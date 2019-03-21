@@ -72,6 +72,14 @@ public class LoginActivity extends AppCompatActivity {
         txtEmessage = findViewById(R.id.txtEmessage);
 
 
+        txtChangePass.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Start the Forgot activity
+                Intent intent = new Intent(LoginActivity.this, ForgotActivity.class);;
+                startActivity(intent);
+            }
+        });
 
 
         /** Setting up components + validating fields ... */
@@ -169,24 +177,26 @@ public class LoginActivity extends AppCompatActivity {
         email = txtEmail.getText().toString().trim();
         password = txtPassword.getText().toString().trim();
 
-        final ProgressDialog progressDialog = ProgressDialog.show(LoginActivity.this, "Please wait", "Signing In", true);
-        mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-                if (task.isSuccessful() && validation() ) {
-                    /** if the login was successfull then go through to the next activity */
-                    progressDialog.dismiss();
-                    Toast.makeText(LoginActivity.this, "Logged in Successfully", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
-                    startActivity(intent);
-                    finish();
-                } else {
-                    /** else increment the attempt */
-                    progressDialog.dismiss();
-                    txtEmessage.setText("username or password is invalid");
+        if (validation()) {
+            final ProgressDialog progressDialog = ProgressDialog.show(LoginActivity.this, "Please wait", "Signing In", true);
+            mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                @Override
+                public void onComplete(@NonNull Task<AuthResult> task) {
+                    if (task.isSuccessful()) {
+                        /** if the login was successfull then go through to the next activity */
+                        progressDialog.dismiss();
+                        Toast.makeText(LoginActivity.this, "Logged in Successfully", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+                        startActivity(intent);
+                        finish();
+                    } else {
+                        /** else increment the attempt */
+                        progressDialog.dismiss();
+                        txtEmessage.setText("username or password is invalid");
+                    }
                 }
-            }
-        });
+            });
+        }
 
     }
 

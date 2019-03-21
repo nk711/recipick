@@ -12,9 +12,8 @@
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_gravity="center"
-        android:layout_marginLeft="10dp"
         android:layout_marginTop="10dp"
-        android:backgroundTint="@color/colorAccent"
+        android:backgroundTint="@color/colorDarkerGrey"
         android:background="@drawable/ic_arrow_back" />
 
     <TextView
@@ -46,8 +45,8 @@
         android:layout_gravity="center"
         android:layout_below="@+id/txtDisplayName"
         android:layout_marginTop="15dp"
-        android:layout_marginStart="25dp"
-        android:layout_marginEnd="25dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="15dp"
         android:ems="10"
         android:hint="Email"
         android:inputType="textPersonName" />
@@ -60,9 +59,7 @@
         android:layout_below="@+id/txtEmail"
         android:layout_alignStart="@+id/txtEmail"
         android:layout_alignEnd="@+id/txtEmail"
-        android:layout_marginStart="1dp"
         android:layout_marginTop="15dp"
-        android:layout_marginEnd="-1dp"
         android:ems="10"
         android:hint="Confirm Email"
         android:inputType="textEmailAddress" />
@@ -74,11 +71,11 @@
         android:layout_gravity="center"
         android:layout_below="@+id/txtConfirmEmail"
         android:layout_marginTop="15dp"
-        android:layout_marginStart="25dp"
-        android:layout_marginEnd="25dp"
+        android:layout_alignStart="@+id/txtEmail"
+        android:layout_alignEnd="@+id/txtEmail"
         android:ems="10"
         android:hint="Password"
-        android:inputType="textPersonName" />
+        android:inputType="textPassword" />
 
     <EditText
         android:id="@+id/txtConfirmPassword"
@@ -87,12 +84,11 @@
         android:layout_gravity="center"
         android:layout_below="@+id/txtPassword"
         android:layout_marginTop="15dp"
-        android:layout_marginStart="25dp"
-        android:layout_marginEnd="25dp"
+        android:layout_alignStart="@+id/txtPassword"
+        android:layout_alignEnd="@+id/txtPassword"
         android:ems="10"
         android:hint="Confirm Password"
-
-        android:inputType="textPersonName" />
+        android:inputType="textPassword" />
 
     <EditText
         android:id="@+id/txtDisplayName"
@@ -101,8 +97,8 @@
         android:layout_gravity="center"
         android:layout_below="@+id/txtEmessage"
         android:layout_marginTop="15dp"
-        android:layout_marginStart="25dp"
-        android:layout_marginEnd="25dp"
+        android:layout_alignStart="@+id/txtEmail"
+        android:layout_alignEnd="@+id/txtEmail"
         android:ems="10"
         android:hint="Display Name"
         android:inputType="textPersonName" />
@@ -120,7 +116,7 @@
         android:textColor="@color/white" />
 
     <TextView
-        android:id="@+id/desc"
+        android:id="@+id/txtSignIn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/btnRegister"
@@ -129,6 +125,6 @@
         android:text= "Already have an acocunt?"
         android:layout_marginTop="10dp"
         android:textAlignment="center"
-        android:textColor="@color/colorAccentLight" />
+        android:textColor="@color/colorGrey" />
 
 </RelativeLayout>

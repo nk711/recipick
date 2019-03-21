@@ -34,6 +34,7 @@ public class SignUpActivity extends AppCompatActivity {
     private EditText txtPassword;
     private EditText txtConfirmPass;
     private TextView txtEmessage;
+    private TextView txtSignIn;
 
     private TextView txtDisplayName;
 
@@ -67,6 +68,7 @@ public class SignUpActivity extends AppCompatActivity {
         txtConfirmPass = findViewById(R.id.txtConfirmPassword);
         txtEmessage = findViewById(R.id.txtEmessage);
         txtDisplayName = findViewById(R.id.txtDisplayName);
+        txtSignIn = findViewById(R.id.txtSignIn);
 
         /**
          * when the user presses the btnSignUp button
@@ -93,6 +95,12 @@ public class SignUpActivity extends AppCompatActivity {
         });
 
 
+        txtSignIn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
+            }
+        });
 
     }
 
@@ -122,23 +130,27 @@ public class SignUpActivity extends AppCompatActivity {
      * Registers a user into the system
      */
     public void register() {
-        final ProgressDialog progressDialog = ProgressDialog.show(SignUpActivity.this, "Please wait", "Registering New User!", true);
-        mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener( SignUpActivity.this, new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-                Toast.makeText(SignUpActivity.this, "Registered Successfully", Toast.LENGTH_SHORT).show();
-                if (task.isSuccessful() && validation()) {
-                    /** if the registration was successful, then switch to the login fragment */
-                    progressDialog.dismiss();
-                    onBackPressed();
+        if (validation()) {
+            final ProgressDialog progressDialog = ProgressDialog.show(SignUpActivity.this, "Please wait", "Registering New User!", true);
+            mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(SignUpActivity.this, new OnCompleteListener<AuthResult>() {
+                @Override
+                public void onComplete(@NonNull Task<AuthResult> task) {
                     Toast.makeText(SignUpActivity.this, "Registered Successfully", Toast.LENGTH_SHORT).show();
-                    /** else if the registration was unsuccessful, then increment the attempt */
-                } else {
-                    progressDialog.dismiss();
-                    txtEmessage.setText("Registration was unsuccessful, please try again!");
+                    if (task.isSuccessful()) {
+                        /** if the registration was successful, then switch to the login fragment */
+                        progressDialog.dismiss();
+                        onBackPressed();
+                        Toast.makeText(SignUpActivity.this, "Registered Successfully", Toast.LENGTH_SHORT).show();
+                        /** else if the registration was unsuccessful, then increment the attempt */
+                    } else {
+                        progressDialog.dismiss();
+                        txtEmessage.setText("Registration was unsuccessful, please try again!");
+                    }
                 }
-            }
-        });
+            });
+        } else {
+            txtEmessage.setText("Validation error");
+        }
     }
 
 }

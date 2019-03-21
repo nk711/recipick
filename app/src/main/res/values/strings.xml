@@ -1,4 +1,10 @@
 <resources>
-    <string name="app_name">Recipeasy</string>
+    <string name="app_name">Recipick</string>
     <string name="title_activity_login">LoginActivity</string>
+    <string name="forgot_title">Forgot your Password?</string>
+    <string name="forgot_password_message">No worries, we\'ll help you get access to your account again. Just enter the email that was used to set up your profile and hit reset password, After a few minutes you\'ll be sent an email containing a link to reset your password.</string>
+    <string name="forgot_email_field">Enter your email address</string>
+    <string name="forgot_go_back">Go back to login page</string>
+    <string name="forgot_btnForgotPass">Reset Password</string>
+    <string name="Email_Regex">^[_A-Za-z0-9-+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$</string>
 </resources>
