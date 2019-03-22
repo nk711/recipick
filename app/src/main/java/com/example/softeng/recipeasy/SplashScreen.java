@@ -19,7 +19,6 @@ public class SplashScreen extends AppCompatActivity {
     private static int DELAY = 4000;
     /** Text view component */
     private ImageView app_logo;
-    private TextView app_name;
     /** Animation component */
     private Animation fadeIn;
 
@@ -33,12 +32,10 @@ public class SplashScreen extends AppCompatActivity {
 
         /** Initialising the text view */
         app_logo = (ImageView) findViewById(R.id.logo);
-        app_name = (TextView) findViewById(R.id.title);
 
 
         /** Animation set on the text view*/
         fadeIn = AnimationUtils.loadAnimation(SplashScreen.this, R.anim.fade_in);
-        app_name.startAnimation(fadeIn);
         app_logo.startAnimation(fadeIn);
 
         /** After the the DELAY, start the main activity. */

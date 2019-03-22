@@ -7,4 +7,13 @@
     <string name="forgot_go_back">Go back to login page</string>
     <string name="forgot_btnForgotPass">Reset Password</string>
     <string name="Email_Regex">^[_A-Za-z0-9-+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$</string>
+    <string name="slogan">Make it your own</string>
+    <string name="email_field">Enter your email</string>
+    <string name="password_field">Enter your password</string>
+    <string name="log_in">LOG IN</string>
+    <string name="forgot_password_txtbtn">Forgot Password?</string>
+    <string name="or">OR</string>
+    <string name="no_account_txtbtn">Don\'t have an account?</string>
+    <string name="btn_register">Register</string>
+
 </resources>
