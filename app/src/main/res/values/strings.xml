@@ -7,4 +7,14 @@
     <string name="forgot_go_back">Go back to login page</string>
     <string name="forgot_btnForgotPass">Reset Password</string>
     <string name="Email_Regex">^[_A-Za-z0-9-+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$</string>
+
+    <string name="RecipeTab">Recipe</string>
+    <string name="DiscoverTab">Discover</string>
+    <string name="FavouritesTab">Favourites</string>
+    <string name="SignOut">Sign out</string>
+    <string name="section_format">Hello World from section: %1$d</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
 </resources>
