@@ -89,6 +89,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // Start the Forgot activity
+                Toasty.success(LoginActivity.this, "Welcome back " + mAuth.getCurrentUser().getDisplayName(), Toast.LENGTH_SHORT, false).show();
                 Intent intent = new Intent(LoginActivity.this, ForgotActivity.class);;
                 startActivity(intent);
             }
@@ -205,7 +206,7 @@ public class LoginActivity extends AppCompatActivity {
                     if (task.isSuccessful()) {
                         /** if the login was successfull then go through to the next activity */
                         Toasty.success(LoginActivity.this, "Successfully Logged in", Toast.LENGTH_SHORT, true).show();
-                        Intent intent = new Intent(LoginActivity.this, AddRecipeActivity.class);
+                        Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
                         startActivity(intent);
                         finish();
                     } else {

@@ -21,5 +21,6 @@
     <string name="already_have_an_account_txtbtn">Already have an account?</string>
     <string name="display_name_field">Enter Your display name</string>
     <string name="go_back_to_login_page">Go back to login page</string>
+    <string name="app_logo_splash">App Logo</string>
 
 </resources>
