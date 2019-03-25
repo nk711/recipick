@@ -89,7 +89,6 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // Start the Forgot activity
-                Toasty.success(LoginActivity.this, "Welcome back " + mAuth.getCurrentUser().getDisplayName(), Toast.LENGTH_SHORT, false).show();
                 Intent intent = new Intent(LoginActivity.this, ForgotActivity.class);;
                 startActivity(intent);
             }
@@ -100,7 +99,8 @@ public class LoginActivity extends AppCompatActivity {
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               login();
+                Toasty.success(LoginActivity.this, "Welcome back " + mAuth.getCurrentUser().getDisplayName(), Toast.LENGTH_SHORT, false).show();
+                login();
             }
         });
 
