@@ -16,6 +16,8 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 
+import es.dmoral.toasty.Toasty;
+
 public class ForgotActivity extends AppCompatActivity {
     /** Tags the Forgot activity class */
     private static final String TAG = "ForgotActivity";
@@ -24,7 +26,6 @@ public class ForgotActivity extends AppCompatActivity {
     private ImageButton back;
     private Button btnForgotPass;
     private EditText txtEmail;
-    private TextView txtEmessage;
     private FirebaseAuth mAuth;
 
 
@@ -48,8 +49,6 @@ public class ForgotActivity extends AppCompatActivity {
 
         btnForgotPass = findViewById(R.id.btnForgotPass);
         txtEmail = findViewById(R.id.txtEmail);
-        txtEmessage = findViewById(R.id.txtEmessage);
-
         mAuth = FirebaseAuth.getInstance();
 
         /** Setting up components + validating fields ... */
@@ -71,7 +70,6 @@ public class ForgotActivity extends AppCompatActivity {
         email = txtEmail.getText().toString().trim();
         boolean validation = true;
         if (email.isEmpty() || !email.matches(EMAIL)) {
-            Toast.makeText(getApplication(), "Enter the email address you signed in with", Toast.LENGTH_SHORT).show();
             validation = false;
         }
         return validation;
@@ -88,17 +86,20 @@ public class ForgotActivity extends AppCompatActivity {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             if (task.isSuccessful()) {
+                                Toasty.success(ForgotActivity.this, "Email Successfully Sent. Please check your email", Toast.LENGTH_SHORT, true).show();
                                 Log.d(TAG, "Email sent.");
-                                txtEmessage.setText("Email has been sent! Check your email");
                             }
                         }
                     }).addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception e) {
-                    Toast.makeText(getApplicationContext(), "Email failed to send, please try again later", Toast.LENGTH_SHORT).show();
-                    txtEmessage.setText("Email failed to send, please try again later");
+                    Toasty.error(ForgotActivity.this, "Email failed to send, please try again later", Toast.LENGTH_LONG, true).show();
+
                 }
             });
+        } else {
+            Toasty.error(ForgotActivity.this, "Invalid Email! Enter the email you registered with", Toast.LENGTH_LONG, true).show();
+
         }
     }
 

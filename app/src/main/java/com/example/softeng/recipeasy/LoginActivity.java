@@ -23,6 +23,8 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
+import es.dmoral.toasty.Toasty;
+
 
 public class LoginActivity extends AppCompatActivity {
     /** Tags the login activity class */
@@ -41,8 +43,8 @@ public class LoginActivity extends AppCompatActivity {
     /** setting up input fields + output fields */
     private EditText txtEmail;
     private EditText txtPassword;
-    private TextView txtEmessage;
     private TextView txtChangePass;
+    private TextView txtRegister;
 
     /** email and password fields */
     private String email;
@@ -69,9 +71,20 @@ public class LoginActivity extends AppCompatActivity {
         txtEmail = findViewById(R.id.txtEmail);
         txtPassword = findViewById(R.id.txtPassword);
         txtChangePass = findViewById(R.id.txtChangePass);
-        txtEmessage = findViewById(R.id.txtEmessage);
+        txtRegister = findViewById(R.id.txtRegister);
 
 
+        /**
+         * When the user selects the text view, it will open the sign_up activity
+         */
+        txtRegister.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openRegister();
+            }
+        });
+
+        /** When the user selects the text view, it will open the forgot password activity */
         txtChangePass.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -86,16 +99,19 @@ public class LoginActivity extends AppCompatActivity {
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               login();
+                Toasty.success(LoginActivity.this, "Welcome back " + mAuth.getCurrentUser().getDisplayName(), Toast.LENGTH_SHORT, false).show();
+                login();
             }
         });
 
+        /**
+         * When the user hits the register button, it will open the sign_up activity
+         */
         btnRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // Start the Signup activity
-                Intent intent = new Intent(LoginActivity.this, SignUpActivity.class);;
-                startActivity(intent);
+                openRegister();
             }
         });
 
@@ -152,6 +168,12 @@ public class LoginActivity extends AppCompatActivity {
         }); */
     }
 
+    /** Starts up the register activity */
+    public void openRegister() {
+        // Start the Signup activity
+        Intent intent = new Intent(LoginActivity.this, SignUpActivity.class);;
+        startActivity(intent);
+    }
     /**
      * Checks the validation of the fields
      * @return true if the validation passed
@@ -178,24 +200,23 @@ public class LoginActivity extends AppCompatActivity {
         password = txtPassword.getText().toString().trim();
 
         if (validation()) {
-            final ProgressDialog progressDialog = ProgressDialog.show(LoginActivity.this, "Please wait", "Signing In", true);
             mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
                     if (task.isSuccessful()) {
                         /** if the login was successfull then go through to the next activity */
-                        progressDialog.dismiss();
-                        Toast.makeText(LoginActivity.this, "Logged in Successfully", Toast.LENGTH_SHORT).show();
+                        Toasty.success(LoginActivity.this, "Successfully Logged in", Toast.LENGTH_SHORT, true).show();
                         Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
                         startActivity(intent);
                         finish();
                     } else {
-                        /** else increment the attempt */
-                        progressDialog.dismiss();
-                        txtEmessage.setText("username or password is invalid");
+                        Toasty.error(LoginActivity.this, "Invalid details! Check the entered details and try again", Toast.LENGTH_LONG, true).show();
                     }
                 }
             });
+        } else {
+
+            Toasty.error(LoginActivity.this, "Invalid details! Check the entered details and try again", Toast.LENGTH_LONG, true).show();
         }
 
     }
