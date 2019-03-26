@@ -109,6 +109,23 @@ public class ListOfRecipesFragment extends Fragment {
                         R.drawable.pizza
                 ));
 
+        recipeList.add(
+                new Recipe("Pasta",
+                        "Some pasta and sauce lol",
+                        R.drawable.pasta
+                ));
+        recipeList.add(
+                new Recipe("Chicken Dish",
+                        "Very nice chicken, would recommend",
+                        R.drawable.chicken
+                ));
+        recipeList.add(
+                new Recipe("Pizza",
+                        "Hella good pizza",
+                        R.drawable.pizza
+                ));
+
+
         recipeAdapter = new RecipeAdapter(ListOfRecipesFragment.this.getActivity(), recipeList);
         recyclerView.setAdapter(recipeAdapter);
     }

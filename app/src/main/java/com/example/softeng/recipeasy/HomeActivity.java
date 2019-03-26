@@ -1,4 +1,5 @@
 package com.example.softeng.recipeasy;
+import android.content.Intent;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -18,6 +19,8 @@ import android.view.ViewGroup;
 
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 public class HomeActivity extends AppCompatActivity {
 
     /**
@@ -35,13 +38,16 @@ public class HomeActivity extends AppCompatActivity {
      */
     private ViewPager mViewPager;
 
+    /** used to get the currently logged in user */
+    private FirebaseAuth mAuth;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-        //Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        //setSupportActionBar(toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
@@ -50,6 +56,15 @@ public class HomeActivity extends AppCompatActivity {
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
+
+        /**
+         * Gets the currently logged in user, if the user == null then return back to the login activity
+         */
+        mAuth = FirebaseAuth.getInstance();
+        if (mAuth.getCurrentUser()==null) {
+            finish();
+            startActivity(new Intent(this, LoginActivity.class));
+        }
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
 
@@ -80,12 +95,12 @@ public class HomeActivity extends AppCompatActivity {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.signOut) {
-
-            return true;
+        switch (item.getItemId()) {
+            case R.id.signOut:
+                mAuth.signOut();
+                finish();
+                startActivity(new Intent(this, LoginActivity.class));
+                break;
         }
 
         return super.onOptionsItemSelected(item);

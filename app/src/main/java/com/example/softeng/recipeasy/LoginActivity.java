@@ -62,6 +62,7 @@ public class LoginActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         /** If the user is already logged in then proceed to the main activity */
         if (mAuth.getCurrentUser()!=null) {
+            Toasty.success(LoginActivity.this, "Welcome back ", Toast.LENGTH_SHORT, false).show();
             startActivity(new Intent(this, HomeActivity.class));
             finish();
         }
@@ -99,7 +100,6 @@ public class LoginActivity extends AppCompatActivity {
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toasty.success(LoginActivity.this, "Welcome back " + mAuth.getCurrentUser().getDisplayName(), Toast.LENGTH_SHORT, false).show();
                 login();
             }
         });
