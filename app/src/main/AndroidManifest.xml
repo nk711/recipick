@@ -11,17 +11,19 @@
         android:roundIcon="@drawable/ic_applogoo"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
-        <activity android:name=".AddRecipeActivity"
-            android:theme="@style/Theme.AppCompat.Light.DarkActionBar"/>
-
+        <activity
+            android:name=".RecipeDetails"
+            android:label="@string/title_activity_recipe_details"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity
+            android:name=".AddRecipeActivity"
+            android:theme="@style/Theme.AppCompat.Light.DarkActionBar" />
         <activity
             android:name=".ForgotActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
-
-        <activity android:name=".HomeActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
-
+        <activity
+            android:name=".HomeActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
             android:name=".SignUpActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />

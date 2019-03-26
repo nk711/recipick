@@ -30,4 +30,9 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_recipe_details">RecipeDetails</string>
+    <string name="tab_text_1">Overview</string>
+    <string name="tab_text_2">Preparation</string>
+    <string name="tab_text_3">Photos</string>
+    <string name="action_settings">Settings</string>
 </resources>
