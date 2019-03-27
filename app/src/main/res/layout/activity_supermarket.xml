@@ -24,7 +24,7 @@
             app:titleTextColor="#FFFFFF"
             android:theme="@style/AppTheme.PopupOverlay">
         </android.support.v7.widget.Toolbar>
-
+<!--hh-->
         <android.support.design.widget.TabLayout
             android:id="@+id/tabs"
             android:layout_width="match_parent"
