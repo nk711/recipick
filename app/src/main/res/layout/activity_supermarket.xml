@@ -23,7 +23,7 @@
             app:title="@string/app_name"
             app:titleTextColor="#FFFFFF"
             android:theme="@style/AppTheme.PopupOverlay">
-<!--recipesh-->
+<!--recijpesh-->
         </android.support.v7.widget.Toolbar>
 
         <android.support.design.widget.TabLayout
