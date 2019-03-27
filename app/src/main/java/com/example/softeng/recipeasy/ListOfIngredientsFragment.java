@@ -2,10 +2,18 @@ package com.example.softeng.recipeasy;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
+import android.widget.ListView;
+import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -27,6 +35,12 @@ public class ListOfIngredientsFragment extends Fragment {
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
+
+    private List<String> ingredientList = new ArrayList<String>();
+
+    private ListView listView;
+
+    private ImageButton imageButton;
 
     public ListOfIngredientsFragment() {
         // Required empty public constructor
@@ -66,6 +80,23 @@ public class ListOfIngredientsFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_list_of_ingredients, container, false);
     }
 
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        ingredientList.add("Tomato");
+        ingredientList.add("Pasta");
+        ingredientList.add("Chicken");
+        ingredientList.add("Flour");
+        ingredientList.add("Beef");
+
+        this.listView = (ListView) view.findViewById(R.id.ingredientsView);
+
+        IngredientsAdapter ingredientsAdapter = new IngredientsAdapter(ListOfIngredientsFragment.this.getContext(), ingredientList);
+        this.listView.setAdapter(ingredientsAdapter);
+
+
+    }
+
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
@@ -93,4 +124,6 @@ public class ListOfIngredientsFragment extends Fragment {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
+
+
 }

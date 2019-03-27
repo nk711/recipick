@@ -22,8 +22,10 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
         android:layout_margin="@dimen/fab_margin"
-        android:tint="@color/colorPrimary"
-        android:src="@android:drawable/ic_input_add" />
+        app:maxImageSize="30dp"
+        android:backgroundTint="@color/colorAccent"
+        app:borderWidth="0dp"
+        app:srcCompat="@drawable/ic_action_name" />
 
 
 
