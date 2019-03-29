@@ -15,6 +15,7 @@ public class Recipe {
     private Cuisine cuisine = null;
     private ArrayList<String> images = null;
     private boolean share = false;
+    private boolean visibility = false;
 
 
     private int id;
@@ -131,6 +132,14 @@ public class Recipe {
 
     public boolean isShare() {
         return share;
+    }
+
+    public boolean isVisibility() {
+        return visibility;
+    }
+
+    public void setVisibility(boolean visibility) {
+        this.visibility = visibility;
     }
 
     public void setShare(boolean share) {
