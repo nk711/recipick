@@ -20,6 +20,14 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.mikepenz.materialdrawer.AccountHeader;
+import com.mikepenz.materialdrawer.AccountHeaderBuilder;
+import com.mikepenz.materialdrawer.Drawer;
+import com.mikepenz.materialdrawer.DrawerBuilder;
+import com.mikepenz.materialdrawer.model.DividerDrawerItem;
+import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
+import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
+import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -38,16 +46,92 @@ public class HomeActivity extends AppCompatActivity {
      */
     private ViewPager mViewPager;
 
+    private Toolbar toolbar;
+
+    private Drawer result;
+
     /** used to get the currently logged in user */
     private FirebaseAuth mAuth;
+
+    public void navbar_setup() {
+        //if you want to update the items at a later time it is recommended to keep it in a variable
+        PrimaryDrawerItem item1 = new PrimaryDrawerItem().withIdentifier(1).withName("Home");
+        PrimaryDrawerItem item2 = new PrimaryDrawerItem().withIdentifier(2).withName("My Recipes");
+        PrimaryDrawerItem item3 = new PrimaryDrawerItem().withIdentifier(3).withName("My Favourites");
+        PrimaryDrawerItem item4 = new PrimaryDrawerItem().withIdentifier(4).withName("Shopping List");
+        PrimaryDrawerItem item5 = new PrimaryDrawerItem().withIdentifier(5).withName("Profile");
+        PrimaryDrawerItem item6 = new PrimaryDrawerItem().withIdentifier(6).withName("Log out");
+        PrimaryDrawerItem item7 = new PrimaryDrawerItem().withIdentifier(7).withName("Add A recipe TEST");
+
+        AccountHeader accountHeader = new AccountHeaderBuilder()
+                .withActivity(this)
+                .withTranslucentStatusBar(true)
+                .withHeaderBackground(R.drawable.ic_applogoo)
+                .build();
+
+        //create the drawer and remember the `Drawer` result object
+        result = new DrawerBuilder()
+                .withActivity(this)
+                .withToolbar(toolbar)
+                .withAccountHeader(accountHeader)
+                .addDrawerItems(
+                        item1,
+                        item2,
+                        item3,
+                        item4,
+                        new DividerDrawerItem(),
+                        item7
+                )
+                .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
+                    @Override
+                    public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
+                        // do something with the clicked item :D
+
+                        switch(position) {
+                            case 1:
+                                result.closeDrawer();
+                                break;
+                            case 2:
+                                result.closeDrawer();
+                                break;
+                            case 3:
+                                result.closeDrawer();
+                                break;
+                            case 4:
+                                result.closeDrawer();
+                                break;
+                            case 5:
+                                result.closeDrawer();
+                                break;
+                            case 6:
+                                result.closeDrawer();
+                                break;
+                            case 7:
+                                result.closeDrawer();
+                                Intent intent = new Intent(HomeActivity.this, AddRecipeActivity.class);
+                                startActivity(intent);
+                                break;
+                        }
+
+                        return true;
+                    }
+                })
+                .build();
+
+        result.addStickyFooterItem(item5);
+        result.addStickyFooterItem(item6);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+
+        navbar_setup();
 
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
