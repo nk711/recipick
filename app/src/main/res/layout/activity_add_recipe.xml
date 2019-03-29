@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -8,312 +8,324 @@
     android:focusableInTouchMode="true"
     android:background="@color/white">
 
-
-
-    <LinearLayout
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="?attr/actionBarSize"
+        android:background="#FF9052"
+        app:title="Your new recipe"
+        app:titleTextColor="#FFFFFF"
+        android:theme="@style/AppTheme.PopupOverlay">
 
+    </android.support.v7.widget.Toolbar>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="10dp"
-            android:orientation="horizontal">
-            <TextView
-                android:id="@+id/title"
-                android:layout_width="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:gravity="start"
-                android:layout_weight="1"
-                android:text="Add some pictures"
-                android:textColor="@color/TitleColour"
-                android:layout_marginStart="20dp"
-                android:textSize="25sp" />
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal">
+                <TextView
+                    android:id="@+id/title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="start"
+                    android:layout_weight="1"
+                    android:text="Add some pictures"
+                    android:textColor="@color/TitleColour"
+                    android:layout_marginStart="20dp"
+                    android:textSize="25sp" />
 
 
-            <Button
-                android:id="@+id/btnUpload"
-                android:layout_width="wrap_content"
-                android:layout_height="40dp"
-                android:background="@drawable/hollow_button"
+                <Button
+                    android:id="@+id/btnUpload"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:background="@drawable/hollow_button"
+                    android:layout_marginEnd="10dp"
+                    android:layout_gravity="center"
+
+                    android:text = "Upload"
+                    android:textColor="@color/TitleColour"
+                    android:textAlignment="center"/>
+
+
+            </LinearLayout>
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/list_images"
+                android:background="@color/white"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="15dp"
+                android:layout_marginTop="5dp">
+            </android.support.v7.widget.RecyclerView>
+
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="15dp"
+                android:layout_marginStart="15dp"
                 android:layout_marginEnd="10dp"
-                android:layout_gravity="center"
-
-                android:text = "Upload"
-                android:textColor="@color/TitleColour"
-                android:textAlignment="center"/>
+                android:orientation="horizontal">
 
 
-        </LinearLayout>
+                <EditText
+                    android:id="@+id/txtRecipeName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="50dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/fields"
+                    android:drawableEnd= "@drawable/ic_email"
+                    android:ems="10"
+                    android:paddingEnd = "10dp"
+                    android:hint="Recipe Name"
+                    android:inputType="text"
+                    tools:ignore="Autofill,RtlSymmetry" />
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/list_images"
-            android:background="@color/white"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="15dp"
-            android:layout_marginEnd="15dp"
-            android:layout_marginTop="5dp">
-        </android.support.v7.widget.RecyclerView>
+                <Switch
+                    android:id="@+id/switch2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:paddingEnd="10dp"
+                    android:layout_weight="2"
+                    android:gravity="end"
+                    android:textSize="20sp"
+                    android:textColor="@color/TitleColour"
+                    android:text=" Share " />
 
 
+            </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="15dp"
-            android:layout_marginStart="15dp"
-            android:layout_marginEnd="10dp"
-            android:orientation="horizontal">
 
 
             <EditText
-                android:id="@+id/txtRecipeName"
-                android:layout_width="wrap_content"
+                android:id="@+id/txtDescription"
+                android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:layout_weight="1"
-                android:background="@drawable/fields"
+                android:layout_marginTop="15dp"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="15dp"
+                android:overScrollMode="always"
+                android:scrollbarStyle="insideInset"
+                android:scrollbars="vertical"
                 android:drawableEnd= "@drawable/ic_email"
                 android:ems="10"
-                android:paddingEnd = "10dp"
-                android:hint="Recipe Name"
-                android:inputType="text"
-                tools:ignore="Autofill,RtlSymmetry" />
-
-            <Switch
-                android:id="@+id/switch2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:paddingEnd="10dp"
-                android:layout_weight="2"
-                android:gravity="end"
-                android:textSize="20sp"
-                android:textColor="@color/TitleColour"
-                android:text=" Share " />
+                android:background="@drawable/fields"
+                android:hint="Give preperation details"
+                android:textColor="@color/colorAccent"
+                android:inputType="text|textMultiLine|textLongMessage" />
 
 
-        </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="15dp"
+                android:orientation="horizontal">
 
 
+                <EditText
+                        android:id="@+id/txtIngredient"
+                        android:layout_width="0dp"
+                        android:layout_height="50dp"
+                        android:layout_marginStart="15dp"
+                        android:layout_marginEnd="15dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/fields"
+                        android:ems="10"
+                        android:paddingEnd = "10dp"
+                        android:hint="Add your Ingredients"
+                        android:inputType="text"
+                        tools:ignore="Autofill,RtlSymmetry" />
 
-        <EditText
-            android:id="@+id/txtDescription"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_marginTop="15dp"
-            android:layout_marginStart="15dp"
-            android:layout_marginEnd="15dp"
-            android:overScrollMode="always"
-            android:scrollbarStyle="insideInset"
-            android:scrollbars="vertical"
-            android:drawableEnd= "@drawable/ic_email"
-            android:ems="10"
-            android:background="@drawable/fields"
-            android:hint="Give preperation details"
-            android:textColor="@color/colorAccent"
-            android:inputType="text|textMultiLine|textLongMessage" />
+                <Button
+                    android:id="@+id/btnAddIngredient"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:background="@drawable/hollow_button"
+                    android:layout_marginEnd="10dp"
+                    android:layout_gravity="center"
+                    android:text = "Add"
+                    android:textColor="@color/TitleColour"
+                    android:textAlignment="center"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
 
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="15dp"
-            android:orientation="horizontal">
-
-
-            <EditText
-                    android:id="@+id/txtIngredient"
-                    android:layout_width="0dp"
+                <EditText
+                    android:id="@+id/txtMeasurement"
+                    android:layout_width="match_parent"
                     android:layout_height="50dp"
+                    android:layout_marginTop="15dp"
                     android:layout_marginStart="15dp"
-                    android:layout_marginEnd="15dp"
+                    android:layout_marginEnd="10dp"
                     android:layout_weight="1"
                     android:background="@drawable/fields"
                     android:ems="10"
                     android:paddingEnd = "10dp"
-                    android:hint="Add your Ingredients"
+                    android:hint="Measurement"
                     android:inputType="text"
                     tools:ignore="Autofill,RtlSymmetry" />
 
+                <EditText
+                    android:id="@+id/txtQuantity"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="15dp"
+                    android:background="@drawable/fields" android:ems="10"
+                    android:paddingEnd = "10dp"
+                    android:hint="Quantity"
+                    android:inputType="text"
+                    tools:ignore="Autofill,RtlSymmetry" />
+            </LinearLayout>
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/list_of_ingredients"
+                android:background="@color/white"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="15dp"
+                android:layout_marginTop="15dp">
+            </android.support.v7.widget.RecyclerView>
+
+            <EditText
+                android:id="@+id/txtPreperation"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="15dp"
+                android:gravity="top|start"
+                android:overScrollMode="always"
+                android:scrollbarStyle="insideInset"
+                android:scrollbars="vertical"
+                android:ems="10"
+                android:background="@drawable/fields"
+                android:hint="Preperation details"
+                android:textColor="@color/colorAccent"
+                android:inputType="text|textMultiLine|textLongMessage" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <EditText
+                    android:id="@+id/txtDuration"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/fields"
+                    android:ems="10"
+                    android:paddingEnd = "10dp"
+                    android:hint="Duration"
+                    android:inputType="number"
+                    tools:ignore="Autofill,RtlSymmetry" />
+
+                <EditText
+                    android:id="@+id/txtBudget"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="15dp"
+                    android:background="@drawable/fields" android:ems="10"
+                    android:paddingEnd = "10dp"
+                    android:hint="Budget"
+                    android:inputType="numberDecimal"
+                    tools:ignore="Autofill,RtlSymmetry" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+                <EditText
+                    android:id="@+id/txtCalories"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/fields"
+                    android:ems="10"
+                    android:paddingEnd = "10dp"
+                    android:hint="Calories"
+                    android:inputType="number"
+                    tools:ignore="Autofill,RtlSymmetry" />
+
+                <EditText
+                    android:id="@+id/txtServings"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="15dp"
+                    android:background="@drawable/fields" android:ems="10"
+                    android:paddingEnd = "10dp"
+                    android:hint="Servings"
+                    android:inputType="number"
+                    tools:ignore="Autofill,RtlSymmetry" />
+            </LinearLayout>
+
+
+
+
+                <EditText
+                    android:id="@+id/txtCuisine"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginEnd="15dp"
+                    android:background="@drawable/fields"
+                    android:ems="10"
+                    android:paddingEnd = "10dp"
+                    android:hint="Cuisine"
+                    android:inputType="number"
+                    tools:ignore="Autofill,RtlSymmetry" />
+
             <Button
-                android:id="@+id/btnAddIngredient"
-                android:layout_width="wrap_content"
-                android:layout_height="40dp"
-                android:background="@drawable/hollow_button"
-                android:layout_marginEnd="10dp"
-                android:layout_gravity="center"
-                android:text = "Add"
-                android:textColor="@color/TitleColour"
-                android:textAlignment="center"/>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal">
-
-
-            <EditText
-                android:id="@+id/txtMeasurement"
+                android:id="@+id/btnSubmit"
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/button"
                 android:layout_marginTop="15dp"
-                android:layout_marginStart="15dp"
-                android:layout_marginEnd="10dp"
-                android:layout_weight="1"
-                android:background="@drawable/fields"
-                android:ems="10"
-                android:paddingEnd = "10dp"
-                android:hint="Measurement"
-                android:inputType="text"
-                tools:ignore="Autofill,RtlSymmetry" />
-
-            <EditText
-                android:id="@+id/txtQuantity"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_marginTop="15dp"
-                android:layout_marginStart="10dp"
-                android:layout_weight="1"
-                android:layout_marginEnd="15dp"
-                android:background="@drawable/fields" android:ems="10"
-                android:paddingEnd = "10dp"
-                android:hint="Quantity"
-                android:inputType="text"
-                tools:ignore="Autofill,RtlSymmetry" />
-        </LinearLayout>
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/list_of_ingredients"
-            android:background="@color/white"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="15dp"
-            android:layout_marginEnd="15dp"
-            android:layout_marginTop="15dp">
-        </android.support.v7.widget.RecyclerView>
-
-        <EditText
-            android:id="@+id/txtPreperation"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_marginTop="15dp"
-            android:layout_marginStart="15dp"
-            android:layout_marginEnd="15dp"
-            android:gravity="top|start"
-            android:overScrollMode="always"
-            android:scrollbarStyle="insideInset"
-            android:scrollbars="vertical"
-            android:ems="10"
-            android:background="@drawable/fields"
-            android:hint="Preperation details"
-            android:textColor="@color/colorAccent"
-            android:inputType="text|textMultiLine|textLongMessage" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal">
-
-            <EditText
-                android:id="@+id/txtDuration"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_marginTop="15dp"
-                android:layout_marginStart="15dp"
-                android:layout_marginEnd="10dp"
-                android:layout_weight="1"
-                android:background="@drawable/fields"
-                android:ems="10"
-                android:paddingEnd = "10dp"
-                android:hint="Duration"
-                android:inputType="number"
-                tools:ignore="Autofill,RtlSymmetry" />
-
-            <EditText
-                android:id="@+id/txtBudget"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_marginTop="15dp"
-                android:layout_marginStart="10dp"
-                android:layout_weight="1"
-                android:layout_marginEnd="15dp"
-                android:background="@drawable/fields" android:ems="10"
-                android:paddingEnd = "10dp"
-                android:hint="Budget"
-                android:inputType="numberDecimal"
-                tools:ignore="Autofill,RtlSymmetry" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal">
-            <EditText
-                android:id="@+id/txtCalories"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_marginTop="15dp"
-                android:layout_marginStart="15dp"
-                android:layout_marginEnd="10dp"
-                android:layout_weight="1"
-                android:background="@drawable/fields"
-                android:ems="10"
-                android:paddingEnd = "10dp"
-                android:hint="Calories"
-                android:inputType="number"
-                tools:ignore="Autofill,RtlSymmetry" />
-
-            <EditText
-                android:id="@+id/txtServings"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_marginTop="15dp"
-                android:layout_marginStart="10dp"
-                android:layout_weight="1"
-                android:layout_marginEnd="15dp"
-                android:background="@drawable/fields" android:ems="10"
-                android:paddingEnd = "10dp"
-                android:hint="Servings"
-                android:inputType="number"
-                tools:ignore="Autofill,RtlSymmetry" />
-        </LinearLayout>
-
-
-
-
-            <EditText
-                android:id="@+id/txtCuisine"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_marginTop="15dp"
+                android:layout_marginBottom="15dp"
                 android:layout_marginStart="15dp"
                 android:layout_marginEnd="15dp"
-                android:background="@drawable/fields"
-                android:ems="10"
-                android:paddingEnd = "10dp"
-                android:hint="Cuisine"
-                android:inputType="number"
-                tools:ignore="Autofill,RtlSymmetry" />
-
-        <Button
-            android:id="@+id/btnSubmit"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/button"
-            android:layout_marginTop="15dp"
-            android:layout_marginBottom="15dp"
-            android:layout_marginStart="15dp"
-            android:layout_marginEnd="15dp"
-            android:text="Create Recipe"
-            android:textColor="@color/white" />
+                android:text="Create Recipe"
+                android:textColor="@color/white" />
 
 
 
-    </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
 
-
-</ScrollView>
+</LinearLayout>
