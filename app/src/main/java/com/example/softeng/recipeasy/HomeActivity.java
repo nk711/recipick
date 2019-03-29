@@ -87,7 +87,7 @@ public class HomeActivity extends AppCompatActivity {
                     public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
                         // do something with the clicked item :D
 
-                        switch(position) {
+                        switch((int)drawerItem.getIdentifier()) {
                             case 1:
                                 result.closeDrawer();
                                 break;
