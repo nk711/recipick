@@ -10,7 +10,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:484659685727:android:dd1f9e8e28abddf8",
         "android_client_info": {
-          "package_name": "com.example.softeng.recipeasy"
+          "package_name": "com.example.softeng.recipick"
         }
       },
       "oauth_client": [
@@ -18,7 +18,7 @@
           "client_id": "484659685727-qtsl0soe6n0su5hc9h4kl3pnddna2uad.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.example.softeng.recipeasy",
+            "package_name": "com.example.softeng.recipick",
             "certificate_hash": "66a2c7934523204aa6b40da260c2ea8d80df3be0"
           }
         },

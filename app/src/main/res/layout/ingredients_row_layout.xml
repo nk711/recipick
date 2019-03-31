@@ -1,27 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="50dp"
     android:orientation="horizontal"
+    android:background="@color/white"
+    android:padding="10dp"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <TextView
         android:id="@+id/txtIngredient"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
         android:layout_weight="1"
-        android:textSize="25dp"
-        android:textColor="#000000"
-        android:padding="10dp"
+        android:textSize="20sp"
+        android:background="@color/white"
         android:text="Ingredient" />
 
     <ImageButton
         android:id="@+id/deleteIngredient"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:backgroundTint="@color/colorPrimaryTransparent"
-        android:tint="@color/colorAccent"
-        app:srcCompat="@drawable/ic_delete"/>
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:tint="@color/colorLighterGrey"
+        app:srcCompat="@drawable/ic_delete2"/>
 
 
 </LinearLayout>

@@ -36,13 +36,12 @@
                     android:id="@+id/title"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:gravity="start"
+                    android:gravity="center_vertical|start"
                     android:layout_weight="1"
-                    android:text="Add some pictures"
+                    android:text="Add Images"
                     android:textColor="@color/TitleColour"
                     android:layout_marginStart="20dp"
                     android:textSize="25sp" />
-
 
                 <Button
                     android:id="@+id/btnUpload"
@@ -51,10 +50,24 @@
                     android:background="@drawable/hollow_button"
                     android:layout_marginEnd="10dp"
                     android:layout_gravity="center"
-
                     android:text = "Upload"
                     android:textColor="@color/TitleColour"
                     android:textAlignment="center"/>
+
+                <Button
+                    android:id="@+id/btnCamera"
+                    android:layout_width="50dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/hollow_button"
+                    android:layout_marginEnd="10dp"
+                    android:layout_gravity="center"
+                    android:drawableEnd="@drawable/ic_camera"
+                    android:drawableTint="@color/TitleColour"
+                    android:padding="13dp"
+                    android:textColor="@color/TitleColour"
+                    android:textAlignment="center"/>
+
+
 
 
             </LinearLayout>
@@ -69,16 +82,38 @@
                 android:layout_marginTop="5dp">
             </android.support.v7.widget.RecyclerView>
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="10dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+
+                    android:gravity="center_vertical"
+                    android:maxLines="1"
+                    android:text="Add a name and description"
+                    android:textColor="@android:color/darker_gray"
+                    android:textSize="12sp" />
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="1"
+                    android:background="@android:color/darker_gray"/>
+            </LinearLayout>
 
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginTop="15dp"
                 android:layout_marginStart="15dp"
                 android:layout_marginEnd="10dp"
                 android:orientation="horizontal">
-
 
                 <EditText
                     android:id="@+id/txtRecipeName"
@@ -113,25 +148,53 @@
             <EditText
                 android:id="@+id/txtDescription"
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
+                android:layout_height="match_parent"
                 android:layout_marginTop="15dp"
                 android:layout_marginStart="15dp"
                 android:layout_marginEnd="15dp"
                 android:overScrollMode="always"
                 android:scrollbarStyle="insideInset"
                 android:scrollbars="vertical"
-                android:drawableEnd= "@drawable/ic_email"
+                android:lines="4"
                 android:ems="10"
                 android:background="@drawable/fields"
-                android:hint="Give preperation details"
+                android:hint="Add a brief description"
                 android:textColor="@color/colorAccent"
-                android:inputType="text|textMultiLine|textLongMessage" />
+                android:gravity="top|start"
+                 android:inputType="text|textMultiLine|textLongMessage" />
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="10dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+
+                    android:gravity="center_vertical"
+                    android:maxLines="1"
+                    android:text="Add the recipe's ingredients"
+                    android:textColor="@android:color/darker_gray"
+                    android:textSize="12sp" />
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="1"
+                    android:background="@android:color/darker_gray"/>
+            </LinearLayout>
+
 
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginTop="15dp"
                 android:orientation="horizontal">
 
 
@@ -145,7 +208,7 @@
                         android:background="@drawable/fields"
                         android:ems="10"
                         android:paddingEnd = "10dp"
-                        android:hint="Add your Ingredients"
+                        android:hint="Ingredient name"
                         android:inputType="text"
                         tools:ignore="Autofill,RtlSymmetry" />
 
@@ -161,6 +224,7 @@
                     android:textAlignment="center"/>
 
             </LinearLayout>
+
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -198,7 +262,7 @@
                     tools:ignore="Autofill,RtlSymmetry" />
             </LinearLayout>
 
-            <android.support.v7.widget.RecyclerView
+            <ListView
                 android:id="@+id/list_of_ingredients"
                 android:background="@color/white"
                 android:layout_width="match_parent"
@@ -206,23 +270,49 @@
                 android:layout_marginStart="15dp"
                 android:layout_marginEnd="15dp"
                 android:layout_marginTop="15dp">
-            </android.support.v7.widget.RecyclerView>
+            </ListView>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="10dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+
+                    android:gravity="center_vertical"
+                    android:maxLines="1"
+                    android:text="Add the following details about the recipe"
+                    android:textColor="@android:color/darker_gray"
+                    android:textSize="12sp" />
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="1"
+                    android:background="@android:color/darker_gray"/>
+            </LinearLayout>
 
             <EditText
                 android:id="@+id/txtPreperation"
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
+                android:layout_height="match_parent"
                 android:layout_marginTop="15dp"
                 android:layout_marginStart="15dp"
                 android:layout_marginEnd="15dp"
-                android:gravity="top|start"
                 android:overScrollMode="always"
                 android:scrollbarStyle="insideInset"
                 android:scrollbars="vertical"
+                android:lines="4"
                 android:ems="10"
                 android:background="@drawable/fields"
-                android:hint="Preperation details"
+                android:hint="Preperation Details"
                 android:textColor="@color/colorAccent"
+                android:gravity="top|start"
                 android:inputType="text|textMultiLine|textLongMessage" />
 
             <LinearLayout
