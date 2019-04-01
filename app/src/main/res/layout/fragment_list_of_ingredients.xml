@@ -10,8 +10,7 @@
     <ListView
         android:id="@+id/ingredientsView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:dividerHeight="1dp">
+        android:layout_height="match_parent">
 
     </ListView>
 
