@@ -1,18 +1,19 @@
 package com.example.softeng.recipick;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class Recipe {
     private String name = null;
     private String description = null;
-    private HashMap<Ingredients, String> ingredients = null;
+    private Map<String, Map.Entry<String, String>> ingredients = null;
     private String preparation = null;
     private int duration = 0;
     private int calories = 0;
     private double budget = 0.0;
     private int servings = 0;
-    private Cuisine cuisine = null;
+    private String cuisine = null;
     private List<String> images = null;
     private boolean share = false;
     private boolean visibility = false;
@@ -33,7 +34,7 @@ public class Recipe {
         this.id = id;
     }
 
-    public Recipe(String name, String description, HashMap<Ingredients, String> ingredients, String preparation, int duration, int calories, double budget, int servings, Cuisine cuisine, List<String> images, boolean share) {
+    public Recipe(String name, String description, Map<String, Map.Entry<String, String>> ingredients, String preparation, int duration, int calories, double budget, int servings, String cuisine, boolean share) {
         this.name = name;
         this.description = description;
         this.ingredients = ingredients;
@@ -43,13 +44,10 @@ public class Recipe {
         this.budget = budget;
         this.servings = servings;
         this.cuisine = cuisine;
-        this.images = images;
+        this.images = new ArrayList<>();
         this.share = share;
     }
 
-    public int getImage() {
-        return this.id;
-    }
     public String getName() {
         return name;
     }
@@ -66,11 +64,11 @@ public class Recipe {
         this.description = description;
     }
 
-    public HashMap<Ingredients, String> getIngredients() {
+    public Map<String, Map.Entry<String, String>> getIngredients() {
         return ingredients;
     }
 
-    public void setIngredients(HashMap<Ingredients, String> ingredients) {
+    public void setIngredients(Map<String, Map.Entry<String, String>> ingredients) {
         this.ingredients = ingredients;
     }
 
@@ -114,11 +112,11 @@ public class Recipe {
         this.servings = servings;
     }
 
-    public Cuisine getCuisine() {
+    public String getCuisine() {
         return cuisine;
     }
 
-    public void setCuisine(Cuisine cuisine) {
+    public void setCuisine(String cuisine) {
         this.cuisine = cuisine;
     }
 
