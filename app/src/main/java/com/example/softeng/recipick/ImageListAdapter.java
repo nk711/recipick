@@ -82,17 +82,6 @@ public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.View
                 .error(R.drawable.ic_applogo)
                 .dontAnimate()
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .listener(new RequestListener<Drawable>() {
-                    @Override
-                    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                        return false;
-                    }
-
-                    @Override
-                    public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-                        return false;
-                    }
-                })
                 .into(holder.fileView);
 
 

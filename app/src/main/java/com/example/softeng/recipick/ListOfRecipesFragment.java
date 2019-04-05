@@ -10,6 +10,15 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +41,17 @@ public class ListOfRecipesFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+
+
+    private FirebaseDatabase mDatabase;
+    private FirebaseAuth mAuth;
+    private DatabaseReference myRef;
+    private String uid;
+    private static final String USERS = "Users";
+    private static final String CONTACTS = "Contacts";
+    private static final String IMAGES = "Images";
+    private static final String RECIPES = "Recipes";
+    private User mUser;
 
     RecyclerView recyclerView;
     RecipeAdapter recipeAdapter;
@@ -85,6 +105,15 @@ public class ListOfRecipesFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+        mAuth = FirebaseAuth.getInstance();
+        mDatabase = FirebaseDatabase.getInstance();
+        myRef = mDatabase.getReference();
+        FirebaseUser user = mAuth.getCurrentUser();
+        uid = user.getUid();
+        // Write a message to the database
+        mDatabase= FirebaseDatabase.getInstance();
+        myRef = mDatabase.getReference().child(RECIPES);
+
         recipeList = new ArrayList<>();
 
         recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
@@ -92,43 +121,118 @@ public class ListOfRecipesFragment extends Fragment {
 
         recyclerView.setLayoutManager(new LinearLayoutManager(ListOfRecipesFragment.this.getActivity()));
 
-        recipeList.add(
-                new Recipe("Pasta",
-                        "Some pasta and sauce lol",
-                        R.drawable.pasta
-                ));
-        recipeList.add(
-                new Recipe("Chicken Dish",
-                        "Very nice chicken, would recommend",
-                        R.drawable.chicken
-                ));
-        recipeList.add(
-                new Recipe("Pizza",
-                        "Hella good pizza",
-                        R.drawable.pizza
-                ));
-
-        recipeList.add(
-                new Recipe("Pasta",
-                        "Some pasta and sauce lol",
-                        R.drawable.pasta
-                ));
-        recipeList.add(
-                new Recipe("Chicken Dish",
-                        "Very nice chicken, would recommend",
-                        R.drawable.chicken
-                ));
-        recipeList.add(
-                new Recipe("Pizza",
-                        "Hella good pizza",
-                        R.drawable.pizza
-                ));
-
 
         recipeAdapter = new RecipeAdapter(ListOfRecipesFragment.this.getActivity(), recipeList);
         recyclerView.setAdapter(recipeAdapter);
+
+
+        myRef.addChildEventListener(new ChildEventListener() {
+
+            public Recipe create(DataSnapshot dataSnapshot) {
+                List<String> images = new ArrayList<>();
+                Recipe recipe = dataSnapshot.getValue(Recipe.class);
+                for (DataSnapshot img : dataSnapshot.child(IMAGES).getChildren()) {
+                    images.add(img.getValue().toString());
+                }
+                recipe.setImages(images);
+                return recipe;
+            }
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                recipeList.add(create(dataSnapshot));
+                recipeAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                Toast.makeText(getContext(), "2" , Toast.LENGTH_LONG).show();
+
+                populateList(dataSnapshot);
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+                Toast.makeText(getContext(), "3" , Toast.LENGTH_LONG).show();
+
+                if (recipeList.remove(create(dataSnapshot))) {
+                    Toast.makeText(getContext(), "Removed", Toast.LENGTH_SHORT).show();
+                }
+                recipeAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                Toast.makeText(getContext(), "4" , Toast.LENGTH_LONG).show();
+
+                populateList(dataSnapshot);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Toast.makeText(getContext(), "5" , Toast.LENGTH_LONG).show();
+
+
+            }
+        });
+
+/**
+        recipeList.add(
+                new Recipe("Pasta",
+                        "Some pasta and sauce lol",
+                        R.drawable.pasta
+                ));
+        recipeList.add(
+                new Recipe("Chicken Dish",
+                        "Very nice chicken, would recommend",
+                        R.drawable.chicken
+                ));
+        recipeList.add(
+                new Recipe("Pizza",
+                        "Hella good pizza",
+                        R.drawable.pizza
+                ));
+
+        recipeList.add(
+                new Recipe("Pasta",
+                        "Some pasta and sauce lol",
+                        R.drawable.pasta
+                ));
+        recipeList.add(
+                new Recipe("Chicken Dish",
+                        "Very nice chicken, would recommend",
+                        R.drawable.chicken
+                ));
+        recipeList.add(
+                new Recipe("Pizza",
+                        "Hella good pizza",
+                        R.drawable.pizza
+                ));
+
+ **/
+
+
     }
 
+
+
+    public void populateList(DataSnapshot dataSnapshot) {
+        recipeList.clear();
+        List<String> images = new ArrayList<>();
+
+        Toast.makeText(getContext(), dataSnapshot.getKey() , Toast.LENGTH_LONG).show();
+
+
+        for (DataSnapshot posts : dataSnapshot.child(RECIPES).getChildren()) {
+                    Recipe recipe = posts.getValue(Recipe.class);
+                    for (DataSnapshot img : posts.child(IMAGES).getChildren()) {
+                        images.add(img.getValue().toString());
+                    }
+                    recipe.setImages(images);
+                    recipeList.add(recipe);
+                    images = new ArrayList<>();
+        }
+        recipeAdapter.notifyDataSetChanged();
+    }
 
 
     // TODO: Rename method, update argument and hook method into UI event

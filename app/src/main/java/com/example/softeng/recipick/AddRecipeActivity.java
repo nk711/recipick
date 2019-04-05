@@ -410,7 +410,12 @@ public class AddRecipeActivity extends AppCompatActivity {
 
     private boolean validation() {
 
-        txtRecipeName.getText().toString();
+        /** Need to validate
+         *  -Duration
+         *  -Calories
+         *  -Budget
+         *  -Servings
+         */
 
         boolean result = true;
 
@@ -436,6 +441,16 @@ public class AddRecipeActivity extends AppCompatActivity {
 
         return result;
     }
+
+    /** Associated with Enum classes */
+    private void chooseCuisineDialog() {
+
+    }
+
+    private void chooseMeasurementDialog() {
+
+    }
+
 
 
 }

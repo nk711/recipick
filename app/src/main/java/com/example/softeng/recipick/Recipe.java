@@ -48,9 +48,6 @@ public class Recipe {
         this.share = share;
     }
 
-    public int getImage() {
-        return this.id;
-    }
     public String getName() {
         return name;
     }

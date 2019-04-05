@@ -401,7 +401,7 @@
                     android:ems="10"
                     android:paddingEnd = "10dp"
                     android:hint="Cuisine"
-                    android:inputType="number"
+                    android:inputType="text"
                     tools:ignore="Autofill,RtlSymmetry" />
 
             <Button
