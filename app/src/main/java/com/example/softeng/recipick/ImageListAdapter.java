@@ -114,11 +114,15 @@ public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.View
      *          Deletes the specified position of the item in the recycler view
      */
     public void delete(int position) {
-        fileNameList.remove(position);
-        fileList.remove(position);
-        notifyItemRemoved(position);
-        notifyItemRangeChanged(position, fileNameList.size());
-        notifyItemRangeChanged(position, fileList.size());
+        try {
+            fileNameList.remove(position);
+            fileList.remove(position);
+            notifyItemRemoved(position);
+            notifyItemRangeChanged(position, fileNameList.size());
+            notifyItemRangeChanged(position, fileList.size());
+        } catch (ArrayIndexOutOfBoundsException e) {
+
+        }
     }
 
     /**

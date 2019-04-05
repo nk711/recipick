@@ -24,7 +24,7 @@ import java.util.List;
 
 import es.dmoral.toasty.Toasty;
 
-public class uploadRecipeTask extends AsyncTask<Uri[], Integer, Boolean> {
+public class UploadRecipeTask extends AsyncTask<Uri[], Integer, Boolean> {
     /** holds the firebase database */
     private FirebaseDatabase mDatabase;
     /** used to get the currently logged in user */
@@ -45,7 +45,7 @@ public class uploadRecipeTask extends AsyncTask<Uri[], Integer, Boolean> {
      */
     private static final String USERS = "Users";
     private static final String IMAGES = "Images";
-    private static final String RECIPES = "Posts";
+    private static final String RECIPES = "Recipes";
 
     /** The value that will be returnd */
     private boolean result;
@@ -74,7 +74,7 @@ public class uploadRecipeTask extends AsyncTask<Uri[], Integer, Boolean> {
      * @param activity
      *           so that we can interact with the UI
      */
-    public uploadRecipeTask(List<Uri> list, Recipe recipe, AddRecipeActivity activity) {
+    public UploadRecipeTask(List<Uri> list, Recipe recipe, AddRecipeActivity activity) {
         this.imageList = list;
         this.mRecipe = recipe;
         this.mActivity = activity;
@@ -197,13 +197,15 @@ public class uploadRecipeTask extends AsyncTask<Uri[], Integer, Boolean> {
         pushed.setValue(mRecipe, new DatabaseReference.CompletionListener() {
             public void onComplete(DatabaseError err, DatabaseReference ref) {
                 if (err == null) {
-                    pushPost.setValue(mRecipe, new DatabaseReference.CompletionListener() {
-                        public void onComplete(DatabaseError err, DatabaseReference ref) {
-                            if (err != null) {
-                                result = false;
+                    if (mRecipe.isShare()) {
+                        pushPost.setValue(mRecipe, new DatabaseReference.CompletionListener() {
+                            public void onComplete(DatabaseError err, DatabaseReference ref) {
+                                if (err != null) {
+                                    result = false;
+                                }
                             }
-                        }
-                    });
+                        });
+                    }
                 } else {
                     result = false;
                 }
@@ -224,7 +226,7 @@ public class uploadRecipeTask extends AsyncTask<Uri[], Integer, Boolean> {
     protected void onPostExecute(Boolean result) {
         super.onPostExecute(result);
         if (!result) {
-            Toasty.error(mActivity, "Post Failed to Upload, please try again!", Toast.LENGTH_LONG, true).show();
+            Toasty.error(mActivity, "Failed to upload recipe, please try again!", Toast.LENGTH_LONG, true).show();
         }
 
     }

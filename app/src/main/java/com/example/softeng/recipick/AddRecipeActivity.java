@@ -18,7 +18,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ListView;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,12 +26,14 @@ import com.google.firebase.auth.FirebaseAuth;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.text.SimpleDateFormat;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 public class AddRecipeActivity extends AppCompatActivity {
     /** The request code in order for the user to select multiple images */
@@ -53,6 +55,9 @@ public class AddRecipeActivity extends AppCompatActivity {
     private Button btnUpload;
     /** button that will allow the user to take a picture to be uploaded */
     private Button btnCamera;
+    /** button that will upload the recipe to the database */
+    private Button btnSubmit;
+
     /** Recycler view will hold the list of selected images */
     private RecyclerView mImages;
     /** Holds the list of file names     */
@@ -61,13 +66,19 @@ public class AddRecipeActivity extends AppCompatActivity {
     private List<Uri> fileList;
 
 
-    private List<RecipeIngredient> ingredientList;
+    /** the list of ingredient's name   */
+    public List<String> ingredients;
+    /** the list of ingredient's measurements */
+    public List<String> measurements;
+    /** the list of ingredient's quantity */
+    public List<String> quantity;
+    /** the context of the passed activity*/
 
-    private ListView listView;
+    private RecyclerView listView;
 
     private Button btnAddIngredient;
 
-    private static RecipeIngredientsAdapter ingredientAdapter;
+    private IngredientsAndMeasurementsAdapter ingredientsAdapter;
 
     /** custom adapter to set the recycler view's state */
     private ImageListAdapter adapter;
@@ -77,12 +88,21 @@ public class AddRecipeActivity extends AppCompatActivity {
     private AlertDialog.Builder mBuilder;
     /** Allows us to create custom dialogs */
     private View mView;
-    /** Button to submit the recipe */
-    private Button btnSubmit;
     /** input fields for the user to fill in */
+    private TextView txtRecipeName;
+    private Switch share;
+    private TextView txtDescription;
+    private TextView txtPreperation;
+    private TextView txtDuration;
+    private TextView txtServings;
+    private TextView txtBudget;
+    private TextView txtCalories;
+    private TextView txtCuisine;
+
     private TextView txtIngredient;
     private TextView txtMeasurement;
     private TextView txtQuantity;
+
 
     /** The object created when the post button has been clicked*/
     private Recipe mRecipe;
@@ -99,22 +119,42 @@ public class AddRecipeActivity extends AppCompatActivity {
         /** Initialising components from layout */
         btnUpload = findViewById(R.id.btnUpload);
         btnCamera = findViewById(R.id.btnCamera);
+        btnSubmit = findViewById(R.id.btnSubmit);
+
         mImages =  findViewById(R.id.list_images);
         listView = findViewById(R.id.list_of_ingredients);
         btnAddIngredient = findViewById(R.id.btnAddIngredient);
-        txtIngredient= findViewById(R.id.txtIngredient);;
-        txtMeasurement= findViewById(R.id.txtMeasurement);;
+        txtIngredient= findViewById(R.id.txtIngredient);
+        txtMeasurement= findViewById(R.id.txtMeasurement);
         txtQuantity= findViewById(R.id.txtQuantity);
 
-        ingredientList = new ArrayList<>();
-        RecipeIngredientsAdapter ingredientsAdapter = new RecipeIngredientsAdapter(AddRecipeActivity.this, ingredientList);
+        txtRecipeName = findViewById(R.id.txtRecipeName);
+        share = findViewById(R.id.sShare);
+        txtDescription= findViewById(R.id.txtDescription);
+        txtPreperation= findViewById(R.id.txtPreperation);
+        txtDuration= findViewById(R.id.txtDuration);
+        txtServings= findViewById(R.id.txtServings);
+        txtBudget= findViewById(R.id.txtBudget);
+        txtCalories= findViewById(R.id.txtCalories);
+        txtCuisine= findViewById(R.id.txtCuisine);
+
+
+        ingredients = new ArrayList<>();
+        measurements = new ArrayList<>();
+        quantity = new ArrayList<>();
+
+        ingredientsAdapter = new IngredientsAndMeasurementsAdapter(ingredients, measurements, quantity);
+        listView.setLayoutManager(new LinearLayoutManager(this));
         listView.setAdapter(ingredientsAdapter);
+
 
         fileNameList = new ArrayList<>();
         fileList = new ArrayList<>();
         adapter = new ImageListAdapter(fileNameList, fileList);
         mImages.setLayoutManager(new LinearLayoutManager(this));
         mImages.setAdapter(adapter);
+
+
         /**
          * When the user presses the button to upload images...
          */
@@ -157,16 +197,21 @@ public class AddRecipeActivity extends AppCompatActivity {
         btnAddIngredient.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                RecipeIngredient new_ingredient = new RecipeIngredient(
-                        txtIngredient.getText().toString(),
-                        txtMeasurement.getText().toString(),
-                        txtQuantity.getText().toString()
-                );
-
-                ingredientList.add(new_ingredient);
-                adapter.notifyDataSetChanged();
+                 ingredients.add(txtIngredient.getText().toString());
+                 measurements.add(txtMeasurement.getText().toString());
+                 quantity.add(txtQuantity.getText().toString());
+                 ingredientsAdapter.notifyDataSetChanged();
             }
         });
+
+
+        btnSubmit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                createRecipe();
+            }
+        });
+
 
     }
 
@@ -182,11 +227,11 @@ public class AddRecipeActivity extends AppCompatActivity {
         int size =  this.fileNameList.size();
 
         /**
-         * Checks if the file name list is greater than 4
-         * as the user cannot upload more than 4 images
+         * Checks if the file name list is greater than 6
+         * as the user cannot upload more than 6 images
          *
          */
-        if ( this.fileNameList.size()<=4) {
+        if ( this.fileNameList.size()<=6) {
             if (requestCode == RESULT_LOAD_IMAGE && resultCode == RESULT_OK) {
                 /** If the user selected multiple images... */
                 if (data.getClipData() != null) {
@@ -195,7 +240,7 @@ public class AddRecipeActivity extends AppCompatActivity {
                     /** gets the count of the existing selected images + the new selected images*/
                     size = size+totalSelected;
                     /** Checks if its greater than 4 => cannot be greater than 4*/
-                    if (size<=4) {
+                    if (size<=6) {
                         /** If everything is valid... Go through each file*/
                         for (int i = 0; i < totalSelected; i++) {
                             /** get the file directory of the current image*/
@@ -208,15 +253,15 @@ public class AddRecipeActivity extends AppCompatActivity {
                             adapter.notifyDataSetChanged();
                         }
                     } else {
-                        /** Display message if size > 4 */
-                        Toast.makeText(this, "You can only upload 4 Images!", Toast.LENGTH_SHORT).show();
+                        /** Display message if size > 6 */
+                        Toast.makeText(this, "You can only upload 6 Images!", Toast.LENGTH_SHORT).show();
                     }
                     /** If the user selects only one image     */
                 } else if (data.getData() != null) {
                     /** gets the count of the existing selected images + the new selected images*/
                     size = size +1;
-                    /** Checks if its greater than 4 => cannot be greater than 4*/
-                    if (size<=4) {
+                    /** Checks if its greater than 4 => cannot be greater than 6*/
+                    if (size<=6) {
                         /** get the file directory of the current image*/
                         Uri file = data.getData();
                         /** gets the file name of the current image */
@@ -227,7 +272,7 @@ public class AddRecipeActivity extends AppCompatActivity {
                         adapter.notifyDataSetChanged();
                     } else {
                         /** Display message if size > 4 */
-                        Toast.makeText(this, "You can only upload 4 Images!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "You can only upload 6 Images!", Toast.LENGTH_SHORT).show();
                     }
                 }
 
@@ -235,7 +280,7 @@ public class AddRecipeActivity extends AppCompatActivity {
 
             if (requestCode == REQUEST_CAPTURE_IMAGE && resultCode == RESULT_OK) {
                     size = size+1;
-                    if (size<=4){
+                    if (size<=6){
 
                         /** get the file directory of the current image*/
                         Uri file = imageUri;
@@ -246,14 +291,14 @@ public class AddRecipeActivity extends AppCompatActivity {
                         fileList.add(file);
                         adapter.notifyDataSetChanged();
                     } else {
-                        /** Display message if size > 4 */
+                        /** Display message if size > 6 */
                         Toast.makeText(this, "You can only upload 4 Images!", Toast.LENGTH_SHORT).show();
                     }
 
             }
 
         }  else {
-            /** Display message if size > 4 */
+            /** Display message if size > 6 */
             Toast.makeText(this, "You can only upload 4 Images!", Toast.LENGTH_SHORT).show();
         }
 
@@ -332,6 +377,64 @@ public class AddRecipeActivity extends AppCompatActivity {
                         REQUEST_CAPTURE_IMAGE);
             }
         }
+    }
+
+    private void createRecipe() {
+
+
+        if (validation()) {
+            Map<String, Map.Entry<String, String>> listOfIngredients = new HashMap<>();
+            for (int i = 0; i < ingredients.size(); i++) {
+                listOfIngredients.put(ingredients.get(i), new AbstractMap.SimpleEntry(quantity.get(i), measurements.get(i)));
+            }
+            Recipe recipe = new Recipe (
+                    txtRecipeName.getText().toString(),
+                    txtDescription.getText().toString(),
+                    listOfIngredients,
+                    txtPreperation.getText().toString(),
+                    Integer.parseInt(txtDuration.getText().toString()),
+                    Integer.parseInt(txtCalories.getText().toString()),
+                    Double.parseDouble(txtBudget.getText().toString()),
+                    Integer.parseInt(txtServings.getText().toString()),
+                    txtCuisine.getText().toString(),
+                    share.isChecked()
+            );
+
+            UploadRecipeTask upload = new UploadRecipeTask(fileList, recipe, AddRecipeActivity.this);
+            upload.execute();
+
+
+        }
+
+    }
+
+    private boolean validation() {
+
+        txtRecipeName.getText().toString();
+
+        boolean result = true;
+
+        /** Checks if fields are blank */
+        if (txtRecipeName.getText().toString().isEmpty()||
+                txtDescription.getText().toString().isEmpty()||
+                txtPreperation.getText().toString().isEmpty()||
+                txtDuration.getText().toString().isEmpty()||
+                txtCalories.getText().toString().isEmpty()||
+                txtBudget.getText().toString().isEmpty()||
+                txtServings.getText().toString().isEmpty()||
+                txtCuisine.getText().toString().isEmpty()||
+                fileList.isEmpty() ||
+                fileNameList.isEmpty() ||
+                ingredients.isEmpty() ||
+                measurements.isEmpty() ||
+                quantity.isEmpty()) {
+            result = false;
+        }
+
+
+
+
+        return result;
     }
 
 
