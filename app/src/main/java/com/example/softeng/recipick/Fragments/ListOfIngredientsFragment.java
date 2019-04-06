@@ -8,14 +8,28 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
 
-import com.example.softeng.recipick.Adapters.IngredientsAdapter;
+import com.example.softeng.recipick.Models.User;
 import com.example.softeng.recipick.R;
+import com.firebase.ui.database.FirebaseListAdapter;
+import com.firebase.ui.database.FirebaseListOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import es.dmoral.toasty.Toasty;
 
 
 /**
@@ -42,7 +56,21 @@ public class ListOfIngredientsFragment extends Fragment {
 
     private ListView listView;
 
-    private ImageButton imageButton;
+    private FirebaseDatabase mDatabase;
+    private FirebaseAuth mAuth;
+    private DatabaseReference ingredientsRef;
+
+    private FirebaseListOptions<String> options;
+    private FirebaseListAdapter<String> ingredientAdapter;
+
+    private String uid;
+    private static final String USERS = "Users";
+    private static final String INGREDIENTS = "Ingredients";
+
+    private User mUser;
+
+
+    private EditText txtIngredient;
 
     public ListOfIngredientsFragment() {
         // Required empty public constructor
@@ -85,16 +113,74 @@ public class ListOfIngredientsFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ingredientList.add("Tomato");
-        ingredientList.add("Pasta");
-        ingredientList.add("Chicken");
-        ingredientList.add("Flour");
-        ingredientList.add("Beef");
+        Button btnAddIngredient = view.findViewById(R.id.btnAddIngredient);
+        txtIngredient = view.findViewById(R.id.txtIngredient);
+
+        mAuth = FirebaseAuth.getInstance();
+        mDatabase = FirebaseDatabase.getInstance();
+        FirebaseUser user = mAuth.getCurrentUser();
+        uid = user.getUid();
+
+        //Need to check if the user is logged in or not
+
+        ingredientsRef = mDatabase.getReference().child(USERS).child(uid).child(INGREDIENTS);
 
         this.listView = (ListView) view.findViewById(R.id.ingredientsView);
 
-        IngredientsAdapter ingredientsAdapter = new IngredientsAdapter(ListOfIngredientsFragment.this.getContext(), ingredientList);
-        this.listView.setAdapter(ingredientsAdapter);
+        options = new FirebaseListOptions.Builder<String>()
+                .setLayout(R.layout.ingredients_row_layout)
+                .setQuery(ingredientsRef, String.class).build();
+
+
+
+        ingredientAdapter = new FirebaseListAdapter<String>(options) {
+            @Override
+            protected void populateView(@NonNull View view, @NonNull final String ingredient, final int position) {
+                TextView textView = (TextView) view.findViewById(R.id.txtIngredient);
+                textView.setText(ingredient);
+
+                ImageButton imageButton = (ImageButton) view.findViewById(R.id.deleteIngredient);
+
+                imageButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        ingredientAdapter.getRef(position).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (!task.isSuccessful()) {
+                                    Toasty.error(getContext(), "An error has occurred, Please check your internet connection!", Toast.LENGTH_SHORT, true).show();
+                                }
+                            }
+                        });
+                    }
+                });
+
+            }
+        };
+
+        ingredientAdapter.startListening();
+        listView.setAdapter(ingredientAdapter);
+
+        btnAddIngredient.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (txtIngredient.getText().toString().isEmpty()) {
+                    Toasty.warning(getContext(), "Missing Ingredient!", Toast.LENGTH_SHORT, true).show();
+                } else {
+
+                    ingredientsRef.push().setValue(txtIngredient.getText().toString()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                txtIngredient.setText(null);
+                            } else {
+                                Toasty.error(getContext(), "An error has occurred, Please check your internet connection!", Toast.LENGTH_SHORT, true).show();
+                            }
+                        }
+                    });
+                }
+            }
+        });
 
 
     }
@@ -126,6 +212,28 @@ public class ListOfIngredientsFragment extends Fragment {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (ingredientAdapter!=null)
+            ingredientAdapter.startListening();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (ingredientAdapter!=null)
+            ingredientAdapter.stopListening();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (ingredientAdapter!=null)
+            ingredientAdapter.startListening();
+    }
+
 
 
 }

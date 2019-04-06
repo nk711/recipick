@@ -190,25 +190,25 @@ public class ListOfRecipesFragment extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 
-    public void startListening() {
-        if (recipeAdapter!=null)
-            recipeAdapter.startListening();
-    }
+
     @Override
     public void onStart() {
         super.onStart();
-        startListening();
+        if (recipeAdapter!=null)
+            recipeAdapter.startListening();
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        startListening();
+        if (recipeAdapter!=null)
+            recipeAdapter.stopListening();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        startListening();
+        if (recipeAdapter!=null)
+            recipeAdapter.startListening();
     }
 }

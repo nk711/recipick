@@ -3,28 +3,55 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".Fragments.ListOfIngredientsFragment"
     android:orientation="vertical">
 
+
+    <LinearLayout
+        android:id="@+id/fieldLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:paddingTop= "20dp"
+        android:paddingBottom= "20dp"
+        android:layout_marginBottom="1dp"
+        android:orientation="horizontal">
+
+
+        <EditText
+            android:id="@+id/txtIngredient"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="15dp"
+            android:layout_weight="1"
+            android:background="@drawable/fields"
+            android:ems="10"
+            android:paddingEnd = "10dp"
+            android:hint="Add an Ingredient"
+            android:inputType="text"
+            tools:ignore="Autofill,RtlSymmetry" />
+
+        <Button
+            android:id="@+id/btnAddIngredient"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:background="@drawable/hollow_button"
+            android:layout_marginEnd="10dp"
+            android:layout_gravity="center"
+            android:text = "Add"
+            android:textColor="@color/TitleColour"
+            android:textAlignment="center"/>
+
+    </LinearLayout>
+
     <ListView
         android:id="@+id/ingredientsView"
+        android:layout_below="@id/fieldLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
     </ListView>
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:layout_margin="@dimen/fab_margin"
-        app:maxImageSize="30dp"
-        android:backgroundTint="@color/colorAccent"
-        app:borderWidth="0dp"
-        app:srcCompat="@drawable/ic_add"/>
 
 </RelativeLayout>
