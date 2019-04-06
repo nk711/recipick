@@ -10,9 +10,11 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.example.softeng.recipick.Activities.HomeActivity;
 import com.example.softeng.recipick.Models.Recipe;
 import com.example.softeng.recipick.Models.User;
 import com.example.softeng.recipick.R;
@@ -22,8 +24,13 @@ import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import es.dmoral.toasty.Toasty;
 
 
 /**
@@ -54,8 +61,7 @@ public class ListOfRecipesFragment extends Fragment {
 
     private String uid;
     private static final String USERS = "Users";
-    private static final String CONTACTS = "Contacts";
-    private static final String IMAGES = "Images";
+    private static final String INGREDIENTS = "Ingredients";
     private static final String RECIPES = "Recipes";
     private User mUser;
 
@@ -114,6 +120,7 @@ public class ListOfRecipesFragment extends Fragment {
         FirebaseUser user = mAuth.getCurrentUser();
         uid = user.getUid();
 
+        checkIfIngredientsIsBlank();
 
       //  recipeList = new ArrayList<>();
 
@@ -144,6 +151,7 @@ public class ListOfRecipesFragment extends Fragment {
                 }
             }
 
+
             @NonNull
             @Override
             public RecipeViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
@@ -161,6 +169,24 @@ public class ListOfRecipesFragment extends Fragment {
 
 
     }
+
+    public void checkIfIngredientsIsBlank() {
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child(USERS).child(uid).child(INGREDIENTS);
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (!dataSnapshot.exists()) {
+                    Toasty.info(getContext(), "You currently have no ingredients in your collection, keep track of your ingredients and add them to your list in order to view recipe's based on your current ingredients!", Toast.LENGTH_LONG, true).show();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {

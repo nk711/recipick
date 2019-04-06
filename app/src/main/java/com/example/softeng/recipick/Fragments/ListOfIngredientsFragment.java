@@ -165,7 +165,7 @@ public class ListOfIngredientsFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 if (txtIngredient.getText().toString().isEmpty()) {
-                    Toasty.warning(getContext(), "Missing Ingredient!", Toast.LENGTH_SHORT, true).show();
+                    Toasty.warning(getContext(), "Missing Ingredient Name!", Toast.LENGTH_SHORT, true).show();
                 } else {
 
                     ingredientsRef.push().setValue(txtIngredient.getText().toString()).addOnCompleteListener(new OnCompleteListener<Void>() {
