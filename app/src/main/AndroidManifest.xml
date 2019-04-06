@@ -31,27 +31,27 @@
         </provider>
 
         <activity
-            android:name="com.example.softeng.recipick.RecipeDetails"
+            android:name="com.example.softeng.recipick.Fragments.RecipeDetails"
             android:label="@string/title_activity_recipe_details"
             android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity
-            android:name="com.example.softeng.recipick.AddRecipeActivity"
+            android:name="com.example.softeng.recipick.Activities.AddRecipeActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
-            android:name="com.example.softeng.recipick.ForgotActivity"
+            android:name="com.example.softeng.recipick.Activities.ForgotActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
-            android:name="com.example.softeng.recipick.HomeActivity"
+            android:name="com.example.softeng.recipick.Activities.HomeActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
-            android:name="com.example.softeng.recipick.SignUpActivity"
+            android:name="com.example.softeng.recipick.Activities.SignUpActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
-            android:name="com.example.softeng.recipick.LoginActivity"
+            android:name="com.example.softeng.recipick.Activities.LoginActivity"
             android:label="@string/title_activity_login"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
-            android:name="com.example.softeng.recipick.SplashScreen"
+            android:name="com.example.softeng.recipick.Activities.SplashActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar">
             <intent-filter>

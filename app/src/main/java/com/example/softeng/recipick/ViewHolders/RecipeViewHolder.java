@@ -1,19 +1,21 @@
-package com.example.softeng.recipick;
+package com.example.softeng.recipick.ViewHolders;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.softeng.recipick.R;
+
 /**
  * Class for UI elements
  */
-class RecipeViewHolder extends RecyclerView.ViewHolder {
+public class RecipeViewHolder extends RecyclerView.ViewHolder {
 
     /** Holds the image for recipes*/
-    ImageView imageView;
+    public ImageView imageView;
     /** Holds the name and description for recipes */
-    TextView textViewName, textViewDesc;
+    public TextView textViewName, textViewDesc;
 
     public RecipeViewHolder(View itemView) {
         super(itemView);

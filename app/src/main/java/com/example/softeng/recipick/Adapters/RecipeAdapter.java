@@ -1,16 +1,16 @@
-package com.example.softeng.recipick;
+package com.example.softeng.recipick.Adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.example.softeng.recipick.Models.Recipe;
+import com.example.softeng.recipick.R;
+import com.example.softeng.recipick.ViewHolders.RecipeViewHolder;
 
 import java.util.List;
 

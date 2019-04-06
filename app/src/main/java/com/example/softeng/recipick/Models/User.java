@@ -1,4 +1,4 @@
-package com.example.softeng.recipick;
+package com.example.softeng.recipick.Models;
 
 public class User {
     private String display_name;

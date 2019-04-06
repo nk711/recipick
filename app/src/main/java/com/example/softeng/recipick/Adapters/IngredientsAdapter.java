@@ -1,4 +1,4 @@
-package com.example.softeng.recipick;
+package com.example.softeng.recipick.Adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -8,6 +8,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.softeng.recipick.R;
 
 import java.util.List;
 

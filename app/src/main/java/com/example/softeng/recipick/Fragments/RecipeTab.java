@@ -1,4 +1,4 @@
-package com.example.softeng.recipick;
+package com.example.softeng.recipick.Fragments;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.BottomNavigationView;
@@ -8,6 +8,8 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.example.softeng.recipick.R;
 
 
 /**

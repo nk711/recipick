@@ -1,4 +1,4 @@
-package com.example.softeng.recipick;
+package com.example.softeng.recipick.Activities;
 
 import android.content.Intent;
 import android.os.Handler;
@@ -10,7 +10,9 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 
-public class SplashScreen extends AppCompatActivity {
+import com.example.softeng.recipick.R;
+
+public class SplashActivity extends AppCompatActivity {
 
     /** Sets a delay for the splash screen */
     private static int DELAY = 4000;
@@ -32,14 +34,14 @@ public class SplashScreen extends AppCompatActivity {
 
 
         /** Animation set on the text view*/
-        fadeIn = AnimationUtils.loadAnimation(SplashScreen.this, R.anim.fade_in);
+        fadeIn = AnimationUtils.loadAnimation(SplashActivity.this, R.anim.fade_in);
         app_logo.startAnimation(fadeIn);
 
         /** After the the DELAY, start the main activity. */
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                Intent intent = new Intent(SplashScreen.this, LoginActivity.class);
+                Intent intent = new Intent(SplashActivity.this, LoginActivity.class);
                 startActivity(intent);
                 finish();
             }

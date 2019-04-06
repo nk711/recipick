@@ -1,4 +1,4 @@
-package com.example.softeng.recipick;
+package com.example.softeng.recipick.Activities;
 import android.content.Intent;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -19,6 +19,10 @@ import android.view.ViewGroup;
 
 import android.widget.TextView;
 
+import com.example.softeng.recipick.Fragments.DiscoverTab;
+import com.example.softeng.recipick.Fragments.FavouritesTab;
+import com.example.softeng.recipick.R;
+import com.example.softeng.recipick.Fragments.RecipeTab;
 import com.google.firebase.auth.FirebaseAuth;
 import com.mikepenz.materialdrawer.AccountHeader;
 import com.mikepenz.materialdrawer.AccountHeaderBuilder;

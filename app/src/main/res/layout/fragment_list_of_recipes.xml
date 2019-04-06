@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#33FF9052"
-    tools:context=".ListOfRecipesFragment">
+    tools:context=".Fragments.ListOfRecipesFragment">
 
     <!-- TODO: Update blank fragment layout -->
     <android.support.v7.widget.RecyclerView

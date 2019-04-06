@@ -1,29 +1,25 @@
-package com.example.softeng.recipick;
+package com.example.softeng.recipick.Fragments;
 
+import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
-import android.widget.ListView;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.example.softeng.recipick.R;
 
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link ListOfIngredientsFragment.OnFragmentInteractionListener} interface
+ * {@link RecipePreparation.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link ListOfIngredientsFragment#newInstance} factory method to
+ * Use the {@link RecipePreparation#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ListOfIngredientsFragment extends Fragment {
+public class RecipePreparation extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -35,13 +31,7 @@ public class ListOfIngredientsFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    private List<String> ingredientList = new ArrayList<String>();
-
-    private ListView listView;
-
-    private ImageButton imageButton;
-
-    public ListOfIngredientsFragment() {
+    public RecipePreparation() {
         // Required empty public constructor
     }
 
@@ -51,11 +41,11 @@ public class ListOfIngredientsFragment extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment ListOfIngredientsFragment.
+     * @return A new instance of fragment RecipePreparation.
      */
     // TODO: Rename and change types and number of parameters
-    public static ListOfIngredientsFragment newInstance(String param1, String param2) {
-        ListOfIngredientsFragment fragment = new ListOfIngredientsFragment();
+    public static RecipePreparation newInstance(String param1, String param2) {
+        RecipePreparation fragment = new RecipePreparation();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -76,30 +66,24 @@ public class ListOfIngredientsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_list_of_ingredients, container, false);
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        ingredientList.add("Tomato");
-        ingredientList.add("Pasta");
-        ingredientList.add("Chicken");
-        ingredientList.add("Flour");
-        ingredientList.add("Beef");
-
-        this.listView = (ListView) view.findViewById(R.id.ingredientsView);
-
-        IngredientsAdapter ingredientsAdapter = new IngredientsAdapter(ListOfIngredientsFragment.this.getContext(), ingredientList);
-        this.listView.setAdapter(ingredientsAdapter);
-
-
+        return inflater.inflate(R.layout.fragment_recipe_preparation, container, false);
     }
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
+        }
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof OnFragmentInteractionListener) {
+            mListener = (OnFragmentInteractionListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnFragmentInteractionListener");
         }
     }
 
@@ -123,6 +107,4 @@ public class ListOfIngredientsFragment extends Fragment {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
-
-
 }

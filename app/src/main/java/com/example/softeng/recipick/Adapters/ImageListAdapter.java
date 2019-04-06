@@ -1,46 +1,46 @@
 /**
  * ImageListAdapter.java
  */
-package com.example.softeng.recipick;
+package com.example.softeng.recipick.Adapters;
 
 import android.content.Context;
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.example.softeng.recipick.R;
 
 import java.util.List;
 
 /**
  *  @author Nithesh Koneswaran
  */
-public class IngredientsAndMeasurementsAdapter extends RecyclerView.Adapter<IngredientsAndMeasurementsAdapter.ViewHolder> {
-    /** the list of ingredient's name   */
-    public List<String> ingredients;
-    /** the list of ingredient's measurements */
-    public List<String> measurements;
-    /** the list of ingredient's quantity */
-    public List<String> quantity;
-
+public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.ViewHolder> {
+    /** the list of file names   */
+    public List<String> fileNameList;
+    /** the list of file directories */
+    public List<Uri> fileList;
     /** the context of the passed activity*/
     public Context context;
 
     /**
-     * The constructor of the IngredientsAndMeasurementsAdapter
-     * @param ingredients
-     *          the list of ingredients names
-     * @param measurements
-     *          the list of ingredients paired with a measurement type and quantity
+     * The constructor of the imagelistAdapter
+     * @param fileNameList
+     *          the list of file names
+     * @param fileList
+     *          the list of file directories
      */
-    public IngredientsAndMeasurementsAdapter(List<String> ingredients, List<String> measurements, List<String> quantity) {
-            this.ingredients = ingredients;
-            this.measurements = measurements;
-            this.quantity = quantity;
+    public ImageListAdapter(List<String> fileNameList, List<Uri> fileList) {
+            this.fileNameList = fileNameList;
+            this.fileList = fileList;
     }
 
 
@@ -52,7 +52,7 @@ public class IngredientsAndMeasurementsAdapter extends RecyclerView.Adapter<Ingr
      */
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.add_recipe_ingredients_recycler_view_layout, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.add_recipe_image_recycler_view_layout, parent, false);
         this.context = parent.getContext();
         return new ViewHolder(view);
     }
@@ -66,9 +66,21 @@ public class IngredientsAndMeasurementsAdapter extends RecyclerView.Adapter<Ingr
      */
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        String description = quantity.get(holder.getAdapterPosition()) + " " +measurements.get(holder.getAdapterPosition());
-        holder.ingredient_name.setText(ingredients.get(holder.getAdapterPosition()));
-        holder.ingredient_desc.setText(description);
+        String fileName = fileNameList.get(position);
+        holder.fileNameView.setText(fileName);
+        Uri image = fileList.get(position);
+        Toast.makeText(this.context, image.toString(), Toast.LENGTH_LONG).show();
+        Glide.with(this.context)
+                .load(image)
+                .centerCrop()
+                .placeholder(R.drawable.ic_applogoo)
+                .error(R.drawable.ic_applogo)
+                .dontAnimate()
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .into(holder.fileView);
+
+
+        holder.fileView.setScaleType(ImageView.ScaleType.CENTER_CROP);
     }
 
 
@@ -78,7 +90,7 @@ public class IngredientsAndMeasurementsAdapter extends RecyclerView.Adapter<Ingr
      */
     @Override
     public int getItemCount() {
-        return ingredients.size();
+        return fileNameList.size();
     }
 
     /**0
@@ -87,13 +99,11 @@ public class IngredientsAndMeasurementsAdapter extends RecyclerView.Adapter<Ingr
      */
     public void delete(int position) {
         try {
-            ingredients.remove(position);
-            measurements.remove(position);
-            quantity.remove(position);
+            fileNameList.remove(position);
+            fileList.remove(position);
             notifyItemRemoved(position);
-            notifyItemRangeChanged(position, ingredients.size());
-            notifyItemRangeChanged(position, measurements.size());
-            notifyItemRangeChanged(position, quantity.size());
+            notifyItemRangeChanged(position, fileNameList.size());
+            notifyItemRangeChanged(position, fileList.size());
         } catch (ArrayIndexOutOfBoundsException e) {
 
         }
@@ -109,28 +119,25 @@ public class IngredientsAndMeasurementsAdapter extends RecyclerView.Adapter<Ingr
          */
         View mView;
 
-
-
-
         /** The components of the view         */
-        public TextView ingredient_name;
-        public TextView ingredient_desc;
-        public ImageView btnDelete;
+        public TextView fileNameView;
+        public ImageView fileView;
+        public ImageView btnRemove;
         public LinearLayout background;
 
         public ViewHolder(View itemView) {
             super(itemView);
             mView= itemView;
             /** Initialising the components of the view */
-             ingredient_name = (TextView) mView.findViewById(R.id.txtIngredient);
-             ingredient_desc = (TextView) mView.findViewById(R.id.txtAmount);
-             btnDelete = (ImageView) mView.findViewById(R.id.btn_delete);
+            fileNameView = (TextView) mView.findViewById(R.id.txt_file);
+            fileView = (ImageView) mView.findViewById(R.id.img);
+            btnRemove = (ImageView) mView.findViewById(R.id.btn_delete);
             background = (LinearLayout) mView.findViewById(R.id.background);
 
             /**
              * Pressing the remove button on a specific row will delete that specific row
              */
-            btnDelete.setOnClickListener(new View.OnClickListener() {
+            btnRemove.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     delete(getAdapterPosition());

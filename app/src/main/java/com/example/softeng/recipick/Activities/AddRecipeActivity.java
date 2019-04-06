@@ -1,4 +1,4 @@
-package com.example.softeng.recipick;
+package com.example.softeng.recipick.Activities;
 
 import android.Manifest;
 import android.app.AlertDialog;
@@ -22,6 +22,13 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.softeng.recipick.Adapters.ImageListAdapter;
+import com.example.softeng.recipick.Adapters.IngredientsAndMeasurementsAdapter;
+import com.example.softeng.recipick.Models.Ingredient;
+import com.example.softeng.recipick.Models.Recipe;
+import com.example.softeng.recipick.Models.User;
+import com.example.softeng.recipick.R;
+import com.example.softeng.recipick.AsyncTasks.UploadRecipeTask;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -33,13 +40,10 @@ import com.google.firebase.database.ValueEventListener;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 public class AddRecipeActivity extends AppCompatActivity {
     /** The request code in order for the user to select multiple images */

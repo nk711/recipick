@@ -1,4 +1,4 @@
-package com.example.softeng.recipick;
+package com.example.softeng.recipick.Models;
 
 public class Ingredient {
     private String name ;

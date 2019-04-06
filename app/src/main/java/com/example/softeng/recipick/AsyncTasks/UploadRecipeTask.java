@@ -1,4 +1,4 @@
-package com.example.softeng.recipick;
+package com.example.softeng.recipick.AsyncTasks;
 
 import android.app.ProgressDialog;
 import android.net.Uri;
@@ -6,6 +6,8 @@ import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.widget.Toast;
 
+import com.example.softeng.recipick.Activities.AddRecipeActivity;
+import com.example.softeng.recipick.Models.Recipe;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
