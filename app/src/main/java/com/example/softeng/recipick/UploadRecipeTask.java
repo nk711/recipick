@@ -57,7 +57,7 @@ public class UploadRecipeTask extends AsyncTask<Uri[], Integer, Boolean> {
     private int counter;
     /** an instance of an activity */
     private AddRecipeActivity mActivity;
-    /** The list of images to be uploaded onto firebase     */
+    /** The list of images to be uploaded onto firebase */
     private List<Uri> imageList;
     /** The item to be pushed into the database */
     private Recipe mRecipe;
@@ -108,7 +108,7 @@ public class UploadRecipeTask extends AsyncTask<Uri[], Integer, Boolean> {
         counter = 0;
         /** sets the dialog */
         dialog = new ProgressDialog(mActivity);
-        dialog.setMessage(" Uploading Recipe. ");
+        dialog.setMessage(" Uploading Recipe");
         dialog.show();
     }
 
@@ -136,40 +136,48 @@ public class UploadRecipeTask extends AsyncTask<Uri[], Integer, Boolean> {
      */
     public void uploadImage(Uri uri) {
         /** gets the reference to a path in the storage */
-        StorageReference storageReference = mStorageRef
+        final StorageReference storageReference = mStorageRef
                 .child(uid)
                 .child(uri.getLastPathSegment());
 
         /** Uploads the file to the storage of firebase*/
         storageReference.putFile(uri)
-                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        /** After it has been added, add the URL to the list */
-                        String urlToImage = taskSnapshot.getMetadata().getReference().getDownloadUrl().toString();
-                        downloadedList.add(urlToImage);
-                    }
-                })
                 .addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
                         /** After the image has been fully uploaded */
                         /** Increment the counter */
-                        counter++;
-                        /** Set the dialog message according to counter */
+                        if (task.isSuccessful()) {
+
+                            storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                @Override
+                                public void onSuccess(Uri uri) {
+                                    downloadedList.add(uri.toString());
+                                }
+                            }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                                                         @Override
+                                                         public void onComplete(@NonNull Task<Uri> task) {
+                                                             counter++;
+                                                             /** Set the dialog message according to counter */
 
 
-                        dialog.setMessage(" Uploading Images and data ["+counter+"/" + imageList.size() + "]");
+                                                             dialog.setMessage(" Uploading Images and data [" + counter + "/" + imageList.size() + "]");
+                                                             dialog.show();
+
+                                                             /** If the counter is equal to the imageList.size(), that means that all of the images have been downloaded
+                                                              *  so now we need to update the data to the database
+                                                              */
+                                                             if (counter == imageList.size()) {
+                                                                 uploadData(downloadedList);
+                                                                 mActivity.finish();
+                                                                 dialog.dismiss();
+                                                             }
+                                                         }
+                                                     });
 
 
-                        /** If the counter is equal to the imageList.size(), that means that all of the images have been downloaded
-                         *  so now we need to update the data to the database
-                         */
-                        if (counter == imageList.size()) {
-                            uploadData(downloadedList);
-                            Toasty.success(mActivity, "New Recipe Added!", Toast.LENGTH_LONG, true).show();
-                            mActivity.finish();
-                            dialog.dismiss();
+                        } else {
+                            result = false;
                         }
                     }
                 })
@@ -191,26 +199,30 @@ public class UploadRecipeTask extends AsyncTask<Uri[], Integer, Boolean> {
      *
      */
     public void  uploadData(List<String> uploadedImages) {
-        /** sets the list in the item object */
-        mRecipe.setImages(uploadedImages);
-        /** now uploads the value to the firebase database */
-        pushed.setValue(mRecipe, new DatabaseReference.CompletionListener() {
-            public void onComplete(DatabaseError err, DatabaseReference ref) {
-                if (err == null) {
-                    if (mRecipe.isShare()) {
-                        pushPost.setValue(mRecipe, new DatabaseReference.CompletionListener() {
-                            public void onComplete(DatabaseError err, DatabaseReference ref) {
-                                if (err != null) {
-                                    result = false;
+        if (uploadedImages.size()==0) {
+            result = false;
+        } else {
+            /** sets the list in the item object */
+            mRecipe.setImages(uploadedImages);
+            /** now uploads the value to the firebase database */
+            pushed.setValue(mRecipe, new DatabaseReference.CompletionListener() {
+                public void onComplete(DatabaseError err, DatabaseReference ref) {
+                    if (err == null) {
+                        if (mRecipe.isShare()) {
+                            pushPost.setValue(mRecipe, new DatabaseReference.CompletionListener() {
+                                public void onComplete(DatabaseError err, DatabaseReference ref) {
+                                    if (err != null) {
+                                        result = false;
+                                    }
                                 }
-                            }
-                        });
+                            });
+                        }
+                    } else {
+                        result = false;
                     }
-                } else {
-                    result = false;
                 }
-            }
-        });
+            });
+        }
     }
 
     protected void onProgressUpdate(Integer...a){
@@ -225,10 +237,11 @@ public class UploadRecipeTask extends AsyncTask<Uri[], Integer, Boolean> {
     @Override
     protected void onPostExecute(Boolean result) {
         super.onPostExecute(result);
-        if (!result) {
+        if (result) {
+            Toasty.success(mActivity, "New Recipe Added!", Toast.LENGTH_LONG, true).show();
+        } else {
             Toasty.error(mActivity, "Failed to upload recipe, please try again!", Toast.LENGTH_LONG, true).show();
         }
-
     }
 
 }

@@ -12,6 +12,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -21,7 +25,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -45,7 +51,11 @@ public class ListOfRecipesFragment extends Fragment {
 
     private FirebaseDatabase mDatabase;
     private FirebaseAuth mAuth;
-    private DatabaseReference myRef;
+    private DatabaseReference recipeRef;
+
+    private FirebaseRecyclerOptions<Recipe> options;
+    private FirebaseRecyclerAdapter<Recipe, RecipeViewHolder> recipeAdapter;
+
     private String uid;
     private static final String USERS = "Users";
     private static final String CONTACTS = "Contacts";
@@ -54,9 +64,6 @@ public class ListOfRecipesFragment extends Fragment {
     private User mUser;
 
     RecyclerView recyclerView;
-    RecipeAdapter recipeAdapter;
-
-    List<Recipe> recipeList;
 
     private OnFragmentInteractionListener mListener;
 
@@ -107,133 +114,57 @@ public class ListOfRecipesFragment extends Fragment {
         }
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance();
-        myRef = mDatabase.getReference();
+        recipeRef = mDatabase.getReference().child(RECIPES);
         FirebaseUser user = mAuth.getCurrentUser();
         uid = user.getUid();
-        // Write a message to the database
-        mDatabase= FirebaseDatabase.getInstance();
-        myRef = mDatabase.getReference().child(RECIPES);
 
-        recipeList = new ArrayList<>();
+
+      //  recipeList = new ArrayList<>();
 
         recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true);
-
         recyclerView.setLayoutManager(new LinearLayoutManager(ListOfRecipesFragment.this.getActivity()));
 
+        options = new FirebaseRecyclerOptions.Builder<Recipe>()
+                .setQuery(recipeRef, Recipe.class).build();
 
-        recipeAdapter = new RecipeAdapter(ListOfRecipesFragment.this.getActivity(), recipeList);
+        recipeAdapter = new FirebaseRecyclerAdapter<Recipe, RecipeViewHolder>(options) {
+            @Override
+            protected void onBindViewHolder(@NonNull RecipeViewHolder holder, int position, @NonNull Recipe recipe) {
+                holder.textViewName.setText(recipe.getName());
+                holder.textViewDesc.setText(recipe.getDescription());
+                try {
+                    Glide.with(getContext())
+                            .load(recipe.getImages().get(0))
+                            .centerCrop()
+                            .placeholder(R.drawable.ic_applogoo)
+                            .error(R.drawable.ic_applogo)
+                            .dontAnimate()
+                            .diskCacheStrategy(DiskCacheStrategy.ALL)
+                            .into(holder.imageView);
+
+                    /** Catches an error caused if the recipe has no images */
+                } catch (IndexOutOfBoundsException e) {
+                }
+            }
+
+            @NonNull
+            @Override
+            public RecipeViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+                // Creating a view object with the use of LayoutInflater
+                LayoutInflater layoutInflater = LayoutInflater.from(getContext());
+                View view = layoutInflater.inflate(R.layout.card_recycler_view_layout, null);
+                return new RecipeViewHolder(view);
+            }
+        };
+
+      //  recipeAdapter = new RecipeAdapter(ListOfRecipesFragment.this.getActivity(), recipeList);
+        recipeAdapter.startListening();
         recyclerView.setAdapter(recipeAdapter);
 
 
-        myRef.addChildEventListener(new ChildEventListener() {
-
-            public Recipe create(DataSnapshot dataSnapshot) {
-                List<String> images = new ArrayList<>();
-                Recipe recipe = dataSnapshot.getValue(Recipe.class);
-                for (DataSnapshot img : dataSnapshot.child(IMAGES).getChildren()) {
-                    images.add(img.getValue().toString());
-                }
-                recipe.setImages(images);
-                return recipe;
-            }
-            @Override
-            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                recipeList.add(create(dataSnapshot));
-                recipeAdapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                Toast.makeText(getContext(), "2" , Toast.LENGTH_LONG).show();
-
-                populateList(dataSnapshot);
-            }
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-                Toast.makeText(getContext(), "3" , Toast.LENGTH_LONG).show();
-
-                if (recipeList.remove(create(dataSnapshot))) {
-                    Toast.makeText(getContext(), "Removed", Toast.LENGTH_SHORT).show();
-                }
-                recipeAdapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                Toast.makeText(getContext(), "4" , Toast.LENGTH_LONG).show();
-
-                populateList(dataSnapshot);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                Toast.makeText(getContext(), "5" , Toast.LENGTH_LONG).show();
-
-
-            }
-        });
-
-/**
-        recipeList.add(
-                new Recipe("Pasta",
-                        "Some pasta and sauce lol",
-                        R.drawable.pasta
-                ));
-        recipeList.add(
-                new Recipe("Chicken Dish",
-                        "Very nice chicken, would recommend",
-                        R.drawable.chicken
-                ));
-        recipeList.add(
-                new Recipe("Pizza",
-                        "Hella good pizza",
-                        R.drawable.pizza
-                ));
-
-        recipeList.add(
-                new Recipe("Pasta",
-                        "Some pasta and sauce lol",
-                        R.drawable.pasta
-                ));
-        recipeList.add(
-                new Recipe("Chicken Dish",
-                        "Very nice chicken, would recommend",
-                        R.drawable.chicken
-                ));
-        recipeList.add(
-                new Recipe("Pizza",
-                        "Hella good pizza",
-                        R.drawable.pizza
-                ));
-
- **/
-
 
     }
-
-
-
-    public void populateList(DataSnapshot dataSnapshot) {
-        recipeList.clear();
-        List<String> images = new ArrayList<>();
-
-        Toast.makeText(getContext(), dataSnapshot.getKey() , Toast.LENGTH_LONG).show();
-
-
-        for (DataSnapshot posts : dataSnapshot.child(RECIPES).getChildren()) {
-                    Recipe recipe = posts.getValue(Recipe.class);
-                    for (DataSnapshot img : posts.child(IMAGES).getChildren()) {
-                        images.add(img.getValue().toString());
-                    }
-                    recipe.setImages(images);
-                    recipeList.add(recipe);
-                    images = new ArrayList<>();
-        }
-        recipeAdapter.notifyDataSetChanged();
-    }
-
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
@@ -261,5 +192,27 @@ public class ListOfRecipesFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    public void startListening() {
+        if (recipeAdapter!=null)
+            recipeAdapter.startListening();
+    }
+    @Override
+    public void onStart() {
+        super.onStart();
+        startListening();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        startListening();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        startListening();
     }
 }

@@ -160,7 +160,6 @@
                 android:ems="10"
                 android:background="@drawable/fields"
                 android:hint="Add a brief description"
-                android:textColor="@color/colorAccent"
                 android:gravity="top|start"
                  android:inputType="text|textMultiLine|textLongMessage" />
 
@@ -314,7 +313,6 @@
                 android:ems="10"
                 android:background="@drawable/fields"
                 android:hint="Preperation Details"
-                android:textColor="@color/colorAccent"
                 android:gravity="top|start"
                 android:inputType="text|textMultiLine|textLongMessage" />
 

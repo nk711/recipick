@@ -7,7 +7,7 @@ import java.util.Map;
 public class Recipe {
     private String name = null;
     private String description = null;
-    private Map<String, Map.Entry<String, String>> ingredients = null;
+    private List<Ingredient> ingredients = null;
     private String preparation = null;
     private int duration = 0;
     private int calories = 0;
@@ -17,24 +17,15 @@ public class Recipe {
     private List<String> images = null;
     private boolean share = false;
     private boolean visibility = false;
-
-
-    private int id;
+    private String author = null;
 
     /** Default constructor, allows values to be pushed onto firebase */
     public Recipe() {
 
     }
 
-
-
-    public Recipe(String name, String desciption, int id ) {
-        this.name = name;
-        this.description = desciption;
-        this.id = id;
-    }
-
-    public Recipe(String name, String description, Map<String, Map.Entry<String, String>> ingredients, String preparation, int duration, int calories, double budget, int servings, String cuisine, boolean share) {
+    public Recipe(String name, String description, List<Ingredient> ingredients, String preparation, int duration,
+                  int calories, double budget, int servings, String cuisine, boolean share, String author) {
         this.name = name;
         this.description = description;
         this.ingredients = ingredients;
@@ -46,6 +37,7 @@ public class Recipe {
         this.cuisine = cuisine;
         this.images = new ArrayList<>();
         this.share = share;
+        this.author = author;
     }
 
     public String getName() {
@@ -64,11 +56,11 @@ public class Recipe {
         this.description = description;
     }
 
-    public Map<String, Map.Entry<String, String>> getIngredients() {
+    public List<Ingredient> getIngredients() {
         return ingredients;
     }
 
-    public void setIngredients(Map<String, Map.Entry<String, String>> ingredients) {
+    public void setIngredients(List<Ingredient> ingredients) {
         this.ingredients = ingredients;
     }
 
@@ -142,5 +134,13 @@ public class Recipe {
 
     public void setShare(boolean share) {
         this.share = share;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
     }
 }

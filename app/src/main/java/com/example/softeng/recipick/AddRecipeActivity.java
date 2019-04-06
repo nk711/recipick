@@ -23,6 +23,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.io.File;
 import java.io.IOException;
@@ -82,8 +88,6 @@ public class AddRecipeActivity extends AppCompatActivity {
 
     /** custom adapter to set the recycler view's state */
     private ImageListAdapter adapter;
-    /** Required to have access to the current user */
-    private FirebaseAuth mAuth;
     /** Allows us to create custom dialogs */
     private AlertDialog.Builder mBuilder;
     /** Allows us to create custom dialogs */
@@ -103,6 +107,18 @@ public class AddRecipeActivity extends AppCompatActivity {
     private TextView txtMeasurement;
     private TextView txtQuantity;
 
+    private String author;
+
+    private FirebaseDatabase mDatabase;
+    private FirebaseAuth mAuth;
+    private DatabaseReference getUserDetails;
+    private String uid;
+
+
+    private static final String USERS = "Users";
+    private static final String CONTACTS = "Contacts";
+    private static final String IMAGES = "Images";
+    private static final String RECIPES = "Recipes";
 
     /** The object created when the post button has been clicked*/
     private Recipe mRecipe;
@@ -143,6 +159,7 @@ public class AddRecipeActivity extends AppCompatActivity {
         measurements = new ArrayList<>();
         quantity = new ArrayList<>();
 
+
         ingredientsAdapter = new IngredientsAndMeasurementsAdapter(ingredients, measurements, quantity);
         listView.setLayoutManager(new LinearLayoutManager(this));
         listView.setAdapter(ingredientsAdapter);
@@ -153,6 +170,29 @@ public class AddRecipeActivity extends AppCompatActivity {
         adapter = new ImageListAdapter(fileNameList, fileList);
         mImages.setLayoutManager(new LinearLayoutManager(this));
         mImages.setAdapter(adapter);
+
+        mAuth = FirebaseAuth.getInstance();
+        mDatabase = FirebaseDatabase.getInstance();
+        getUserDetails = mDatabase.getReference().child(USERS);
+
+        FirebaseUser user = mAuth.getCurrentUser();
+        uid = user.getUid();
+
+
+        getUserDetails.child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    User user = dataSnapshot.getValue(User.class);
+                    author = user.getDisplay_name();
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
 
 
         /**
@@ -197,10 +237,10 @@ public class AddRecipeActivity extends AppCompatActivity {
         btnAddIngredient.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                 ingredients.add(txtIngredient.getText().toString());
-                 measurements.add(txtMeasurement.getText().toString());
-                 quantity.add(txtQuantity.getText().toString());
-                 ingredientsAdapter.notifyDataSetChanged();
+                ingredients.add(txtIngredient.getText().toString());
+                measurements.add(txtMeasurement.getText().toString());
+                quantity.add(txtQuantity.getText().toString());
+                ingredientsAdapter.notifyDataSetChanged();
             }
         });
 
@@ -279,21 +319,21 @@ public class AddRecipeActivity extends AppCompatActivity {
             }
 
             if (requestCode == REQUEST_CAPTURE_IMAGE && resultCode == RESULT_OK) {
-                    size = size+1;
-                    if (size<=6){
+                size = size+1;
+                if (size<=6){
 
-                        /** get the file directory of the current image*/
-                        Uri file = imageUri;
-                        /** gets the file name of the current image */
-                        String fileName = getFileName(file);
-                        /** Adds the file to the recycler view and updates its state */
-                        fileNameList.add(fileName);
-                        fileList.add(file);
-                        adapter.notifyDataSetChanged();
-                    } else {
-                        /** Display message if size > 6 */
-                        Toast.makeText(this, "You can only upload 4 Images!", Toast.LENGTH_SHORT).show();
-                    }
+                    /** get the file directory of the current image*/
+                    Uri file = imageUri;
+                    /** gets the file name of the current image */
+                    String fileName = getFileName(file);
+                    /** Adds the file to the recycler view and updates its state */
+                    fileNameList.add(fileName);
+                    fileList.add(file);
+                    adapter.notifyDataSetChanged();
+                } else {
+                    /** Display message if size > 6 */
+                    Toast.makeText(this, "You can only upload 4 Images!", Toast.LENGTH_SHORT).show();
+                }
 
             }
 
@@ -383,9 +423,9 @@ public class AddRecipeActivity extends AppCompatActivity {
 
 
         if (validation()) {
-            Map<String, Map.Entry<String, String>> listOfIngredients = new HashMap<>();
+            List<Ingredient> listOfIngredients = new ArrayList<>();
             for (int i = 0; i < ingredients.size(); i++) {
-                listOfIngredients.put(ingredients.get(i), new AbstractMap.SimpleEntry(quantity.get(i), measurements.get(i)));
+                listOfIngredients.add(new Ingredient(ingredients.get(i), quantity.get(i), measurements.get(i)));
             }
             Recipe recipe = new Recipe (
                     txtRecipeName.getText().toString(),
@@ -397,7 +437,8 @@ public class AddRecipeActivity extends AppCompatActivity {
                     Double.parseDouble(txtBudget.getText().toString()),
                     Integer.parseInt(txtServings.getText().toString()),
                     txtCuisine.getText().toString(),
-                    share.isChecked()
+                    share.isChecked(),
+                    author
             );
 
             UploadRecipeTask upload = new UploadRecipeTask(fileList, recipe, AddRecipeActivity.this);
