@@ -20,6 +20,12 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import es.dmoral.toasty.Toasty;
 
@@ -29,6 +35,9 @@ public class SignUpActivity extends AppCompatActivity {
     /** This is the regex for email format taken from this website: https://www.mkyong.com/regular-expressions/how-to-validate-email-address-with-regular-expression/*/
     private static final String EMAIL = "^[_A-Za-z0-9-+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
     private static final String PASSWORD = "[a-zA-Z0-9]{6,}";
+    private static final String USERS = "Users";
+    //private static final String IMAGES = "Images";
+    //private static final String RECIPES = "Recipes";
 
     private ImageButton back;
 
@@ -48,6 +57,8 @@ public class SignUpActivity extends AppCompatActivity {
     private String confirmPass;
     private String displayName;
 
+    private CollectionReference userRef;
+    private FirebaseFirestore db;
     private FirebaseAuth mAuth;
 
     @Override
@@ -55,7 +66,7 @@ public class SignUpActivity extends AppCompatActivity {
         super.onStart();
         // Check if user is signed in (non-null) and update UI accordingly.
         FirebaseUser currentUser = mAuth.getCurrentUser();
-}
+    }
 
 
     @Override
@@ -72,6 +83,8 @@ public class SignUpActivity extends AppCompatActivity {
         });
 
         mAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
+        userRef = db.collection(USERS);
 
         /** initilises the components */
         btnSignUp =  findViewById(R.id.btnRegister);
@@ -153,7 +166,7 @@ public class SignUpActivity extends AppCompatActivity {
                 public void onComplete(@NonNull Task<AuthResult> task) {
                     if (task.isSuccessful()) {
                         /** Gets the currently logged in user */
-                        String Uid = currentUser().getUid();
+                        String uid = currentUser().getUid();
 
                         /** Creates an instance of the user */
                         User user = new User(
@@ -162,12 +175,36 @@ public class SignUpActivity extends AppCompatActivity {
                         );
 
                         /**
-                         * Creates a node called users, within the node, it'll create a node with the user's unique ID
+                         * Creates a node called users, within the node, it'll create a node with the user's unique ID [FIREBASE]
+                         *
+
+                        FirebaseDatabase.getInstance().getReference("Users")
+                                .child(uid)
+                                .setValue(user).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                /** if the registration was successful, then switch to the login fragment
+                                if (task.isSuccessful()) {
+                                    Toasty.success(SignUpActivity.this, "Registered Successfully", Toast.LENGTH_SHORT, true).show();
+                                    onBackPressed();
+                                } else {
+                                    Toasty.error(SignUpActivity.this, "Failed to register user! Please try again later!", Toast.LENGTH_LONG, true).show();
+                                }
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Toasty.error(SignUpActivity.this, "Failed to register user! Check your internet connection!", Toast.LENGTH_LONG, true).show();
+                            }
+                        });
+                            */
+
+                        /**
+                         * Creates a node called users, within the node, it'll create a node with the user's unique ID [FIRESTORE METHOD]
                          *
                          */
-                        FirebaseDatabase.getInstance().getReference("Users")
-                                .child(Uid)
-                                .setValue(user).addOnCompleteListener(new OnCompleteListener<Void>() {
+
+                        userRef.document(uid).set(user).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
                                 /** if the registration was successful, then switch to the login fragment */
@@ -184,6 +221,7 @@ public class SignUpActivity extends AppCompatActivity {
                                 Toasty.error(SignUpActivity.this, "Failed to register user! Check your internet connection!", Toast.LENGTH_LONG, true).show();
                             }
                         });
+
 
                         /** else if the registration was unsuccessful, then increment the attempt */
                     } else {

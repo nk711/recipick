@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Recipe {
+    private String uid = null;
+    private String author = null;
     private String name = null;
     private String description = null;
     private List<Ingredient> ingredients = null;
@@ -16,15 +18,16 @@ public class Recipe {
     private List<String> images = null;
     private boolean share = false;
     private boolean visibility = false;
-    private String author = null;
+
 
     /** Default constructor, allows values to be pushed onto firebase */
     public Recipe() {
 
     }
 
-    public Recipe(String name, String description, List<Ingredient> ingredients, String preparation, int duration,
+    public Recipe(String uid, String name, String description, List<Ingredient> ingredients, String preparation, int duration,
                   int calories, double budget, int servings, String cuisine, boolean share, String author) {
+        this.uid = uid;
         this.name = name;
         this.description = description;
         this.ingredients = ingredients;
@@ -37,6 +40,14 @@ public class Recipe {
         this.images = new ArrayList<>();
         this.share = share;
         this.author = author;
+    }
+
+    public String getUid() {
+        return uid;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
     }
 
     public String getName() {

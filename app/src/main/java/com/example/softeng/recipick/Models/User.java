@@ -1,8 +1,13 @@
 package com.example.softeng.recipick.Models;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class User {
     private String display_name;
     private String email;
+    private List<String> ingredients;
+
 
     public User() {
 
@@ -11,6 +16,15 @@ public class User {
     public User(String display_name, String email) {
         this.display_name = display_name;
         this.email = email;
+        this.ingredients = new ArrayList<>();
+    }
+
+    public List<String> getIngredients() {
+        return ingredients;
+    }
+
+    public void setIngredients(List<String> ingredients) {
+        this.ingredients = ingredients;
     }
 
     public String getDisplay_name() {

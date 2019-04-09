@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,19 +16,37 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.softeng.recipick.Activities.AddRecipeActivity;
+import com.example.softeng.recipick.Adapters.IngredientsAdapter;
 import com.example.softeng.recipick.Models.User;
 import com.example.softeng.recipick.R;
 import com.firebase.ui.database.FirebaseListAdapter;
 import com.firebase.ui.database.FirebaseListOptions;
+import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FieldValue;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.SetOptions;
+
+import org.w3c.dom.Document;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import es.dmoral.toasty.Toasty;
 
@@ -52,20 +71,23 @@ public class ListOfIngredientsFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
+
+    private IngredientsAdapter adapter;
     private List<String> ingredientList = new ArrayList<String>();
 
     private ListView listView;
 
     private FirebaseDatabase mDatabase;
     private FirebaseAuth mAuth;
-    private DatabaseReference ingredientsRef;
 
-    private FirebaseListOptions<String> options;
-    private FirebaseListAdapter<String> ingredientAdapter;
+    private DocumentReference userRef;
 
     private String uid;
     private static final String USERS = "Users";
     private static final String INGREDIENTS = "Ingredients";
+
+
+    private List<String> ingredients = new ArrayList<>();
 
     private User mUser;
 
@@ -101,6 +123,10 @@ public class ListOfIngredientsFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
+
+
+
     }
 
     @Override
@@ -115,51 +141,23 @@ public class ListOfIngredientsFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         Button btnAddIngredient = view.findViewById(R.id.btnAddIngredient);
         txtIngredient = view.findViewById(R.id.txtIngredient);
-
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance();
         FirebaseUser user = mAuth.getCurrentUser();
         uid = user.getUid();
 
-        //Need to check if the user is logged in or not
-
-        ingredientsRef = mDatabase.getReference().child(USERS).child(uid).child(INGREDIENTS);
+        userRef = FirebaseFirestore.getInstance().collection(USERS).document(uid);
 
         this.listView = (ListView) view.findViewById(R.id.ingredientsView);
 
-        options = new FirebaseListOptions.Builder<String>()
-                .setLayout(R.layout.ingredients_row_layout)
-                .setQuery(ingredientsRef, String.class).build();
+        adapter = new IngredientsAdapter(ListOfIngredientsFragment.this.getContext(), ingredients);
+
+        getIngredients();
+
+        listView.setAdapter(adapter);
 
 
-
-        ingredientAdapter = new FirebaseListAdapter<String>(options) {
-            @Override
-            protected void populateView(@NonNull View view, @NonNull final String ingredient, final int position) {
-                TextView textView = (TextView) view.findViewById(R.id.txtIngredient);
-                textView.setText(ingredient);
-
-                ImageButton imageButton = (ImageButton) view.findViewById(R.id.deleteIngredient);
-
-                imageButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        ingredientAdapter.getRef(position).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                if (!task.isSuccessful()) {
-                                    Toasty.error(getContext(), "An error has occurred, Please check your internet connection!", Toast.LENGTH_SHORT, true).show();
-                                }
-                            }
-                        });
-                    }
-                });
-
-            }
-        };
-
-        ingredientAdapter.startListening();
-        listView.setAdapter(ingredientAdapter);
+        ingredients.add("testttt");
 
         btnAddIngredient.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -167,7 +165,24 @@ public class ListOfIngredientsFragment extends Fragment {
                 if (txtIngredient.getText().toString().isEmpty()) {
                     Toasty.warning(getContext(), "Missing Ingredient Name!", Toast.LENGTH_SHORT, true).show();
                 } else {
+                    userRef.update("ingredients", FieldValue.arrayUnion(txtIngredient.getText().toString()))
+                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (task.isSuccessful()) {
+                                        txtIngredient.setText(null);
 
+                                        ingredients.add(txtIngredient.getText().toString());
+                                        adapter.notifyDataSetChanged();
+                                    } else {
+                                        Toasty.error(getContext(), "An error has occurred, Please check your internet connection!", Toast.LENGTH_SHORT, true).show();
+                                    }
+                                }
+                    });
+
+
+
+                    /** FIREBASE METHOD
                     ingredientsRef.push().setValue(txtIngredient.getText().toString()).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
@@ -178,6 +193,7 @@ public class ListOfIngredientsFragment extends Fragment {
                             }
                         }
                     });
+                     */
                 }
             }
         });
@@ -185,6 +201,30 @@ public class ListOfIngredientsFragment extends Fragment {
 
     }
 
+    public void getIngredients() {
+        Toasty.error(getContext(), "test", Toast.LENGTH_SHORT, true).show();
+
+
+        userRef.get()
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if (task.isSuccessful()) {
+                            DocumentSnapshot document = task.getResult();
+                            if (document.exists()) {
+                                Toasty.warning(getContext(), "should work", Toast.LENGTH_SHORT, true).show();
+                                User user = document.toObject(User.class);
+                                ingredients = user.getIngredients();
+                                Toasty.warning(getContext(), ingredients.toString(), Toast.LENGTH_SHORT, true).show();
+
+                                adapter.notifyDataSetChanged();
+                            }
+                        } else {
+                            Toasty.info(getContext(), "no work", Toast.LENGTH_SHORT, true).show();
+                        }
+                    }
+                });
+    }
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
@@ -213,6 +253,7 @@ public class ListOfIngredientsFragment extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 
+    /**
     @Override
     public void onStart() {
         super.onStart();
@@ -233,7 +274,6 @@ public class ListOfIngredientsFragment extends Fragment {
         if (ingredientAdapter!=null)
             ingredientAdapter.startListening();
     }
-
-
+    */
 
 }
