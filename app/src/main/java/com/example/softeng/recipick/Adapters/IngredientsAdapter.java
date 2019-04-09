@@ -1,6 +1,7 @@
 package com.example.softeng.recipick.Adapters;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,16 +11,35 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.softeng.recipick.R;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FieldPath;
+import com.google.firebase.firestore.FieldValue;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.SetOptions;
 
 import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import es.dmoral.toasty.Toasty;
+
 public class IngredientsAdapter extends ArrayAdapter<String> {
 
     /** Holds the list of ingredients */
     private List<String> ingredientsList;
+
+
+    private DocumentReference userRef;
+    private String uid;
+
+    private static final String USERS = "Users";
+    private static final String INGREDIENTS = "Ingredients";
+
 
     /**
      * Parameterised constructor
@@ -39,9 +59,12 @@ public class IngredientsAdapter extends ArrayAdapter<String> {
      * @return - row that was updated
      */
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
         LayoutInflater inflater = (LayoutInflater) this.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View rowView = inflater.inflate(R.layout.ingredients_row_layout, parent, false);
+
+        uid = FirebaseAuth.getInstance().getUid();
+        userRef = FirebaseFirestore.getInstance().collection(USERS).document(uid);
 
         TextView textView = (TextView) rowView.findViewById(R.id.txtIngredient);
         textView.setText(ingredientsList.get(position));
@@ -53,6 +76,18 @@ public class IngredientsAdapter extends ArrayAdapter<String> {
             @Override
             public void onClick(View v) {
                 Toast.makeText(getContext(), "Method to delete ingredient", Toast.LENGTH_SHORT).show();
+                userRef.update(INGREDIENTS, FieldValue.arrayRemove(ingredientsList.get(position)))
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()) {
+                                    ingredientsList.remove(position);
+                                    notifyDataSetChanged();
+                                } else {
+                                    Toasty.error(getContext(), "An error has occurred, Please check your internet connection!", Toast.LENGTH_SHORT, true).show();
+                                }
+                            }
+                        });
             }
         });
 

@@ -1,6 +1,7 @@
 package com.example.softeng.recipick.Fragments;
 
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -156,29 +157,25 @@ public class ListOfIngredientsFragment extends Fragment {
 
         listView.setAdapter(adapter);
 
-
-        ingredients.add("testttt");
-
         btnAddIngredient.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (txtIngredient.getText().toString().isEmpty()) {
                     Toasty.warning(getContext(), "Missing Ingredient Name!", Toast.LENGTH_SHORT, true).show();
                 } else {
-                    userRef.update("ingredients", FieldValue.arrayUnion(txtIngredient.getText().toString()))
+                    userRef.update(INGREDIENTS, FieldValue.arrayUnion(txtIngredient.getText().toString()))
                             .addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
                                     if (task.isSuccessful()) {
-                                        txtIngredient.setText(null);
-
                                         ingredients.add(txtIngredient.getText().toString());
                                         adapter.notifyDataSetChanged();
+                                        txtIngredient.setText(null);
                                     } else {
                                         Toasty.error(getContext(), "An error has occurred, Please check your internet connection!", Toast.LENGTH_SHORT, true).show();
                                     }
                                 }
-                    });
+                            });
 
 
 
@@ -214,9 +211,10 @@ public class ListOfIngredientsFragment extends Fragment {
                             if (document.exists()) {
                                 Toasty.warning(getContext(), "should work", Toast.LENGTH_SHORT, true).show();
                                 User user = document.toObject(User.class);
-                                ingredients = user.getIngredients();
-                                Toasty.warning(getContext(), ingredients.toString(), Toast.LENGTH_SHORT, true).show();
 
+
+                                ingredients.addAll(user.getIngredients());
+                                Toasty.warning(getContext(), ingredients.toString(), Toast.LENGTH_SHORT, true).show();
                                 adapter.notifyDataSetChanged();
                             }
                         } else {
