@@ -38,7 +38,7 @@ public class IngredientsAdapter extends ArrayAdapter<String> {
     private String uid;
 
     private static final String USERS = "Users";
-    private static final String INGREDIENTS = "Ingredients";
+    private static final String INGREDIENTS = "ingredients";
 
 
     /**
@@ -75,7 +75,6 @@ public class IngredientsAdapter extends ArrayAdapter<String> {
         imageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getContext(), "Method to delete ingredient", Toast.LENGTH_SHORT).show();
                 userRef.update(INGREDIENTS, FieldValue.arrayRemove(ingredientsList.get(position)))
                         .addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
@@ -88,6 +87,7 @@ public class IngredientsAdapter extends ArrayAdapter<String> {
                                 }
                             }
                         });
+
             }
         });
 

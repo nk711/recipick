@@ -20,6 +20,9 @@ public class User {
     }
 
     public List<String> getIngredients() {
+        if (this.ingredients==null) {
+            this.ingredients = new ArrayList<>();
+        }
         return ingredients;
     }
 

@@ -39,6 +39,7 @@ import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.SetOptions;
 
@@ -66,35 +67,23 @@ public class ListOfIngredientsFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
 
-
-    private IngredientsAdapter adapter;
-    private List<String> ingredientList = new ArrayList<String>();
-
-    private ListView listView;
-
-    private FirebaseDatabase mDatabase;
     private FirebaseAuth mAuth;
-
     private DocumentReference userRef;
-
     private String uid;
     private static final String USERS = "Users";
-    private static final String INGREDIENTS = "Ingredients";
+    private static final String INGREDIENTS = "ingredients";
 
-
+    private ListenerRegistration listener;
     private List<String> ingredients = new ArrayList<>();
-
-    private User mUser;
-
+    private IngredientsAdapter adapter;
 
     private EditText txtIngredient;
-
+    private ListView listView;
     public ListOfIngredientsFragment() {
         // Required empty public constructor
     }
@@ -124,10 +113,6 @@ public class ListOfIngredientsFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
-
-
-
-
     }
 
     @Override
@@ -143,9 +128,7 @@ public class ListOfIngredientsFragment extends Fragment {
         Button btnAddIngredient = view.findViewById(R.id.btnAddIngredient);
         txtIngredient = view.findViewById(R.id.txtIngredient);
         mAuth = FirebaseAuth.getInstance();
-        mDatabase = FirebaseDatabase.getInstance();
-        FirebaseUser user = mAuth.getCurrentUser();
-        uid = user.getUid();
+        uid =mAuth.getCurrentUser().getUid();
 
         userRef = FirebaseFirestore.getInstance().collection(USERS).document(uid);
 
@@ -153,7 +136,7 @@ public class ListOfIngredientsFragment extends Fragment {
 
         adapter = new IngredientsAdapter(ListOfIngredientsFragment.this.getContext(), ingredients);
 
-        getIngredients();
+        //getIngredients();
 
         listView.setAdapter(adapter);
 
@@ -161,7 +144,7 @@ public class ListOfIngredientsFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 if (txtIngredient.getText().toString().isEmpty()) {
-                    Toasty.warning(getContext(), "Missing Ingredient Name!", Toast.LENGTH_SHORT, true).show();
+                    Toasty.warning(requireContext(), "Missing Ingredient Name!", Toast.LENGTH_SHORT, true).show();
                 } else {
                     userRef.update(INGREDIENTS, FieldValue.arrayUnion(txtIngredient.getText().toString()))
                             .addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -172,7 +155,7 @@ public class ListOfIngredientsFragment extends Fragment {
                                         adapter.notifyDataSetChanged();
                                         txtIngredient.setText(null);
                                     } else {
-                                        Toasty.error(getContext(), "An error has occurred, Please check your internet connection!", Toast.LENGTH_SHORT, true).show();
+                                        Toasty.error(requireContext(), "An error has occurred, Please check your internet connection!", Toast.LENGTH_SHORT, true).show();
                                     }
                                 }
                             });
@@ -199,9 +182,7 @@ public class ListOfIngredientsFragment extends Fragment {
     }
 
     public void getIngredients() {
-        Toasty.error(getContext(), "test", Toast.LENGTH_SHORT, true).show();
-
-
+        Toasty.error(requireContext(), "test", Toast.LENGTH_SHORT, true).show();
         userRef.get()
                 .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
@@ -209,16 +190,14 @@ public class ListOfIngredientsFragment extends Fragment {
                         if (task.isSuccessful()) {
                             DocumentSnapshot document = task.getResult();
                             if (document.exists()) {
-                                Toasty.warning(getContext(), "should work", Toast.LENGTH_SHORT, true).show();
+                                Toasty.warning(requireContext(), "should work", Toast.LENGTH_SHORT, true).show();
                                 User user = document.toObject(User.class);
-
-
                                 ingredients.addAll(user.getIngredients());
-                                Toasty.warning(getContext(), ingredients.toString(), Toast.LENGTH_SHORT, true).show();
+                                Toasty.warning(requireContext(), ingredients.toString(), Toast.LENGTH_SHORT, true).show();
                                 adapter.notifyDataSetChanged();
                             }
                         } else {
-                            Toasty.info(getContext(), "no work", Toast.LENGTH_SHORT, true).show();
+                            Toasty.info(requireContext(), "no work", Toast.LENGTH_SHORT, true).show();
                         }
                     }
                 });
@@ -251,20 +230,35 @@ public class ListOfIngredientsFragment extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 
-    /**
+
     @Override
     public void onStart() {
         super.onStart();
-        if (ingredientAdapter!=null)
-            ingredientAdapter.startListening();
+        listener = userRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
+            @Override
+            public void onEvent(@javax.annotation.Nullable DocumentSnapshot documentSnapshot, @javax.annotation.Nullable FirebaseFirestoreException e) {
+                if (e!=null) {
+                    Toasty.warning(requireContext(), "Error while loading", Toast.LENGTH_SHORT, true).show();
+                    return;
+                }
+                if (documentSnapshot.exists()) {
+                    User user = documentSnapshot.toObject(User.class);
+                    Toasty.warning(requireContext(), user.getDisplay_name(), Toast.LENGTH_SHORT, true).show();
+
+                    ingredients.addAll(user.getIngredients());
+                    adapter.notifyDataSetChanged();
+                }
+            }
+        });
     }
+
 
     @Override
     public void onStop() {
         super.onStop();
-        if (ingredientAdapter!=null)
-            ingredientAdapter.stopListening();
+        listener.remove();
     }
+    /**
 
     @Override
     public void onResume() {
