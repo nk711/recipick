@@ -117,6 +117,8 @@ public class HomeActivity extends AppCompatActivity {
                                 break;
                             case 4:
                                 result.closeDrawer();
+                                Intent shoppingListIntent = new Intent(HomeActivity.this, ShoppingList.class);
+                                startActivity(shoppingListIntent);
                                 break;
                             case 5:
                                 result.closeDrawer();
