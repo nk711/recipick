@@ -142,7 +142,7 @@ public class ListOfIngredientsFragment extends Fragment {
         btnAddIngredient.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                final String ingredientField = txtIngredient.getText().toString();
+                final String ingredientField = txtIngredient.getText().toString().toLowerCase();
 
                 if (ingredientField.isEmpty()) {
                     Toasty.warning(requireContext(), "Invalid Ingredient!", Toast.LENGTH_SHORT, true).show();
