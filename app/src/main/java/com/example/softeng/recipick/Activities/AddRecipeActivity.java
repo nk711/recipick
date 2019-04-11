@@ -21,7 +21,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Switch;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.softeng.recipick.Adapters.ImageListAdapter;
@@ -34,13 +33,6 @@ import com.example.softeng.recipick.AsyncTasks.UploadRecipeTask;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -122,9 +114,8 @@ public class AddRecipeActivity extends AppCompatActivity {
 
     private String author;
 
-    private FirebaseDatabase mDatabase;
     private FirebaseAuth mAuth;
-    private DatabaseReference getUserDetails;
+
     private String uid;
 
 
@@ -134,11 +125,6 @@ public class AddRecipeActivity extends AppCompatActivity {
     private static final String CONTACTS = "Contacts";
     private static final String IMAGES = "Images";
     private static final String RECIPES = "Recipes";
-
-    /** The object created when the post button has been clicked*/
-    private Recipe mRecipe;
-    /** The currently logged in user's details */
-    private User mUser;
 
 
     @Override
@@ -187,12 +173,7 @@ public class AddRecipeActivity extends AppCompatActivity {
         mImages.setLayoutManager(new LinearLayoutManager(this));
         mImages.setAdapter(adapter);
 
-        mAuth = FirebaseAuth.getInstance();
-        mDatabase = FirebaseDatabase.getInstance();
-        getUserDetails = mDatabase.getReference().child(USERS);
-
-        FirebaseUser user = mAuth.getCurrentUser();
-        uid = user.getUid();
+        uid = mAuth.getCurrentUser().getUid();
 
         userRef = FirebaseFirestore.getInstance().collection(USERS).document(uid);
 

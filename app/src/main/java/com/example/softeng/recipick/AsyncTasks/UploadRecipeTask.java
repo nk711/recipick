@@ -5,21 +5,15 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.widget.Toast;
-
 import com.example.softeng.recipick.Activities.AddRecipeActivity;
 import com.example.softeng.recipick.Models.Recipe;
-import com.example.softeng.recipick.Models.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -31,16 +25,7 @@ import java.util.List;
 import es.dmoral.toasty.Toasty;
 
 public class UploadRecipeTask extends AsyncTask<Uri[], Integer, Boolean> {
-    /** holds the firebase database */
-    private FirebaseDatabase mDatabase;
-    /** used to get the currently logged in user */
-    private FirebaseAuth mAuth;
-    /** gets a reference of the database */
-    private DatabaseReference myRef;
-    /** set reference of the database */
-    private DatabaseReference pushed;
-    /** set reference of the database */
-    private DatabaseReference pushPost;
+
     /** uid of the currently logged in user */
     private String uid;
     /** gets a reference of the firebase storage */
@@ -48,7 +33,9 @@ public class UploadRecipeTask extends AsyncTask<Uri[], Integer, Boolean> {
 
     private CollectionReference userRef;
     private CollectionReference recipeRef;
-    ;
+
+    private FirebaseAuth mAuth;
+
 
 
     /**
@@ -98,24 +85,13 @@ public class UploadRecipeTask extends AsyncTask<Uri[], Integer, Boolean> {
      */
     @Override
     protected void onPreExecute() {
-        /** gets the current instance of the user*/
-        mAuth = FirebaseAuth.getInstance();
-        /** gets the instance of the fire base */
-        mDatabase = FirebaseDatabase.getInstance();
-        /** gets the reference of the database */
-        myRef = mDatabase.getReference();
-        /** gets the currently logged in user */
-        FirebaseUser user = mAuth.getCurrentUser();
+
         /** gets the uid of the currently logged in user */
-        uid = user.getUid();
+        uid = mAuth.getCurrentUser().getUid();
         /** gets the reference of firebase storage */
         mStorageRef = FirebaseStorage.getInstance().getReference();
         /** sets the result to true */
         result = true;
-        /** sets the reference */
-        pushed = myRef.child(USERS).child(uid).child(RECIPES).push();
-        /** sets the reference */
-        pushPost = myRef.child(RECIPES).child(pushed.getKey());
 
         userRef = FirebaseFirestore.getInstance().collection(USERS).document(uid).collection(RECIPES);
         recipeRef = FirebaseFirestore.getInstance().collection(RECIPES);

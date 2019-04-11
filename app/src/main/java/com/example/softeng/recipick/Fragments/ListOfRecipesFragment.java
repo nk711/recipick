@@ -10,34 +10,29 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.example.softeng.recipick.Activities.HomeActivity;
 import com.example.softeng.recipick.Models.Recipe;
 import com.example.softeng.recipick.Models.User;
 import com.example.softeng.recipick.R;
 
+
 import com.example.softeng.recipick.ViewHolders.RecipeViewHolder;
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
-import com.firebase.ui.database.FirebaseRecyclerOptions;
-import com.firebase.ui.database.SnapshotParser;
+import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
+import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.Query;
 
-import es.dmoral.toasty.Toasty;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -67,7 +62,8 @@ public class ListOfRecipesFragment extends Fragment {
   //  private FirebaseRecyclerAdapter<Recipe, RecipeViewHolder> recipeAdapter;
 
     private CollectionReference recipeRef;
-
+    private DocumentReference userRef;
+    private FirestoreRecyclerAdapter recipeAdapter;
 
     private String uid;
     private static final String USERS = "Users";
@@ -128,6 +124,7 @@ public class ListOfRecipesFragment extends Fragment {
 
         mAuth = FirebaseAuth.getInstance();
         recipeRef = FirebaseFirestore.getInstance().collection(RECIPES);
+        userRef = FirebaseFirestore.getInstance().collection(USERS).document(uid);
 
         //mDatabase = FirebaseDatabase.getInstance();
         //recipeRef = mDatabase.getReference().child(RECIPES);
@@ -135,7 +132,37 @@ public class ListOfRecipesFragment extends Fragment {
 
 
 
+        Query query = recipeRef.whereArrayContains(INGREDIENTS, loadUsersIngredients());
 
+        FirestoreRecyclerOptions<Recipe> options = new FirestoreRecyclerOptions.Builder<Recipe>()
+                .setQuery(query, Recipe.class)
+                .build();
+
+
+        recipeAdapter = new FirestoreRecyclerAdapter<Recipe, RecipeViewHolder>(options) {
+            @Override
+            protected void onBindViewHolder(@NonNull RecipeViewHolder holder, int position, @NonNull Recipe recipe) {
+                holder.textViewName.setText(recipe.getName());
+                holder.textViewDesc.setText(recipe.getDescription());
+                Glide.with(getContext())
+                        .load(recipe.getImages().get(0))
+                        .centerCrop()
+                        .placeholder(R.drawable.ic_applogoo)
+                        .error(R.drawable.ic_applogo)
+                        .dontAnimate()
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .into(holder.imageView);
+            }
+
+            @NonNull
+            @Override
+            public RecipeViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+                // Creating a view object with the use of LayoutInflater
+                LayoutInflater layoutInflater = LayoutInflater.from(getContext());
+                View view = layoutInflater.inflate(R.layout.card_recycler_view_layout, null);
+                return new RecipeViewHolder(view);
+            }
+        };
 
         //  recipeList = new ArrayList<>();
 
@@ -182,6 +209,8 @@ public class ListOfRecipesFragment extends Fragment {
         };
 
         */
+
+        recyclerView.setAdapter(recipeAdapter);
       //  recipeAdapter = new RecipeAdapter(ListOfRecipesFragment.this.getActivity(), recipeList);
        // recipeAdapter.startListening();
 
@@ -191,7 +220,31 @@ public class ListOfRecipesFragment extends Fragment {
 
     }
 
+    public List<String> loadUsersIngredients() {
+        final List<String> ingredients = new ArrayList<>();
+        userRef.get()
+                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        if (documentSnapshot.exists()) {
+                            User user = documentSnapshot.toObject(User.class);
+                            ingredients.addAll(user.getIngredients());
+                        } else {
+                            //error user doesnt extist
+                        }
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+
+                    }
+                });
+        return ingredients;
+    }
+
     public void checkIfIngredientsIsBlank() {
+        /**
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child(USERS).child(uid).child(INGREDIENTS);
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -206,6 +259,7 @@ public class ListOfRecipesFragment extends Fragment {
 
             }
         });
+         */
     }
 
 
@@ -242,7 +296,6 @@ public class ListOfRecipesFragment extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 
-    /**
 
     @Override
     public void onStart() {
@@ -264,5 +317,5 @@ public class ListOfRecipesFragment extends Fragment {
         if (recipeAdapter!=null)
             recipeAdapter.startListening();
     }
-    */
+
 }
