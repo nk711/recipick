@@ -131,8 +131,8 @@ public class ListOfRecipesFragment extends Fragment {
 
         //mDatabase = FirebaseDatabase.getInstance();
         //recipeRef = mDatabase.getReference().child(RECIPES);
-        FirebaseUser user = mAuth.getCurrentUser();
-        uid = user.getUid();
+        uid = mAuth.getCurrentUser().getUid();
+
 
 
 
@@ -213,6 +213,7 @@ public class ListOfRecipesFragment extends Fragment {
     public void loadRecipes() {
        // Query query = recipeRef.whereArrayContains("/",  );
     }
+
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
