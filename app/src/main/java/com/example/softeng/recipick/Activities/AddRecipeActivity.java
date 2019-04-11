@@ -19,6 +19,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -104,19 +105,20 @@ public class AddRecipeActivity extends AppCompatActivity {
     /** Allows us to create custom dialogs */
     private View mView;
     /** input fields for the user to fill in */
-    private TextView txtRecipeName;
+    private EditText txtRecipeName;
     private Switch share;
-    private TextView txtDescription;
-    private TextView txtPreperation;
-    private TextView txtDuration;
-    private TextView txtServings;
-    private TextView txtBudget;
-    private TextView txtCalories;
-    private TextView txtCuisine;
+    private EditText txtDescription;
+    private EditText txtPreperation;
+    private EditText txtDuration;
+    private EditText txtServings;
+    private EditText txtBudget;
+    private EditText txtCalories;
+    private EditText txtCuisine;
+    private EditText txtMeals;
 
-    private TextView txtIngredient;
-    private TextView txtMeasurement;
-    private TextView txtQuantity;
+    private EditText txtIngredient;
+    private EditText txtMeasurement;
+    private EditText txtQuantity;
 
     private String author;
 
@@ -166,6 +168,7 @@ public class AddRecipeActivity extends AppCompatActivity {
         txtBudget= findViewById(R.id.txtBudget);
         txtCalories= findViewById(R.id.txtCalories);
         txtCuisine= findViewById(R.id.txtCuisine);
+        txtMeals = findViewById(R.id.txtMeals);
 
 
         ingredients = new ArrayList<>();
@@ -479,6 +482,7 @@ public class AddRecipeActivity extends AppCompatActivity {
                     Double.parseDouble(txtBudget.getText().toString()),
                     Integer.parseInt(txtServings.getText().toString()),
                     txtCuisine.getText().toString(),
+                    txtMeals.getText().toString(),
                     share.isChecked(),
                     author
             );
