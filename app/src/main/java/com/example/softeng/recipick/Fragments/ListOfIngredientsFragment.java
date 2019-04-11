@@ -78,7 +78,6 @@ public class ListOfIngredientsFragment extends Fragment {
     private static final String USERS = "Users";
     private static final String INGREDIENTS = "ingredients";
 
-    private ListenerRegistration listener;
     private List<String> ingredients = new ArrayList<>();
     private IngredientsAdapter adapter;
 
@@ -136,22 +135,27 @@ public class ListOfIngredientsFragment extends Fragment {
 
         adapter = new IngredientsAdapter(ListOfIngredientsFragment.this.getContext(), ingredients);
 
-        //getIngredients();
+        getIngredients();
 
         listView.setAdapter(adapter);
 
         btnAddIngredient.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (txtIngredient.getText().toString().isEmpty()) {
-                    Toasty.warning(requireContext(), "Missing Ingredient Name!", Toast.LENGTH_SHORT, true).show();
-                } else {
+                final String ingredientField = txtIngredient.getText().toString();
+
+                if (ingredientField.isEmpty()) {
+                    Toasty.warning(requireContext(), "Invalid Ingredient!", Toast.LENGTH_SHORT, true).show();
+                } elseif {
+                
+
+                {else {
                     userRef.update(INGREDIENTS, FieldValue.arrayUnion(txtIngredient.getText().toString()))
                             .addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
                                     if (task.isSuccessful()) {
-                                        ingredients.add(txtIngredient.getText().toString());
+                                        ingredients.add(ingredientField);
                                         adapter.notifyDataSetChanged();
                                         txtIngredient.setText(null);
                                     } else {
@@ -234,29 +238,12 @@ public class ListOfIngredientsFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        listener = userRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
-            @Override
-            public void onEvent(@javax.annotation.Nullable DocumentSnapshot documentSnapshot, @javax.annotation.Nullable FirebaseFirestoreException e) {
-                if (e!=null) {
-                    Toasty.warning(requireContext(), "Error while loading", Toast.LENGTH_SHORT, true).show();
-                    return;
-                }
-                if (documentSnapshot.exists()) {
-                    User user = documentSnapshot.toObject(User.class);
-                    Toasty.warning(requireContext(), user.getDisplay_name(), Toast.LENGTH_SHORT, true).show();
-
-                    ingredients.addAll(user.getIngredients());
-                    adapter.notifyDataSetChanged();
-                }
-            }
-        });
     }
 
 
     @Override
     public void onStop() {
         super.onStop();
-        listener.remove();
     }
     /**
 
