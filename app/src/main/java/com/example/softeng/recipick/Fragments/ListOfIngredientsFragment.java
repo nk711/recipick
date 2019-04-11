@@ -146,10 +146,9 @@ public class ListOfIngredientsFragment extends Fragment {
 
                 if (ingredientField.isEmpty()) {
                     Toasty.warning(requireContext(), "Invalid Ingredient!", Toast.LENGTH_SHORT, true).show();
-                } elseif {
-                
-
-                {else {
+                } else if (ingredients.contains(ingredientField)){
+                    Toasty.warning(requireContext(), "Ingredient already exists", Toast.LENGTH_SHORT, true).show();
+                } else {
                     userRef.update(INGREDIENTS, FieldValue.arrayUnion(txtIngredient.getText().toString()))
                             .addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
