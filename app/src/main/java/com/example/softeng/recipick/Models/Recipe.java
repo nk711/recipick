@@ -15,6 +15,7 @@ public class Recipe {
     private double budget = 0.0;
     private int servings = 0;
     private String cuisine = null;
+    private String meals = null;
     private List<String> images = null;
     private boolean share = false;
     private boolean visibility = false;
@@ -26,7 +27,7 @@ public class Recipe {
     }
 
     public Recipe(String uid, String name, String description, List<Ingredient> ingredients, String preparation, int duration,
-                  int calories, double budget, int servings, String cuisine, boolean share, String author) {
+                  int calories, double budget, int servings, String cuisine, String meals, boolean share, String author) {
         this.uid = uid;
         this.name = name;
         this.description = description;
@@ -37,9 +38,18 @@ public class Recipe {
         this.budget = budget;
         this.servings = servings;
         this.cuisine = cuisine;
+        this.meals = meals;
         this.images = new ArrayList<>();
         this.share = share;
         this.author = author;
+    }
+
+    public String getMeals() {
+        return meals;
+    }
+
+    public void setMeals(String meals) {
+        this.meals = meals;
     }
 
     public String getUid() {
