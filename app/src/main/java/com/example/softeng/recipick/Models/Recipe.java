@@ -9,6 +9,7 @@ public class Recipe {
     private String name = null;
     private String description = null;
     private List<Ingredient> ingredients = null;
+    private List<String> ingredientQuery = null;
     private String preparation = null;
     private int duration = 0;
     private int calories = 0;
@@ -26,12 +27,13 @@ public class Recipe {
 
     }
 
-    public Recipe(String uid, String name, String description, List<Ingredient> ingredients, String preparation, int duration,
+    public Recipe(String uid, String name, String description, List<Ingredient> ingredients, List<String> ingredientQuery, String preparation, int duration,
                   int calories, double budget, int servings, String cuisine, String meals, boolean share, String author) {
         this.uid = uid;
         this.name = name;
         this.description = description;
         this.ingredients = ingredients;
+        this.ingredientQuery = ingredientQuery;
         this.preparation = preparation;
         this.duration = duration;
         this.calories = calories;
@@ -42,6 +44,14 @@ public class Recipe {
         this.images = new ArrayList<>();
         this.share = share;
         this.author = author;
+    }
+
+    public List<String> getIngredientQuery() {
+        return ingredientQuery;
+    }
+
+    public void setIngredientQuery(List<String> ingredientQuery) {
+        this.ingredientQuery = ingredientQuery;
     }
 
     public String getMeals() {
