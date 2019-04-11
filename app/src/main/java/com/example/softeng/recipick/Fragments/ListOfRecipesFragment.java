@@ -10,6 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -33,6 +34,8 @@ import com.google.firebase.firestore.Query;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import es.dmoral.toasty.Toasty;
 
 
 /**
@@ -67,9 +70,11 @@ public class ListOfRecipesFragment extends Fragment {
 
     private String uid;
     private static final String USERS = "Users";
-    private static final String INGREDIENTS = "Ingredients";
+    private static final String INGREDIENTS = "ingredientsQuery";
     private static final String RECIPES = "Recipes";
     private User mUser;
+
+    List<String> userIngredients;
 
     RecyclerView recyclerView;
 
@@ -121,22 +126,21 @@ public class ListOfRecipesFragment extends Fragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
 
-
         mAuth = FirebaseAuth.getInstance();
+        uid = mAuth.getCurrentUser().getUid();
+
         recipeRef = FirebaseFirestore.getInstance().collection(RECIPES);
         userRef = FirebaseFirestore.getInstance().collection(USERS).document(uid);
 
-        //mDatabase = FirebaseDatabase.getInstance();
-        //recipeRef = mDatabase.getReference().child(RECIPES);
-        uid = mAuth.getCurrentUser().getUid();
 
-
-
-        Query query = recipeRef.whereArrayContains(INGREDIENTS, loadUsersIngredients());
+        loadUsersIngredients();
+        Query query = recipeRef.whereArrayContains(INGREDIENTS, userIngredients);
 
         FirestoreRecyclerOptions<Recipe> options = new FirestoreRecyclerOptions.Builder<Recipe>()
                 .setQuery(query, Recipe.class)
                 .build();
+
+        Toasty.error(requireContext(), userIngredients.toString(), Toast.LENGTH_LONG, true).show();
 
 
         recipeAdapter = new FirestoreRecyclerAdapter<Recipe, RecipeViewHolder>(options) {
@@ -144,7 +148,7 @@ public class ListOfRecipesFragment extends Fragment {
             protected void onBindViewHolder(@NonNull RecipeViewHolder holder, int position, @NonNull Recipe recipe) {
                 holder.textViewName.setText(recipe.getName());
                 holder.textViewDesc.setText(recipe.getDescription());
-                Glide.with(getContext())
+                Glide.with(requireContext())
                         .load(recipe.getImages().get(0))
                         .centerCrop()
                         .placeholder(R.drawable.ic_applogoo)
@@ -220,27 +224,19 @@ public class ListOfRecipesFragment extends Fragment {
 
     }
 
-    public List<String> loadUsersIngredients() {
-        final List<String> ingredients = new ArrayList<>();
+    public void loadUsersIngredients() {
+        userIngredients = new ArrayList<>();
         userRef.get()
                 .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                     @Override
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
                         if (documentSnapshot.exists()) {
                             User user = documentSnapshot.toObject(User.class);
-                            ingredients.addAll(user.getIngredients());
-                        } else {
-                            //error user doesnt extist
+                            userIngredients.addAll(user.getIngredients());
+                            Toasty.warning(requireContext(), userIngredients.toString(), Toast.LENGTH_SHORT, true).show();
                         }
                     }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-
-                    }
                 });
-        return ingredients;
     }
 
     public void checkIfIngredientsIsBlank() {
@@ -301,6 +297,7 @@ public class ListOfRecipesFragment extends Fragment {
     public void onStart() {
         super.onStart();
         if (recipeAdapter!=null)
+            loadUsersIngredients();
             recipeAdapter.startListening();
     }
 
@@ -315,6 +312,7 @@ public class ListOfRecipesFragment extends Fragment {
     public void onResume() {
         super.onResume();
         if (recipeAdapter!=null)
+            loadUsersIngredients();
             recipeAdapter.startListening();
     }
 
