@@ -49,8 +49,9 @@
     <ListView
         android:id="@+id/ingredientsView"
         android:layout_below="@id/fieldLayout"
-        android:divider="@color/background"
         android:layout_width="match_parent"
+        android:dividerHeight="1dp"
+        android:divider="@color/background"
         android:layout_height="match_parent">
 
     </ListView>
