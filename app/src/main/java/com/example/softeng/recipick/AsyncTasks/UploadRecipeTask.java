@@ -86,6 +86,7 @@ public class UploadRecipeTask extends AsyncTask<Uri[], Integer, Boolean> {
     @Override
     protected void onPreExecute() {
 
+        mAuth = FirebaseAuth.getInstance();
         /** gets the uid of the currently logged in user */
         uid = mAuth.getCurrentUser().getUid();
         /** gets the reference of firebase storage */

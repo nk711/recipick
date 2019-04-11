@@ -404,6 +404,7 @@
                     android:inputType="text"
                     tools:ignore="Autofill,RtlSymmetry" />
 
+
                 <EditText
                     android:id="@+id/txtMeals"
                     android:layout_width="match_parent"
@@ -418,6 +419,7 @@
                     android:hint="Meal"
                     android:inputType="text"
                     tools:ignore="Autofill,RtlSymmetry" />
+
             </LinearLayout>
 
 

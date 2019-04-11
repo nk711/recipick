@@ -172,6 +172,7 @@ public class AddRecipeActivity extends AppCompatActivity {
         mImages.setLayoutManager(new LinearLayoutManager(this));
         mImages.setAdapter(adapter);
 
+        mAuth = FirebaseAuth.getInstance();
         uid = mAuth.getCurrentUser().getUid();
 
         userRef = FirebaseFirestore.getInstance().collection(USERS).document(uid);
