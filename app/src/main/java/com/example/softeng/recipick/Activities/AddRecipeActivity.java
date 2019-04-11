@@ -156,7 +156,6 @@ public class AddRecipeActivity extends AppCompatActivity {
         txtCuisine= findViewById(R.id.txtCuisine);
         txtMeals = findViewById(R.id.txtMeals);
 
-
         ingredients = new ArrayList<>();
         measurements = new ArrayList<>();
         quantity = new ArrayList<>();
@@ -457,6 +456,7 @@ public class AddRecipeActivity extends AppCompatActivity {
                     txtRecipeName.getText().toString(),
                     txtDescription.getText().toString(),
                     listOfIngredients,
+                    ingredients,
                     txtPreperation.getText().toString(),
                     Integer.parseInt(txtDuration.getText().toString()),
                     Integer.parseInt(txtCalories.getText().toString()),
