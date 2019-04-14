@@ -1,5 +1,6 @@
 package com.example.softeng.recipick.Activities;
 
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -11,15 +12,31 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.example.softeng.recipick.Adapters.ImageViewAdapter;
+import com.example.softeng.recipick.Models.Recipe;
+import com.example.softeng.recipick.Models.Utility;
 import com.example.softeng.recipick.R;
+
+import es.dmoral.toasty.Toasty;
+
+import static android.content.res.Configuration.ORIENTATION_PORTRAIT;
 
 public class RecipeDetails extends AppCompatActivity {
 
@@ -39,52 +56,95 @@ public class RecipeDetails extends AppCompatActivity {
     private ViewPager mViewPager;
 
     /* Recipe image component */
-    private ImageView recipeImage;
+    private CollapsingToolbarLayout collapsingToolBar;
+
+    /** Image view holder, will hold an array of images */
+    private ViewPager mImageHolder;
+
+    /** Back to main menu button */
+    private ImageButton back;
+
+    /** The selected recipe*/
+    private Recipe recipe;
+    /** Adapter which will keep a list of images to be displayed */
+    private ImageViewAdapter adapter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipe_details);
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.recipe_toolbar);
         setSupportActionBar(toolbar);
-        // Create the adapter that will return a fragment for each of the three
-        // primary sections of the activity.
-        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
-
-        // Set up the ViewPager with the sections adapter.
-        mViewPager = (ViewPager) findViewById(R.id.container);
-        mViewPager.setAdapter(mSectionsPagerAdapter);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+        back = (ImageButton) findViewById(R.id.backToMain);
+        mViewPager = (ViewPager) findViewById(R.id.container);
+        mImageHolder = findViewById(R.id.recipe_view_pager);
+        adapter = new ImageViewAdapter(RecipeDetails.this);
+        collapsingToolBar = findViewById(R.id.collapsing_toolbar);
 
+        /** gets the bundle from the previous activity */
+        Bundle extras = getIntent().getExtras();
+        /** checks if the bundle is null */
+        if (extras!=null) {
+            /** if not set the item */
+            recipe = (Recipe)extras.getSerializable(Utility.RECIPE);
+        }
+
+
+        /** Create the adapter that will return a fragment for each of the three
+         primary sections of the activity. */
+        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager(), recipe);
+        /** Set up the ViewPager with the sections adapter. */
+        mViewPager.setAdapter(mSectionsPagerAdapter);
         mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager));
 
-        // Initialises the recipe image view
-        recipeImage = (ImageView) findViewById(R.id.recipe_image);
 
-        // Favourite icon
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+        Toasty.error(RecipeDetails.this, recipe.getImages().get(0) , Toast.LENGTH_LONG, true).show();
 
-        // Shopping cart icon
-        FloatingActionButton fab2 = (FloatingActionButton) findViewById(R.id.fab2);
-        fab2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+
+        /**
+         * gets the rotation of the device
+         */
+        int rotation = this.getResources().getConfiguration().orientation;
+
+        /**
+         * if its portrait resize the image appropriately
+         */
+        if (rotation == ORIENTATION_PORTRAIT) {
+            DisplayMetrics metrics = new DisplayMetrics();
+            this.getWindowManager().getDefaultDisplay().getMetrics(metrics);
+            int width = metrics.widthPixels;
+            ViewGroup.LayoutParams params = mImageHolder.getLayoutParams();
+            params.width = ViewGroup.LayoutParams.MATCH_PARENT;
+            params.height = width;
+            mImageHolder.setLayoutParams(params);
+        }
+
+        if (recipe!=null) {
+            for (String url: recipe.getImages()) {
+                adapter.addImage(url);
             }
-        });
+            mImageHolder.setAdapter(adapter);
+
+            SpannableString s = new SpannableString(recipe.getName());
+            s.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.white)), 0, recipe.getName().length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            collapsingToolBar.setTitle(s);
+
+        } else {
+            /** If recipe is null, go back to main menu */
+
+            //TODO: Add error message
+            finish();
+
+        }
 
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -100,6 +160,11 @@ public class RecipeDetails extends AppCompatActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+        }
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
@@ -125,10 +190,11 @@ public class RecipeDetails extends AppCompatActivity {
          * Returns a new instance of this fragment for the given section
          * number.
          */
-        public static PlaceholderFragment newInstance(int sectionNumber) {
+        public static PlaceholderFragment newInstance(int sectionNumber, Recipe recipe) {
             PlaceholderFragment fragment = new PlaceholderFragment();
             Bundle args = new Bundle();
             args.putInt(ARG_SECTION_NUMBER, sectionNumber);
+            args.putSerializable(Utility.RECIPE, recipe);
             fragment.setArguments(args);
             return fragment;
         }
@@ -164,15 +230,18 @@ public class RecipeDetails extends AppCompatActivity {
      */
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
-        public SectionsPagerAdapter(FragmentManager fm) {
+        private Recipe recipe;
+
+        public SectionsPagerAdapter(FragmentManager fm, Recipe recipe) {
             super(fm);
+            this.recipe = recipe;
         }
 
         @Override
         public Fragment getItem(int position) {
             // getItem is called to instantiate the fragment for the given page.
             // Return a PlaceholderFragment (defined as a static inner class below).
-            return PlaceholderFragment.newInstance(position + 1);
+            return PlaceholderFragment.newInstance(position + 1, recipe);
         }
 
         @Override
