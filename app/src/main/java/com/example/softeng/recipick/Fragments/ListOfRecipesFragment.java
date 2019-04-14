@@ -1,5 +1,7 @@
 package com.example.softeng.recipick.Fragments;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -14,16 +16,20 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.example.softeng.recipick.Adapters.FirestoreRecipeAdapter;
 import com.example.softeng.recipick.Models.Recipe;
 import com.example.softeng.recipick.Models.User;
+import com.example.softeng.recipick.Models.Utility;
 import com.example.softeng.recipick.R;
 
 
 import com.example.softeng.recipick.ViewHolders.RecipeViewHolder;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
@@ -32,7 +38,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import es.dmoral.toasty.Toasty;
@@ -56,13 +64,10 @@ public class ListOfRecipesFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-
-  //  private FirebaseDatabase mDatabase;
     private FirebaseAuth mAuth;
-  //  private DatabaseReference recipeRef;
 
- //   private FirebaseRecyclerOptions<Recipe> options;
-  //  private FirebaseRecyclerAdapter<Recipe, RecipeViewHolder> recipeAdapter;
+    private List<String> ingredients = new ArrayList<>();
+
 
     private CollectionReference recipeRef;
     private DocumentReference userRef;
@@ -70,11 +75,10 @@ public class ListOfRecipesFragment extends Fragment {
 
     private String uid;
     private static final String USERS = "Users";
-    private static final String INGREDIENTS = "ingredientsQuery";
+    private static final String INGREDIENTSQUERY = "ingredientsQuery";
+    private static final String INGREDIENTS = "ingredients";
     private static final String RECIPES = "Recipes";
-    private User mUser;
 
-    List<String> userIngredients;
 
     RecyclerView recyclerView;
 
@@ -125,6 +129,7 @@ public class ListOfRecipesFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+        recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
 
         mAuth = FirebaseAuth.getInstance();
         uid = mAuth.getCurrentUser().getUid();
@@ -133,46 +138,19 @@ public class ListOfRecipesFragment extends Fragment {
         userRef = FirebaseFirestore.getInstance().collection(USERS).document(uid);
 
 
-        loadUsersIngredients();
-        Query query = recipeRef.whereArrayContains(INGREDIENTS, userIngredients);
+        Toasty.info(requireContext(),"onViewCreated", Toast.LENGTH_SHORT, true).show();
+
+
+        /**
+        Query query = recipeRef.whereArrayContains(INGREDIENTSQUERY, "test");
 
         FirestoreRecyclerOptions<Recipe> options = new FirestoreRecyclerOptions.Builder<Recipe>()
                 .setQuery(query, Recipe.class)
                 .build();
 
         Toasty.error(requireContext(), userIngredients.toString(), Toast.LENGTH_LONG, true).show();
-
-
-        recipeAdapter = new FirestoreRecyclerAdapter<Recipe, RecipeViewHolder>(options) {
-            @Override
-            protected void onBindViewHolder(@NonNull RecipeViewHolder holder, int position, @NonNull Recipe recipe) {
-                holder.textViewName.setText(recipe.getName());
-                holder.textViewDesc.setText(recipe.getDescription());
-                Glide.with(requireContext())
-                        .load(recipe.getImages().get(0))
-                        .centerCrop()
-                        .placeholder(R.drawable.ic_applogoo)
-                        .error(R.drawable.ic_applogo)
-                        .dontAnimate()
-                        .diskCacheStrategy(DiskCacheStrategy.ALL)
-                        .into(holder.imageView);
-            }
-
-            @NonNull
-            @Override
-            public RecipeViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-                // Creating a view object with the use of LayoutInflater
-                LayoutInflater layoutInflater = LayoutInflater.from(getContext());
-                View view = layoutInflater.inflate(R.layout.card_recycler_view_layout, null);
-                return new RecipeViewHolder(view);
-            }
-        };
-
+        */
         //  recipeList = new ArrayList<>();
-
-        recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(ListOfRecipesFragment.this.getActivity()));
 
 
         /** SELECT * FROM Recipes WHERE ingredients = user_ingredients
@@ -214,30 +192,64 @@ public class ListOfRecipesFragment extends Fragment {
 
         */
 
-        recyclerView.setAdapter(recipeAdapter);
       //  recipeAdapter = new RecipeAdapter(ListOfRecipesFragment.this.getActivity(), recipeList);
        // recipeAdapter.startListening();
 
        // recyclerView.setAdapter(recipeAdapter);
 
+        //if (!loadUsersIngredients())  {
+        //}
+
+       // loadUsersIngredients();
+
+
+
+        String[] listOfIngredients = Utility.retrieveUserIngredients(this.requireContext());
+        Query query = recipeRef;
+        for (String item : listOfIngredients) {
+            if (!item.isEmpty())
+                query = query.whereEqualTo("ingredientsQuery." + item, true);
+        }
+        setAdapter(query);
+    }
+
+    public void setAdapter (Query query) {
+        if (recipeAdapter!=null) {
+            recipeAdapter.stopListening();
+        }
+        FirestoreRecyclerOptions<Recipe> options = new FirestoreRecyclerOptions.Builder<Recipe>()
+                .setQuery(query, Recipe.class)
+                .build();
+
+        recipeAdapter = new FirestoreRecipeAdapter(requireContext(), options);
+
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(ListOfRecipesFragment.this.getActivity()));
+        recyclerView.setAdapter(recipeAdapter);
 
 
     }
 
     public void loadUsersIngredients() {
-        userIngredients = new ArrayList<>();
         userRef.get()
-                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
-                    public void onSuccess(DocumentSnapshot documentSnapshot) {
-                        if (documentSnapshot.exists()) {
-                            User user = documentSnapshot.toObject(User.class);
-                            userIngredients.addAll(user.getIngredients());
-                            Toasty.warning(requireContext(), userIngredients.toString(), Toast.LENGTH_SHORT, true).show();
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if (task.isSuccessful()) {
+                            DocumentSnapshot document = task.getResult();
+                            if (document.exists()) {
+                                User user = document.toObject(User.class);
+                                Toasty.warning(requireContext(), user.getIngredients().toString(), Toast.LENGTH_SHORT, true).show();
+                               // Query query = recipeRef.whereArrayContains(INGREDIENTSQUERY, "test");
+                                //setAdapter(recipeRef);
+                            }
                         }
+
                     }
                 });
     }
+
+
 
     public void checkIfIngredientsIsBlank() {
         /**
@@ -260,9 +272,6 @@ public class ListOfRecipesFragment extends Fragment {
 
 
 
-    public void loadRecipes() {
-       // Query query = recipeRef.whereArrayContains("/",  );
-    }
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
@@ -296,23 +305,41 @@ public class ListOfRecipesFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
+        Toasty.info(requireContext(),"onStart", Toast.LENGTH_SHORT, true).show();
+        String[] listOfIngredients = Utility.retrieveUserIngredients(this.requireContext());
+        Query query = recipeRef;
+        for (String item : listOfIngredients) {
+            if (!item.isEmpty())
+                query = query.whereEqualTo("ingredientsQuery." + item, true);
+        }
+        setAdapter(query);
         if (recipeAdapter!=null)
-            loadUsersIngredients();
             recipeAdapter.startListening();
     }
 
     @Override
     public void onStop() {
         super.onStop();
+        Toasty.info(requireContext(),"onStop", Toast.LENGTH_SHORT, true).show();
+
         if (recipeAdapter!=null)
             recipeAdapter.stopListening();
     }
 
+
+
     @Override
     public void onResume() {
         super.onResume();
+        String[] listOfIngredients = Utility.retrieveUserIngredients(this.requireContext());
+        Query query = recipeRef;
+        for (String item : listOfIngredients) {
+            if (!item.isEmpty())
+                query = query.whereEqualTo("ingredientsQuery." + item, true);
+        }
+        setAdapter(query);
+
         if (recipeAdapter!=null)
-            loadUsersIngredients();
             recipeAdapter.startListening();
     }
 

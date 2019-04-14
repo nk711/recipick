@@ -2,17 +2,35 @@ package com.example.softeng.recipick.Activities;
 
 import android.content.Intent;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.MonthDisplayHelper;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
+import android.widget.Toast;
 
+import com.example.softeng.recipick.Models.User;
+import com.example.softeng.recipick.Models.Utility;
 import com.example.softeng.recipick.R;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+
+import es.dmoral.toasty.Toasty;
 
 public class SplashActivity extends AppCompatActivity {
+
+
+    private DocumentReference userRef;
+
+    private static final String USERS = "Users";
+
+
 
     /** Sets a delay for the splash screen */
     private static int DELAY = 4000;
@@ -37,6 +55,9 @@ public class SplashActivity extends AppCompatActivity {
         fadeIn = AnimationUtils.loadAnimation(SplashActivity.this, R.anim.fade_in);
         app_logo.startAnimation(fadeIn);
 
+
+        Utility.saveUserDetails(this);
+
         /** After the the DELAY, start the main activity. */
         new Handler().postDelayed(new Runnable() {
             @Override
@@ -48,4 +69,10 @@ public class SplashActivity extends AppCompatActivity {
         }, DELAY);
 
     }
+
+    public void loadUsersIngredients() {
+
+    }
+
+
 }

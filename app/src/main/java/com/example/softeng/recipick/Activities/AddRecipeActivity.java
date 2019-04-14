@@ -42,8 +42,10 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 public class AddRecipeActivity extends AppCompatActivity {
     /** The request code in order for the user to select multiple images */
@@ -449,15 +451,18 @@ public class AddRecipeActivity extends AppCompatActivity {
 
         if (validation()) {
             List<Ingredient> listOfIngredients = new ArrayList<>();
+            Map<String, Boolean> ingredientsQuery = new HashMap<>();
+
             for (int i = 0; i < ingredients.size(); i++) {
                 listOfIngredients.add(new Ingredient(ingredients.get(i), quantity.get(i), measurements.get(i)));
+                ingredientsQuery.put(ingredients.get(i), true);
             }
             Recipe recipe = new Recipe (
                     uid,
                     txtRecipeName.getText().toString(),
                     txtDescription.getText().toString(),
                     listOfIngredients,
-                    ingredients,
+                    ingredientsQuery,
                     txtPreperation.getText().toString(),
                     Integer.parseInt(txtDuration.getText().toString()),
                     Integer.parseInt(txtCalories.getText().toString()),

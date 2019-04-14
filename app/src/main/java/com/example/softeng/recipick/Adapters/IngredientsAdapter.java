@@ -75,7 +75,7 @@ public class IngredientsAdapter extends ArrayAdapter<String> {
         imageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                userRef.update(INGREDIENTS, FieldValue.arrayRemove(ingredientsList.get(position)))
+                userRef.update(INGREDIENTS + "." + ingredientsList.get(position), FieldValue.delete() )
                         .addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {

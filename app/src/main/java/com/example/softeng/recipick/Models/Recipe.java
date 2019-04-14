@@ -2,6 +2,7 @@ package com.example.softeng.recipick.Models;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class Recipe {
     private String uid = null;
@@ -9,7 +10,7 @@ public class Recipe {
     private String name = null;
     private String description = null;
     private List<Ingredient> ingredients = null;
-    private List<String> ingredientsQuery = null;
+    private Map<String, Boolean> ingredientsQuery = null;
     private String preparation = null;
     private int duration = 0;
     private int calories = 0;
@@ -27,7 +28,7 @@ public class Recipe {
 
     }
 
-    public Recipe(String uid, String name, String description, List<Ingredient> ingredients, List<String> ingredientsQuery, String preparation, int duration,
+    public Recipe(String uid, String name, String description, List<Ingredient> ingredients, Map<String, Boolean> ingredientsQuery, String preparation, int duration,
                   int calories, double budget, int servings, String cuisine, String meals, boolean share, String author) {
         this.uid = uid;
         this.name = name;
@@ -46,11 +47,11 @@ public class Recipe {
         this.author = author;
     }
 
-    public List<String> getIngredientsQuery() {
+    public Map<String, Boolean> getIngredientsQuery() {
         return ingredientsQuery;
     }
 
-    public void setIngredientQuery(List<String> ingredientQuery) {
+    public void setIngredientQuery( Map<String, Boolean> ingredientQuery) {
         this.ingredientsQuery = ingredientQuery;
     }
 

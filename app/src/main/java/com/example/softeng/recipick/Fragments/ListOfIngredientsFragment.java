@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import com.example.softeng.recipick.Adapters.IngredientsAdapter;
 import com.example.softeng.recipick.Models.User;
+import com.example.softeng.recipick.Models.Utility;
 import com.example.softeng.recipick.R;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -111,7 +112,7 @@ public class ListOfIngredientsFragment extends Fragment {
 
         adapter = new IngredientsAdapter(ListOfIngredientsFragment.this.getContext(), ingredients);
 
-        getIngredients();
+        loadUsersIngredients();
 
         listView.setAdapter(adapter);
 
@@ -125,7 +126,7 @@ public class ListOfIngredientsFragment extends Fragment {
                 } else if (ingredients.contains(ingredientField)){
                     Toasty.warning(requireContext(), "Ingredient already exists", Toast.LENGTH_SHORT, true).show();
                 } else {
-                    userRef.update(INGREDIENTS, FieldValue.arrayUnion(txtIngredient.getText().toString()))
+                    userRef.update(INGREDIENTS+"."+ingredientField, true)
                             .addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
@@ -160,8 +161,8 @@ public class ListOfIngredientsFragment extends Fragment {
 
     }
 
-    public void getIngredients() {
-        Toasty.error(requireContext(), "test", Toast.LENGTH_SHORT, true).show();
+
+    public void loadUsersIngredients() {
         userRef.get()
                 .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
@@ -171,9 +172,11 @@ public class ListOfIngredientsFragment extends Fragment {
                             if (document.exists()) {
                                 Toasty.warning(requireContext(), "should work", Toast.LENGTH_SHORT, true).show();
                                 User user = document.toObject(User.class);
-                                ingredients.addAll(user.getIngredients());
+                                ingredients.addAll(user.getIngredients().keySet());
                                 Toasty.warning(requireContext(), ingredients.toString(), Toast.LENGTH_SHORT, true).show();
                                 adapter.notifyDataSetChanged();
+
+                                Utility.saveUserDetails(requireContext());
                             }
                         } else {
                             Toasty.info(requireContext(), "no work", Toast.LENGTH_SHORT, true).show();
