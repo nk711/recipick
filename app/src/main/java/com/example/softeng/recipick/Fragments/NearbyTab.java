@@ -167,32 +167,36 @@ public class NearbyTab extends Fragment implements OnMapReadyCallback, GoogleMap
      *  Reference: https://developers.google.com/places/web-service/search
      */
     public void findSupermarkets() {
-        // Starting URL to find nearest supermarket
-        StringBuilder stringBuilder = new StringBuilder("https://maps.googleapis.com/maps/api/place/nearbysearch/json?");
-        // Based nearby supermarkets using current location
-        stringBuilder.append("location=" + this.currentLocation.latitude + "," + this.currentLocation.longitude);
-        // Find supermarkets with a 2km radius from current location
-        stringBuilder.append("&radius=" + 2000);
-        // Keyword set to "supermarket"
-        stringBuilder.append("&keyword=" + "supermarket");
-        // API KEY
-        stringBuilder.append("&key=AIzaSyDaLq6zKdTw4niS4AZu52K2itC-zqrRUSc");
+        if(this.currentLocation != null) {
+            // Starting URL to find nearest supermarket
+            StringBuilder stringBuilder = new StringBuilder("https://maps.googleapis.com/maps/api/place/nearbysearch/json?");
+            // Based nearby supermarkets using current location
+            stringBuilder.append("location=" + this.currentLocation.latitude + "," + this.currentLocation.longitude);
+            // Find supermarkets with a 2km radius from current location
+            stringBuilder.append("&radius=" + 2000);
+            // Keyword set to "supermarket"
+            stringBuilder.append("&keyword=" + "supermarket");
+            // API KEY
+            stringBuilder.append("&key=AIzaSyDaLq6zKdTw4niS4AZu52K2itC-zqrRUSc");
 
-        // Convert stringbuilder to a string
-        String url = stringBuilder.toString();
+            // Convert stringbuilder to a string
+            String url = stringBuilder.toString();
 
-        // Creating an array of type object that holds references for the AsyncTask
-        Object transferData[] = new Object[2];
-        transferData[0] = gMap;
-        transferData[1] = url;
+            // Creating an array of type object that holds references for the AsyncTask
+            Object transferData[] = new Object[2];
+            transferData[0] = gMap;
+            transferData[1] = url;
 
-        // Execute the AsyncTask to find the nearest supermarkets.
-        NearbySupermarkets getNearbySupermarkets = new NearbySupermarkets();
-        getNearbySupermarkets.execute(transferData);
+            // Execute the AsyncTask to find the nearest supermarkets.
+            NearbySupermarkets getNearbySupermarkets = new NearbySupermarkets();
+            getNearbySupermarkets.execute(transferData);
 
-        // Camera zooming option when button is pressed.
-        CameraUpdate update = CameraUpdateFactory.newLatLngZoom(currentLocation, 13);
-        this.gMap.animateCamera(update);
+            // Camera zooming option when button is pressed.
+            CameraUpdate update = CameraUpdateFactory.newLatLngZoom(currentLocation, 13);
+            this.gMap.animateCamera(update);
+        } else {
+            Toast.makeText(getContext(), "Current location is not found.", Toast.LENGTH_LONG).show();
+        }
     }
 
     @Override
