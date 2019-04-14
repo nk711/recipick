@@ -120,7 +120,6 @@ public class ListOfIngredientsFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 final String ingredientField = txtIngredient.getText().toString().toLowerCase();
-
                 if (ingredientField.isEmpty()) {
                     Toasty.warning(requireContext(), "Invalid Ingredient!", Toast.LENGTH_SHORT, true).show();
                 } else if (ingredients.contains(ingredientField)){
@@ -134,26 +133,12 @@ public class ListOfIngredientsFragment extends Fragment {
                                         ingredients.add(ingredientField);
                                         adapter.notifyDataSetChanged();
                                         txtIngredient.setText(null);
+                                        Utility.updateUserIngredients(requireContext(), ingredients);
                                     } else {
                                         Toasty.error(requireContext(), "An error has occurred, Please check your internet connection!", Toast.LENGTH_SHORT, true).show();
                                     }
                                 }
                             });
-
-
-
-                    /** FIREBASE METHOD
-                    ingredientsRef.push().setValue(txtIngredient.getText().toString()).addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            if (task.isSuccessful()) {
-                                txtIngredient.setText(null);
-                            } else {
-                                Toasty.error(getContext(), "An error has occurred, Please check your internet connection!", Toast.LENGTH_SHORT, true).show();
-                            }
-                        }
-                    });
-                     */
                 }
             }
         });
@@ -175,8 +160,6 @@ public class ListOfIngredientsFragment extends Fragment {
                                 ingredients.addAll(user.getIngredients().keySet());
                                 Toasty.warning(requireContext(), ingredients.toString(), Toast.LENGTH_SHORT, true).show();
                                 adapter.notifyDataSetChanged();
-
-                                Utility.saveUserDetails(requireContext());
                             }
                         } else {
                             Toasty.info(requireContext(), "no work", Toast.LENGTH_SHORT, true).show();
@@ -223,14 +206,6 @@ public class ListOfIngredientsFragment extends Fragment {
     public void onStop() {
         super.onStop();
     }
-    /**
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (ingredientAdapter!=null)
-            ingredientAdapter.startListening();
-    }
-    */
 
 }
