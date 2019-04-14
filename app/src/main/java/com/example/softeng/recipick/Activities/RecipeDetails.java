@@ -1,4 +1,4 @@
-package com.example.softeng.recipick.Fragments;
+package com.example.softeng.recipick.Activities;
 
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;

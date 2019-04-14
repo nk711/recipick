@@ -9,6 +9,7 @@
     <color name="colorAccent">#f95f62</color>
     <color name="redColor">#f95f62</color>
     <color name="white">#FFFFFF</color>
+    <color name="background">#33FF9052</color>
     <color name="transparent">#00FFFFFF</color>
     <color name="colorField">#F6F6F6</color>
 </resources>

@@ -19,19 +19,12 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.softeng.recipick.Fragments.DiscoverTab;
 import com.example.softeng.recipick.Fragments.FavouritesTab;
 import com.example.softeng.recipick.R;
 import com.example.softeng.recipick.Fragments.RecipeTab;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.mikepenz.materialdrawer.AccountHeader;
 import com.mikepenz.materialdrawer.AccountHeaderBuilder;
 import com.mikepenz.materialdrawer.Drawer;
@@ -39,9 +32,6 @@ import com.mikepenz.materialdrawer.DrawerBuilder;
 import com.mikepenz.materialdrawer.model.DividerDrawerItem;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
-
-import es.dmoral.toasty.Toasty;
-
 public class HomeActivity extends AppCompatActivity {
 
     /**

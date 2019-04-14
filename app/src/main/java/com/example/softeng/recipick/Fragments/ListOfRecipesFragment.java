@@ -1,5 +1,7 @@
 package com.example.softeng.recipick.Fragments;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -14,21 +16,32 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.example.softeng.recipick.Activities.HomeActivity;
+import com.example.softeng.recipick.Adapters.FirestoreRecipeAdapter;
 import com.example.softeng.recipick.Models.Recipe;
 import com.example.softeng.recipick.Models.User;
+import com.example.softeng.recipick.Models.Utility;
 import com.example.softeng.recipick.R;
 
+
 import com.example.softeng.recipick.ViewHolders.RecipeViewHolder;
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
-import com.firebase.ui.database.FirebaseRecyclerOptions;
+import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
+import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+
+
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import es.dmoral.toasty.Toasty;
 
@@ -51,19 +64,21 @@ public class ListOfRecipesFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-
-    private FirebaseDatabase mDatabase;
     private FirebaseAuth mAuth;
-    private DatabaseReference recipeRef;
 
-    private FirebaseRecyclerOptions<Recipe> options;
-    private FirebaseRecyclerAdapter<Recipe, RecipeViewHolder> recipeAdapter;
+    private List<String> ingredients = new ArrayList<>();
+
+
+    private CollectionReference recipeRef;
+    private DocumentReference userRef;
+    private FirestoreRecyclerAdapter recipeAdapter;
 
     private String uid;
     private static final String USERS = "Users";
-    private static final String INGREDIENTS = "Ingredients";
+    private static final String INGREDIENTSQUERY = "ingredientsQuery";
+    private static final String INGREDIENTS = "ingredients";
     private static final String RECIPES = "Recipes";
-    private User mUser;
+
 
     RecyclerView recyclerView;
 
@@ -114,77 +129,32 @@ public class ListOfRecipesFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
-        mAuth = FirebaseAuth.getInstance();
-        mDatabase = FirebaseDatabase.getInstance();
-        recipeRef = mDatabase.getReference().child(RECIPES);
-        FirebaseUser user = mAuth.getCurrentUser();
-        uid = user.getUid();
-
-        checkIfIngredientsIsBlank();
-
-      //  recipeList = new ArrayList<>();
-
         recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(ListOfRecipesFragment.this.getActivity()));
+        uid = Utility.getUid();
+        recipeRef = FirebaseFirestore.getInstance().collection(RECIPES);
+        userRef = FirebaseFirestore.getInstance().collection(USERS).document(uid);
 
-        options = new FirebaseRecyclerOptions.Builder<Recipe>()
-                .setQuery(recipeRef, Recipe.class).build();
-
-        recipeAdapter = new FirebaseRecyclerAdapter<Recipe, RecipeViewHolder>(options) {
-            @Override
-            protected void onBindViewHolder(@NonNull RecipeViewHolder holder, int position, @NonNull Recipe recipe) {
-                holder.textViewName.setText(recipe.getName());
-                holder.textViewDesc.setText(recipe.getDescription());
-                try {
-                    Glide.with(getContext())
-                            .load(recipe.getImages().get(0))
-                            .centerCrop()
-                            .placeholder(R.drawable.ic_applogoo)
-                            .error(R.drawable.ic_applogo)
-                            .dontAnimate()
-                            .diskCacheStrategy(DiskCacheStrategy.ALL)
-                            .into(holder.imageView);
-
-                    /** Catches an error caused if the recipe has no images */
-                } catch (IndexOutOfBoundsException e) {
-                }
-            }
-
-
-            @NonNull
-            @Override
-            public RecipeViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-                // Creating a view object with the use of LayoutInflater
-                LayoutInflater layoutInflater = LayoutInflater.from(getContext());
-                View view = layoutInflater.inflate(R.layout.card_recycler_view_layout, null);
-                return new RecipeViewHolder(view);
-            }
-        };
-
-      //  recipeAdapter = new RecipeAdapter(ListOfRecipesFragment.this.getActivity(), recipeList);
-        recipeAdapter.startListening();
-        recyclerView.setAdapter(recipeAdapter);
-
-
-
+        setAdapter();
     }
 
-    public void checkIfIngredientsIsBlank() {
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child(USERS).child(uid).child(INGREDIENTS);
-        ref.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (!dataSnapshot.exists()) {
-                    Toasty.info(getContext(), "You currently have no ingredients in your collection, keep track of your ingredients and add them to your list in order to view recipe's based on your current ingredients!", Toast.LENGTH_LONG, true).show();
-                }
-            }
+    public void setAdapter () {
+        String[] listOfIngredients = Utility.retrieveUserIngredients(this.requireContext());
+        Query query = recipeRef;
+        for (String item : listOfIngredients) {
+            if (!item.isEmpty())
+                query = query.whereEqualTo("ingredientsQuery." + item, true);
+        }
+        if (recipeAdapter!=null)
+            recipeAdapter.stopListening();
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
+        FirestoreRecyclerOptions<Recipe> options = new FirestoreRecyclerOptions.Builder<Recipe>()
+                .setQuery(query, Recipe.class)
+                .build();
 
-            }
-        });
+        recipeAdapter = new FirestoreRecipeAdapter(requireContext(), options);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(ListOfRecipesFragment.this.getActivity()));
+        recyclerView.setAdapter(recipeAdapter);
     }
 
 
@@ -220,6 +190,7 @@ public class ListOfRecipesFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
+        setAdapter();
         if (recipeAdapter!=null)
             recipeAdapter.startListening();
     }
@@ -234,7 +205,9 @@ public class ListOfRecipesFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        setAdapter();
         if (recipeAdapter!=null)
             recipeAdapter.startListening();
     }
+
 }
