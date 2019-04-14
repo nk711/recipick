@@ -14,6 +14,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
 import es.dmoral.toasty.Toasty;
@@ -69,8 +70,8 @@ public class Utility {
                                 SharedPreferences prefs = context.getSharedPreferences("com.example.softeng.recipick", Context.MODE_PRIVATE);
                                 StringBuilder list = new StringBuilder();
                                 if (user.getIngredients()!=null) {
-                                    for (String ingredients : user.getIngredients().keySet()) {
-                                        list.append(ingredients).append(",");
+                                    for (String ingredient : user.getIngredients().keySet()) {
+                                        list.append(ingredient).append(",");
                                     }
                                 }
                                 prefs.edit().putString(DISPLAYNAME, user.getDisplay_name()).apply();
@@ -81,6 +82,18 @@ public class Utility {
                     }
                 });
     }
+
+    public static void updateUserIngredients(final Context context, List<String> ingredients) {
+        SharedPreferences prefs = context.getSharedPreferences("com.example.softeng.recipick", Context.MODE_PRIVATE);
+        StringBuilder list = new StringBuilder();
+        if (ingredients!=null) {
+            for (String ingredient : ingredients) {
+                list.append(ingredient).append(",");
+            }
+        }
+        prefs.edit().putString(INGREDIENTS, list.toString()).apply();
+    }
+
 
     public static String[] retrieveUserIngredients(final Context context) {
         SharedPreferences prefs = context.getSharedPreferences("com.example.softeng.recipick", Context.MODE_PRIVATE);
