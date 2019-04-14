@@ -31,7 +31,7 @@
         </provider>
 
         <activity
-            android:name="com.example.softeng.recipick.Fragments.RecipeDetails"
+            android:name="com.example.softeng.recipick.Activities.RecipeDetails"
             android:label="@string/title_activity_recipe_details"
             android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity

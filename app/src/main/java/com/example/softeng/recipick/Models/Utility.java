@@ -21,11 +21,11 @@ import es.dmoral.toasty.Toasty;
 
 public class Utility {
 
-    private static final String USERS = "Users";
-
-    private static final String DISPLAYNAME = "display_name";
-    private static final String EMAIL = "email";
-    private static final String INGREDIENTS = "ingredients";
+    public static final String USERS = "Users";
+    public static final String DISPLAYNAME = "display_name";
+    public static final String EMAIL = "email";
+    public static final String INGREDIENTS = "ingredients";
+    public static final String RECIPE = "RECIPE";
 
     private static User user;
 
