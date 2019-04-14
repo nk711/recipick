@@ -1,10 +1,11 @@
 package com.example.softeng.recipick.Models;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class Recipe {
+public class Recipe implements Serializable {
     private String uid = null;
     private String author = null;
     private String name = null;
