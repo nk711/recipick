@@ -71,7 +71,7 @@
 
 
             </LinearLayout>
-
+            
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/list_images"
                 android:background="@color/white"
