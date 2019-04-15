@@ -4,8 +4,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
-import com.example.softeng.recipick.Activities.RecipeDetails;
 import com.example.softeng.recipick.Models.Recipe;
+import com.example.softeng.recipick.ViewHolders.PlaceholderFragment;
 
 /**
  * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
@@ -24,7 +24,7 @@ public class SectionsPageAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
         // getItem is called to instantiate the fragment for the given page.
         // Return a PlaceholderFragment (defined as a static inner class below).
-        return RecipeDetails.PlaceholderFragment.newInstance(position + 1, recipe);
+        return PlaceholderFragment.newInstance(position + 1, recipe);
     }
 
     @Override
