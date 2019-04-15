@@ -1,42 +1,86 @@
 package com.example.softeng.recipick.Models;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
-public class Recipe {
+public class Recipe implements Serializable {
+    private String uid = null;
+    private String author = null;
     private String name = null;
     private String description = null;
     private List<Ingredient> ingredients = null;
+    private Map<String, Boolean> ingredientsQuery = null;
     private String preparation = null;
     private int duration = 0;
     private int calories = 0;
     private double budget = 0.0;
     private int servings = 0;
     private String cuisine = null;
+    private String meals = null;
     private List<String> images = null;
+    private List<Review> reviews = null;
     private boolean share = false;
     private boolean visibility = false;
-    private String author = null;
+
 
     /** Default constructor, allows values to be pushed onto firebase */
     public Recipe() {
 
     }
 
-    public Recipe(String name, String description, List<Ingredient> ingredients, String preparation, int duration,
-                  int calories, double budget, int servings, String cuisine, boolean share, String author) {
+    public Recipe(String uid, String name, String description, List<Ingredient> ingredients, Map<String, Boolean> ingredientsQuery, String preparation, int duration,
+                  int calories, double budget, int servings, String cuisine, String meals, boolean share, String author) {
+        this.uid = uid;
         this.name = name;
         this.description = description;
         this.ingredients = ingredients;
+        this.ingredientsQuery = ingredientsQuery;
         this.preparation = preparation;
         this.duration = duration;
         this.calories = calories;
         this.budget = budget;
         this.servings = servings;
         this.cuisine = cuisine;
+        this.meals = meals;
         this.images = new ArrayList<>();
         this.share = share;
         this.author = author;
+        this.reviews = new ArrayList<>();
+    }
+
+
+    public List<Review> getReviews() {
+        return reviews;
+    }
+
+    public void setReviews(List<Review> reviews) {
+        this.reviews = reviews;
+    }
+
+    public Map<String, Boolean> getIngredientsQuery() {
+        return ingredientsQuery;
+    }
+
+    public void setIngredientsQuery( Map<String, Boolean> ingredientQuery) {
+        this.ingredientsQuery = ingredientQuery;
+    }
+
+    public String getMeals() {
+        return meals;
+    }
+
+    public void setMeals(String meals) {
+        this.meals = meals;
+    }
+
+    public String getUid() {
+        return uid;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
     }
 
     public String getName() {

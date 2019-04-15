@@ -71,7 +71,7 @@
 
 
             </LinearLayout>
-
+            
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/list_images"
                 android:background="@color/white"
@@ -385,21 +385,46 @@
             </LinearLayout>
 
 
-
-
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
                 <EditText
                     android:id="@+id/txtCuisine"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:layout_marginTop="15dp"
                     android:layout_marginStart="15dp"
-                    android:layout_marginEnd="15dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_weight="1"
                     android:background="@drawable/fields"
                     android:ems="10"
                     android:paddingEnd = "10dp"
                     android:hint="Cuisine"
                     android:inputType="text"
                     tools:ignore="Autofill,RtlSymmetry" />
+
+
+                <EditText
+                    android:id="@+id/txtMeals"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="15dp"
+                    android:background="@drawable/fields"
+                    android:ems="10"
+                    android:paddingEnd = "10dp"
+                    android:hint="Meal"
+                    android:inputType="text"
+                    tools:ignore="Autofill,RtlSymmetry" />
+
+            </LinearLayout>
+
+
+
+
 
             <Button
                 android:id="@+id/btnSubmit"

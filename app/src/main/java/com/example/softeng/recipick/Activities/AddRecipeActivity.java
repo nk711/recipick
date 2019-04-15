@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.provider.OpenableColumns;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
@@ -18,8 +19,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Switch;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.softeng.recipick.Adapters.ImageListAdapter;
@@ -29,21 +30,22 @@ import com.example.softeng.recipick.Models.Recipe;
 import com.example.softeng.recipick.Models.User;
 import com.example.softeng.recipick.R;
 import com.example.softeng.recipick.AsyncTasks.UploadRecipeTask;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 public class AddRecipeActivity extends AppCompatActivity {
     /** The request code in order for the user to select multiple images */
@@ -97,37 +99,34 @@ public class AddRecipeActivity extends AppCompatActivity {
     /** Allows us to create custom dialogs */
     private View mView;
     /** input fields for the user to fill in */
-    private TextView txtRecipeName;
+    private EditText txtRecipeName;
     private Switch share;
-    private TextView txtDescription;
-    private TextView txtPreperation;
-    private TextView txtDuration;
-    private TextView txtServings;
-    private TextView txtBudget;
-    private TextView txtCalories;
-    private TextView txtCuisine;
+    private EditText txtDescription;
+    private EditText txtPreperation;
+    private EditText txtDuration;
+    private EditText txtServings;
+    private EditText txtBudget;
+    private EditText txtCalories;
+    private EditText txtCuisine;
+    private EditText txtMeals;
 
-    private TextView txtIngredient;
-    private TextView txtMeasurement;
-    private TextView txtQuantity;
+    private EditText txtIngredient;
+    private EditText txtMeasurement;
+    private EditText txtQuantity;
 
     private String author;
 
-    private FirebaseDatabase mDatabase;
     private FirebaseAuth mAuth;
-    private DatabaseReference getUserDetails;
+
     private String uid;
 
+
+    private DocumentReference userRef;
 
     private static final String USERS = "Users";
     private static final String CONTACTS = "Contacts";
     private static final String IMAGES = "Images";
     private static final String RECIPES = "Recipes";
-
-    /** The object created when the post button has been clicked*/
-    private Recipe mRecipe;
-    /** The currently logged in user's details */
-    private User mUser;
 
 
     @Override
@@ -157,7 +156,7 @@ public class AddRecipeActivity extends AppCompatActivity {
         txtBudget= findViewById(R.id.txtBudget);
         txtCalories= findViewById(R.id.txtCalories);
         txtCuisine= findViewById(R.id.txtCuisine);
-
+        txtMeals = findViewById(R.id.txtMeals);
 
         ingredients = new ArrayList<>();
         measurements = new ArrayList<>();
@@ -176,13 +175,16 @@ public class AddRecipeActivity extends AppCompatActivity {
         mImages.setAdapter(adapter);
 
         mAuth = FirebaseAuth.getInstance();
-        mDatabase = FirebaseDatabase.getInstance();
-        getUserDetails = mDatabase.getReference().child(USERS);
+        uid = mAuth.getCurrentUser().getUid();
 
-        FirebaseUser user = mAuth.getCurrentUser();
-        uid = user.getUid();
+        userRef = FirebaseFirestore.getInstance().collection(USERS).document(uid);
 
 
+
+
+        loadUser();
+
+        /**
         getUserDetails.child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -196,7 +198,7 @@ public class AddRecipeActivity extends AppCompatActivity {
             public void onCancelled(DatabaseError databaseError) {
 
             }
-        });
+        }); */
 
 
         /**
@@ -259,6 +261,27 @@ public class AddRecipeActivity extends AppCompatActivity {
 
     }
 
+    public void loadUser() {
+            userRef.get()
+                    .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                        @Override
+                        public void onSuccess(DocumentSnapshot documentSnapshot) {
+                            if (documentSnapshot.exists()) {
+                                User user = documentSnapshot.toObject(User.class);
+                                author = user.getDisplay_name();
+                            } else {
+                                //error user doesnt extist
+                            }
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                                //error message
+                                //failed to load user details
+                        }
+                    });
+    }
 
     /**
      * When the user selects the images The following happens.
@@ -428,19 +451,25 @@ public class AddRecipeActivity extends AppCompatActivity {
 
         if (validation()) {
             List<Ingredient> listOfIngredients = new ArrayList<>();
+            Map<String, Boolean> ingredientsQuery = new HashMap<>();
+
             for (int i = 0; i < ingredients.size(); i++) {
                 listOfIngredients.add(new Ingredient(ingredients.get(i), quantity.get(i), measurements.get(i)));
+                ingredientsQuery.put(ingredients.get(i), true);
             }
             Recipe recipe = new Recipe (
+                    uid,
                     txtRecipeName.getText().toString(),
                     txtDescription.getText().toString(),
                     listOfIngredients,
+                    ingredientsQuery,
                     txtPreperation.getText().toString(),
                     Integer.parseInt(txtDuration.getText().toString()),
                     Integer.parseInt(txtCalories.getText().toString()),
                     Double.parseDouble(txtBudget.getText().toString()),
                     Integer.parseInt(txtServings.getText().toString()),
                     txtCuisine.getText().toString(),
+                    txtMeals.getText().toString(),
                     share.isChecked(),
                     author
             );
