@@ -217,7 +217,7 @@ public class RecipeDetails extends AppCompatActivity {
                     break;
                 case 3:
                     //TODO: Add photo gallery view here
-                    //rootView = inflater.inflate(R.layout.INSERT_FRAGMENT_HERE, container, false);
+                    rootView = inflater.inflate(R.layout.fragment_recipe_photos, container, false);
                     break;
             }
             return rootView;
