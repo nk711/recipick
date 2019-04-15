@@ -1,25 +1,39 @@
 package com.example.softeng.recipick.Activities;
 
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.TabLayout;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import android.widget.ImageView;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.ImageButton;
+import android.widget.Toast;
 
+import com.example.softeng.recipick.Adapters.ImageViewAdapter;
+import com.example.softeng.recipick.Adapters.SectionsPageAdapter;
+import com.example.softeng.recipick.Models.Recipe;
+import com.example.softeng.recipick.Models.Utility;
 import com.example.softeng.recipick.R;
+
+import es.dmoral.toasty.Toasty;
+
+import static android.content.res.Configuration.ORIENTATION_PORTRAIT;
 
 public class RecipeDetails extends AppCompatActivity {
 
@@ -31,7 +45,7 @@ public class RecipeDetails extends AppCompatActivity {
      * may be best to switch to a
      * {@link android.support.v4.app.FragmentStatePagerAdapter}.
      */
-    private SectionsPagerAdapter mSectionsPagerAdapter;
+    private SectionsPageAdapter mSectionsPagerAdapter;
 
     /**
      * The {@link ViewPager} that will host the section contents.
@@ -39,58 +53,110 @@ public class RecipeDetails extends AppCompatActivity {
     private ViewPager mViewPager;
 
     /* Recipe image component */
-    private ImageView recipeImage;
+    private CollapsingToolbarLayout collapsingToolBar;
+
+    /** Image view holder, will hold an array of images */
+    private ViewPager mImageHolder;
+    /** The selected recipe*/
+    private Recipe recipe;
+    /** Adapter which will keep a list of images to be displayed */
+    private ImageViewAdapter adapter;
+
+    private CheckBox btnFavourite;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipe_details);
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.recipe_toolbar);
         setSupportActionBar(toolbar);
-        // Create the adapter that will return a fragment for each of the three
-        // primary sections of the activity.
-        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
-
-        // Set up the ViewPager with the sections adapter.
-        mViewPager = (ViewPager) findViewById(R.id.container);
-        mViewPager.setAdapter(mSectionsPagerAdapter);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+        mViewPager = (ViewPager) findViewById(R.id.container);
+        mImageHolder = findViewById(R.id.recipe_view_pager);
+        adapter = new ImageViewAdapter(RecipeDetails.this);
+        collapsingToolBar = findViewById(R.id.collapsing_toolbar);
+        btnFavourite = findViewById(R.id.btnFavourite);
 
+        /** gets the bundle from the previous activity */
+        Bundle extras = getIntent().getExtras();
+        /** checks if the bundle is null */
+        if (extras!=null) {
+            /** if not set the item */
+            recipe = (Recipe)extras.getSerializable(Utility.RECIPE);
+        }
+
+
+        /** Create the adapter that will return a fragment for each of the three
+         primary sections of the activity. */
+        mSectionsPagerAdapter = new SectionsPageAdapter(getSupportFragmentManager(), recipe);
+        /** Set up the ViewPager with the sections adapter. */
+        mViewPager.setAdapter(mSectionsPagerAdapter);
         mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager));
 
-        // Initialises the recipe image view
-        recipeImage = (ImageView) findViewById(R.id.recipe_image);
 
-        // Favourite icon
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+        Toasty.error(RecipeDetails.this, recipe.getImages().get(0) , Toast.LENGTH_LONG, true).show();
+
+
+        /**
+         * gets the rotation of the device
+         */
+        int rotation = this.getResources().getConfiguration().orientation;
+
+        /**
+         * if its portrait resize the image appropriately
+         */
+        if (rotation == ORIENTATION_PORTRAIT) {
+            DisplayMetrics metrics = new DisplayMetrics();
+            this.getWindowManager().getDefaultDisplay().getMetrics(metrics);
+            int width = metrics.widthPixels;
+            ViewGroup.LayoutParams params = mImageHolder.getLayoutParams();
+            params.width = ViewGroup.LayoutParams.MATCH_PARENT;
+            params.height = width;
+            mImageHolder.setLayoutParams(params);
+        }
+
+        if (recipe!=null) {
+            for (String url: recipe.getImages()) {
+                adapter.addImage(url);
             }
-        });
+            mImageHolder.setAdapter(adapter);
 
-        // Shopping cart icon
-        FloatingActionButton fab2 = (FloatingActionButton) findViewById(R.id.fab2);
-        fab2.setOnClickListener(new View.OnClickListener() {
+            SpannableString s = new SpannableString(recipe.getName());
+            s.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.white)), 0, recipe.getName().length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            collapsingToolBar.setTitle(s);
+
+        } else {
+            /** If recipe is null, go back to main menu */
+
+            //TODO: Add error message
+            finish();
+
+        }
+
+
+
+        btnFavourite.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    
+                } else {
+
+                }
             }
         });
 
     }
 
+
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_recipe_details, menu);
-        return true;
+        return false;
     }
 
     @Override
@@ -100,85 +166,13 @@ public class RecipeDetails extends AppCompatActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
 
-    /**
-     * A placeholder fragment containing a simple view.
-     */
-    public static class PlaceholderFragment extends Fragment {
-        /**
-         * The fragment argument representing the section number for this
-         * fragment.
-         */
-        private static final String ARG_SECTION_NUMBER = "section_number";
-
-        public PlaceholderFragment() {
-        }
-
-        /**
-         * Returns a new instance of this fragment for the given section
-         * number.
-         */
-        public static PlaceholderFragment newInstance(int sectionNumber) {
-            PlaceholderFragment fragment = new PlaceholderFragment();
-            Bundle args = new Bundle();
-            args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-            fragment.setArguments(args);
-            return fragment;
-        }
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
-
-            View rootView = null;
-
-            // Changes the fragments according to the tabs tabs
-            switch(getArguments().getInt(ARG_SECTION_NUMBER)) {
-                case 1:
-                    // Main 'overview' fragment - has the ingredients list
-                    rootView = inflater.inflate(R.layout.fragment_recipe_details, container, false);
-                    break;
-                case 2:
-                    // 'Preparation' fragment
-                    rootView = inflater.inflate(R.layout.fragment_recipe_preparation, container, false);
-                    break;
-                case 3:
-                    //TODO: Add photo gallery view here
-                    //rootView = inflater.inflate(R.layout.INSERT_FRAGMENT_HERE, container, false);
-                    break;
-            }
-            return rootView;
-        }
-    }
-
-    /**
-     * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
-     * one of the sections/tabs/pages.
-     */
-    public class SectionsPagerAdapter extends FragmentPagerAdapter {
-
-        public SectionsPagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            // getItem is called to instantiate the fragment for the given page.
-            // Return a PlaceholderFragment (defined as a static inner class below).
-            return PlaceholderFragment.newInstance(position + 1);
-        }
-
-        @Override
-        public int getCount() {
-            // Show 3 total pages.
-            return 3;
-        }
-    }
 }

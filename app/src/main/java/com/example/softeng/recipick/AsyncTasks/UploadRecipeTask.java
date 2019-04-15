@@ -152,7 +152,7 @@ public class UploadRecipeTask extends AsyncTask<Uri[], Integer, Boolean> {
                                 public void onComplete(@NonNull Task<Uri> task) {
                                     counter++;
                                     /** Set the dialog message according to counter */
-                                    dialog.setMessage(" Uploading Images and data [" + counter + "/" + imageList.size() + "]");
+                                    dialog.setMessage(" Uploading Images [" + counter + "/" + imageList.size() + "]");
                                     dialog.show();
                                     /** If the counter is equal to the imageList.size(), that means that all of the images have been downloaded
                                      * so now we need to update the data to the database
