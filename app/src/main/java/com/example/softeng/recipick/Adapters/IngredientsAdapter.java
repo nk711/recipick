@@ -10,6 +10,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.softeng.recipick.Models.Utility;
 import com.example.softeng.recipick.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -81,6 +82,7 @@ public class IngredientsAdapter extends ArrayAdapter<String> {
                             public void onComplete(@NonNull Task<Void> task) {
                                 if (task.isSuccessful()) {
                                     ingredientsList.remove(position);
+                                    Utility.updateUserIngredients(getContext(), ingredientsList);
                                     notifyDataSetChanged();
                                 } else {
                                     Toasty.error(getContext(), "An error has occurred, Please check your internet connection!", Toast.LENGTH_SHORT, true).show();

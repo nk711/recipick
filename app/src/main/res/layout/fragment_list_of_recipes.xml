@@ -35,7 +35,7 @@
             tools:ignore="Autofill,RtlSymmetry" />
 
         <Button
-            android:id="@+id/btnAddIngredient"
+            android:id="@+id/btnSearch"
             android:layout_width="wrap_content"
             android:layout_height="40dp"
             android:background="@drawable/hollow_button"
@@ -53,7 +53,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-    </android.support.v7.widget.RecyclerView>
+</android.support.v7.widget.RecyclerView>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"

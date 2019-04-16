@@ -25,6 +25,7 @@ public class Utility {
     public static final String DISPLAYNAME = "display_name";
     public static final String EMAIL = "email";
     public static final String INGREDIENTS = "ingredients";
+    public static final String FAVOURITES = "favourites";
     public static final String RECIPE = "RECIPE";
 
     private static User user;
@@ -74,9 +75,16 @@ public class Utility {
                                         list.append(ingredient).append(",");
                                     }
                                 }
+                                StringBuilder favourites = new StringBuilder();
+                                if (user.getFavourites()!=null) {
+                                    for (String recipe : user.getFavourites()) {
+                                        favourites.append(recipe).append(",");
+                                    }
+                                }
                                 prefs.edit().putString(DISPLAYNAME, user.getDisplay_name()).apply();
                                 prefs.edit().putString(EMAIL, user.getEmail()).apply();
                                 prefs.edit().putString(INGREDIENTS, list.toString()).apply();
+                                prefs.edit().putString(FAVOURITES, favourites.toString()).apply();
                             }
                         }
                     }
