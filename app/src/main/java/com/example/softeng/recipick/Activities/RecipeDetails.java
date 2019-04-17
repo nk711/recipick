@@ -78,7 +78,7 @@ public class RecipeDetails extends AppCompatActivity {
         mImageHolder = findViewById(R.id.recipe_view_pager);
         adapter = new ImageViewAdapter(RecipeDetails.this);
         collapsingToolBar = findViewById(R.id.collapsing_toolbar);
-        btnFavourite = findViewById(R.id.btnFavourite);
+       // btnFavourite = findViewById(R.id.btnFavourite);
 
         /** gets the bundle from the previous activity */
         Bundle extras = getIntent().getExtras();
@@ -137,8 +137,7 @@ public class RecipeDetails extends AppCompatActivity {
 
         }
 
-
-
+        /**
         btnFavourite.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -148,7 +147,7 @@ public class RecipeDetails extends AppCompatActivity {
 
                 }
             }
-        });
+        }); */
 
     }
 
@@ -156,7 +155,7 @@ public class RecipeDetails extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        return false;
+        return true;
     }
 
     @Override
