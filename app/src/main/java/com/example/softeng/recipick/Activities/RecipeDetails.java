@@ -2,6 +2,7 @@ package com.example.softeng.recipick.Activities;
 
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
@@ -18,15 +19,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-
-import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.softeng.recipick.Adapters.ImageViewAdapter;
-import com.example.softeng.recipick.Adapters.SectionsPageAdapter;
+import com.example.softeng.recipick.Fragments.RecipeOverviewFragment;
+import com.example.softeng.recipick.Fragments.RecipePhotosFragment;
+import com.example.softeng.recipick.Fragments.RecipePreparationFragment;
 import com.example.softeng.recipick.Models.Recipe;
 import com.example.softeng.recipick.Models.Utility;
 import com.example.softeng.recipick.R;
@@ -45,7 +45,7 @@ public class RecipeDetails extends AppCompatActivity {
      * may be best to switch to a
      * {@link android.support.v4.app.FragmentStatePagerAdapter}.
      */
-    private SectionsPageAdapter mSectionsPagerAdapter;
+    private SectionsPagerAdapter mSectionsPagerAdapter;
 
     /**
      * The {@link ViewPager} that will host the section contents.
@@ -80,6 +80,17 @@ public class RecipeDetails extends AppCompatActivity {
         collapsingToolBar = findViewById(R.id.collapsing_toolbar);
        // btnFavourite = findViewById(R.id.btnFavourite);
 
+
+        // Create the adapter that will return a fragment for each of the three
+        // primary sections of the activity.
+        mSectionsPagerAdapter = new RecipeDetails.SectionsPagerAdapter(getSupportFragmentManager());
+        // Set up the ViewPager with the sections adapter.
+        mViewPager = (ViewPager) findViewById(R.id.container);
+        mViewPager.setAdapter(mSectionsPagerAdapter);
+
+        mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
+        tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager));
+
         /** gets the bundle from the previous activity */
         Bundle extras = getIntent().getExtras();
         /** checks if the bundle is null */
@@ -87,15 +98,6 @@ public class RecipeDetails extends AppCompatActivity {
             /** if not set the item */
             recipe = (Recipe)extras.getSerializable(Utility.RECIPE);
         }
-
-
-        /** Create the adapter that will return a fragment for each of the three
-         primary sections of the activity. */
-        mSectionsPagerAdapter = new SectionsPageAdapter(getSupportFragmentManager(), recipe);
-        /** Set up the ViewPager with the sections adapter. */
-        mViewPager.setAdapter(mSectionsPagerAdapter);
-        mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
-        tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager));
 
 
         Toasty.error(RecipeDetails.this, recipe.getImages().get(0) , Toast.LENGTH_LONG, true).show();
@@ -172,6 +174,75 @@ public class RecipeDetails extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    /**
+     * A placeholder fragment containing a simple view.
+     */
+    public static class PlaceholderFragment extends Fragment {
+        /**
+         * The fragment argument representing the section number for this
+         * fragment.
+         */
+        private static final String ARG_SECTION_NUMBER = "section_number";
+
+        public PlaceholderFragment() {
+        }
+
+        /**
+         * Returns a new instance of this fragment for the given section
+         * number.
+         */
+        public static PlaceholderFragment newInstance(int sectionNumber) {
+            PlaceholderFragment fragment = new PlaceholderFragment();
+            Bundle args = new Bundle();
+            args.putInt(ARG_SECTION_NUMBER, sectionNumber);
+            fragment.setArguments(args);
+            return fragment;
+        }
+
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                                 Bundle savedInstanceState) {
+            View rootView = inflater.inflate(R.layout.fragment_home, container, false);
+            TextView textView = (TextView) rootView.findViewById(R.id.section_label);
+            textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
+            return rootView;
+        }
+    }
+
+    /**
+     * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
+     * one of the sections/tabs/pages.
+     */
+    public class SectionsPagerAdapter extends FragmentPagerAdapter {
+
+        public SectionsPagerAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            Fragment fragment = null;
+            switch (position) {
+                case 0:
+                    fragment = new RecipeOverviewFragment();
+                    break;
+                case 1:
+                    fragment = new RecipePreparationFragment();
+                    break;
+                case 2:
+                    fragment = new RecipePhotosFragment();
+                    break;
+            }
+            return fragment;
+        }
+
+        @Override
+        public int getCount() {
+            // Show 3 total pages.
+            return 3;
+        }
     }
 
 }

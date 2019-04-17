@@ -30,12 +30,12 @@ import es.dmoral.toasty.Toasty;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link RecipePhotosFragment.OnFragmentInteractionListener} interface
+ * {@link RecipeOverviewFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link RecipePhotosFragment#newInstance} factory method to
+ * Use the {@link RecipeOverviewFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class RecipePhotosFragment extends Fragment {
+public class RecipeOverviewFragment extends Fragment {
 
     private static final String TAG = "Recipe Photos";
     // TODO: Rename parameter arguments, choose names that match
@@ -84,7 +84,7 @@ public class RecipePhotosFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    public RecipePhotosFragment() {
+    public RecipeOverviewFragment() {
         // Required empty public constructor
     }
 
@@ -94,11 +94,11 @@ public class RecipePhotosFragment extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment RecipePhotosFragment.
+     * @return A new instance of fragment RecipeOverviewFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static RecipePhotosFragment newInstance(String param1, String param2) {
-        RecipePhotosFragment fragment = new RecipePhotosFragment();
+    public static RecipeOverviewFragment newInstance(String param1, String param2) {
+        RecipeOverviewFragment fragment = new RecipeOverviewFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -118,7 +118,7 @@ public class RecipePhotosFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view =  inflater.inflate(R.layout.fragment_recipe_photos, container, false);
+        View view =  inflater.inflate(R.layout.fragment_recipe_overview, container, false);
 
         if (view != null) {
             btnOpenDialog = view.findViewById(R.id.btnOpenDialog);
@@ -162,7 +162,6 @@ public class RecipePhotosFragment extends Fragment {
             mListener.onFragmentInteraction(uri);
         }
     }
-
 
 
     @Override
