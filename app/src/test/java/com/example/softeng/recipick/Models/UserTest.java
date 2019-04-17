@@ -27,6 +27,16 @@ public class UserTest {
         user.setDisplay_name("TestName");
         String result = user.getDisplay_name();
         Assertions.assertEquals("TestName", result);
+        
     }
+
+    @Test
+    void TestgetEmail() {
+        user.setEmail("TestName");
+        String result = user.getEmail();
+        Assertions.assertEquals("TestName", result);
+
+    }
+    
 
 }
