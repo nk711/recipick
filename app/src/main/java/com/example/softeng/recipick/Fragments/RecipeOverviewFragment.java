@@ -22,7 +22,16 @@ import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.example.softeng.recipick.Adapters.ImageListAdapter;
+import com.example.softeng.recipick.Models.Recipe;
+import com.example.softeng.recipick.Models.Utility;
 import com.example.softeng.recipick.R;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FieldValue;
+import com.google.firebase.firestore.FirebaseFirestore;
+
 import java.util.List;
 
 import es.dmoral.toasty.Toasty;
@@ -43,43 +52,26 @@ public class RecipeOverviewFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
+    private static final String TROLLEY = "trolley";
+    private static final String FAVOURITES = "favourites";
+    private static final String USERS = "Users";
+
+
+    private FirebaseAuth mAuth;
+    private DocumentReference userRef;
+    private String uid;
+
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
 
 
-
-    /** The request code in order for the
-     *  user to select multiple images,
-     *  capture an image using the camera,
-     *  to have access to external storage*/
-    private static final int RESULT_LOAD_IMAGE = 1;
-    private static final int REQUEST_CAPTURE_IMAGE = 100;
-    private final int MY_PERMISSIONS_REQUEST_CAMERA = 1;
-    private final int MY_PERMISSIONS_REQUEST_EXTERNAL_STORAGE = 2;
-
-
-    /** Holds the list of file names     */
-    private List<String> fileNameList;
-    /** Holds the list of file directories as URI */
-    private List<Uri> fileList;
-
-
-    private Uri imageUri;
-
-    private ImageListAdapter adapter;
-
-    private Button btnOpenDialog;
-
-
-    /** Recycler view will hold the list of selected images */
-    private RecyclerView mImages;
-
-
-    /** Allows us to create custom dialogs */
-    private AlertDialog.Builder mBuilder;
-    /** Allows us to create custom dialogs */
-    private View mView;
+    /** Holds the selected recipe */
+    private Recipe recipe;
+    /** Button for adding recipe to favourites */
+    private Button btnFavourites;
+    /** Button for adding recipe to shopping list */
+    private Button btnTrolley;
 
 
     private OnFragmentInteractionListener mListener;
@@ -119,42 +111,94 @@ public class RecipeOverviewFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view =  inflater.inflate(R.layout.fragment_recipe_overview, container, false);
-
-        if (view != null) {
-            btnOpenDialog = view.findViewById(R.id.btnOpenDialog);
-            Log.d(TAG, "view is not null");
-
-            if (btnOpenDialog != null) {
-                btnOpenDialog.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Toasty.info(requireContext(), "no work", Toast.LENGTH_SHORT, true).show();
-
-                        createDialog();
-                    }
-                });
-                Log.d(TAG, "mButton is not null");
-            }
+        if (savedInstanceState != null) {
+            recipe = (Recipe)savedInstanceState.getSerializable("contacts");
         }
 
+        mAuth = FirebaseAuth.getInstance();
+        uid =mAuth.getCurrentUser().getUid();
+        userRef = FirebaseFirestore.getInstance().collection(USERS).document(uid);
+
+
+        btnFavourites = view.findViewById(R.id.btnFavourite);
+        btnTrolley = view.findViewById(R.id.btnShop);
+
+        /** gets the bundle from the previous activity */
+        Bundle extras = requireActivity().getIntent().getExtras();
+        /** checks if the bundle is null */
+        if (extras!=null) {
+            /** if not set the item */
+            recipe = (Recipe)extras.getSerializable(Utility.RECIPE);
+        }
+
+        btnFavourites.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                /** Checks if the recipe is null, if not go back to main page, otherwise
+                 *  Check if the recipe exists in the user's favourite list, if not add to favourites*/
+                if (recipe!=null) {
+                    if (Utility.checkFavouriteRecipe(requireContext(), recipe.getUid())) {
+                        Toasty.info(requireContext(), "Recipe already added to favourites", Toasty.LENGTH_LONG, true).show();
+                    } else {
+                        addToFavourites();
+                    }
+                } else {
+                    requireActivity().onBackPressed();
+                }
+            }
+        });
+
+        btnTrolley.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                /** Checks if the recipe is null, if not go back to main page, otherwise
+                 *  add ingredients to the shopping list */
+                if (recipe!=null) {
+
+                } else {
+                    requireActivity().onBackPressed();
+                }
+            }
+        });
 
         return view;
     }
 
-
-    public void createDialog() {
-        Toasty.info(requireContext(), "no work", Toast.LENGTH_SHORT, true).show();
-
-        mBuilder = new AlertDialog.Builder(requireContext());
-        mView = getLayoutInflater().inflate(R.layout.dialog_add_photos, null);
-
-        /** The dialog is displayed and shown to the user*/
-        mBuilder.setView(mView);
-        final AlertDialog dialog = mBuilder.create();
-        dialog.show();
-
+    public void addToFavourites() {
+        userRef.update(FAVOURITES, FieldValue.arrayUnion(recipe.getUid()))
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            Utility.saveUserDetails(requireContext());
+                            Toasty.success(requireContext(), "Recipe added to Favourites", Toasty.LENGTH_LONG, true).show();
+                        } else {
+                            Toasty.error(requireContext(), "An error has occurred, Please check your internet connection!", Toast.LENGTH_SHORT, true).show();
+                        }
+                    }
+                });
     }
 
+    public void addToTrolly() {
+        userRef.update(TROLLEY, FieldValue.arrayUnion(recipe.getUid()))
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            Utility.saveUserDetails(requireContext());
+                            Toasty.success(requireContext(), "Recipe added to Favourites", Toasty.LENGTH_LONG, true).show();
+                        } else {
+                            Toasty.error(requireContext(), "An error has occurred, Please check your internet connection!", Toast.LENGTH_SHORT, true).show();
+                        }
+                    }
+                });
+    }
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        //Save the fragment's state here
+    }
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
