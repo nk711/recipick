@@ -8,6 +8,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.softeng.recipick.Models.Recipe;
+import com.example.softeng.recipick.Models.Utility;
 import com.example.softeng.recipick.R;
 
 
@@ -28,6 +30,8 @@ public class RecipePreparationFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+
+    private Recipe recipe;
 
     private OnFragmentInteractionListener mListener;
 
@@ -66,7 +70,16 @@ public class RecipePreparationFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_recipe_preparation, container, false);
+        View view = inflater.inflate(R.layout.fragment_recipe_preparation, container, false);
+
+        /** gets the bundle from the previous activity */
+        Bundle extras = requireActivity().getIntent().getExtras();
+        /** checks if the bundle is null */
+        if (extras!=null) {
+            /** if not set the item */
+            recipe = (Recipe)extras.getSerializable(Utility.RECIPE);
+        }
+        return view;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
