@@ -20,6 +20,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Switch;
 import android.widget.Toast;
 
@@ -89,6 +90,7 @@ public class AddRecipeActivity extends AppCompatActivity {
     private RecyclerView listView;
 
     private Button btnAddIngredient;
+    private ImageButton btnBackToMain;
 
     private IngredientsAndMeasurementsAdapter ingredientsAdapter;
 
@@ -139,6 +141,7 @@ public class AddRecipeActivity extends AppCompatActivity {
         btnUpload = findViewById(R.id.btnUpload);
         btnCamera = findViewById(R.id.btnCamera);
         btnSubmit = findViewById(R.id.btnSubmit);
+        btnBackToMain = findViewById(R.id.backToMain);
 
         mImages =  findViewById(R.id.list_images);
         listView = findViewById(R.id.list_of_ingredients);
@@ -250,7 +253,13 @@ public class AddRecipeActivity extends AppCompatActivity {
             }
         });
 
-
+        btnBackToMain.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
+        
         btnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

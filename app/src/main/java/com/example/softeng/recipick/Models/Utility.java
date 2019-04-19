@@ -27,6 +27,7 @@ public class Utility {
     public static final String EMAIL = "email";
     public static final String INGREDIENTS = "ingredients";
     public static final String FAVOURITES = "favourites";
+    public static final String TROLLEY = "trolley";
     public static final String RECIPE = "RECIPE";
 
     private static User user;
@@ -82,10 +83,17 @@ public class Utility {
                                         favourites.append(recipe).append(",");
                                     }
                                 }
+                                StringBuilder trolleyList = new StringBuilder();
+                                if (user.getTrolley()!=null) {
+                                    for (String items : user.getTrolley().keySet()) {
+                                        trolleyList.append(items).append(",");
+                                    }
+                                }
                                 prefs.edit().putString(DISPLAYNAME, user.getDisplay_name()).apply();
                                 prefs.edit().putString(EMAIL, user.getEmail()).apply();
                                 prefs.edit().putString(INGREDIENTS, list.toString()).apply();
                                 prefs.edit().putString(FAVOURITES, favourites.toString()).apply();
+                                prefs.edit().putString(TROLLEY, trolleyList.toString()).apply();
                             }
                         }
                     }
@@ -126,6 +134,16 @@ public class Utility {
         Log.d("test", list);
         Log.d("does recipe exist", String.valueOf(exists));
         return exists;
+    }
+    public static void updateUserTrolley(final Context context, List<String> trolley) {
+        SharedPreferences prefs = context.getSharedPreferences("com.example.softeng.recipick", Context.MODE_PRIVATE);
+        StringBuilder list = new StringBuilder();
+        if (trolley!=null) {
+            for (String ingredient : trolley) {
+                list.append(ingredient).append(",");
+            }
+        }
+        prefs.edit().putString(TROLLEY, list.toString()).apply();
     }
 
 }
