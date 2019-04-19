@@ -4,9 +4,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.widget.EditText;
 import android.widget.Toast;
-
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -14,6 +14,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
@@ -121,6 +122,19 @@ public class Utility {
         return listOfIngredients;
     }
 
+    public static boolean checkFavouriteRecipe(final Context context, String recipe_uid) {
+        SharedPreferences prefs = context.getSharedPreferences("com.example.softeng.recipick", Context.MODE_PRIVATE);
+        String list = prefs.getString(FAVOURITES, "");
+        List<String> listOfFavourites = null;
+        boolean exists = false;
+        if (list != null) {
+            listOfFavourites =  Arrays.asList(list.split(","));
+            exists = listOfFavourites.contains(recipe_uid);
+        }
+        Log.d("test", list);
+        Log.d("does recipe exist", String.valueOf(exists));
+        return exists;
+    }
     public static void updateUserTrolley(final Context context, List<String> trolley) {
         SharedPreferences prefs = context.getSharedPreferences("com.example.softeng.recipick", Context.MODE_PRIVATE);
         StringBuilder list = new StringBuilder();
