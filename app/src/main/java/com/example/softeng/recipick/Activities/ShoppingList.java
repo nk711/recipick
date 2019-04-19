@@ -1,5 +1,6 @@
 package com.example.softeng.recipick.Activities;
 
+import android.content.Intent;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -22,6 +23,13 @@ import android.widget.TextView;
 import com.example.softeng.recipick.Fragments.NearbyTab;
 import com.example.softeng.recipick.Fragments.TrolleyTab;
 import com.example.softeng.recipick.R;
+import com.mikepenz.materialdrawer.AccountHeader;
+import com.mikepenz.materialdrawer.AccountHeaderBuilder;
+import com.mikepenz.materialdrawer.Drawer;
+import com.mikepenz.materialdrawer.DrawerBuilder;
+import com.mikepenz.materialdrawer.model.DividerDrawerItem;
+import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
+import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 
 public class ShoppingList extends AppCompatActivity {
 
@@ -41,13 +49,91 @@ public class ShoppingList extends AppCompatActivity {
     private ViewPager mViewPager;
 
 
+    private Toolbar toolbar;
+
+    private Drawer result;
+
+    public void navbar_setup() {
+        //if you want to update the items at a later time it is recommended to keep it in a variable
+        PrimaryDrawerItem item1 = new PrimaryDrawerItem().withIdentifier(1).withName("Home");
+        PrimaryDrawerItem item2 = new PrimaryDrawerItem().withIdentifier(2).withName("My Recipes");
+        PrimaryDrawerItem item3 = new PrimaryDrawerItem().withIdentifier(3).withName("My Favourites");
+        PrimaryDrawerItem item4 = new PrimaryDrawerItem().withIdentifier(4).withName("Shopping List");
+        PrimaryDrawerItem item5 = new PrimaryDrawerItem().withIdentifier(5).withName("Profile");
+        PrimaryDrawerItem item6 = new PrimaryDrawerItem().withIdentifier(6).withName("Log out");
+        PrimaryDrawerItem item7 = new PrimaryDrawerItem().withIdentifier(7).withName("Add A recipe TEST");
+
+        AccountHeader accountHeader = new AccountHeaderBuilder()
+                .withActivity(this)
+                .withTranslucentStatusBar(true)
+                .withHeaderBackground(R.drawable.ic_applogoo)
+                .build();
+
+        //create the drawer and remember the `Drawer` result object
+        result = new DrawerBuilder()
+                .withActivity(this)
+                .withToolbar(toolbar)
+                .withAccountHeader(accountHeader)
+                .addDrawerItems(
+                        item1,
+                        item2,
+                        item3,
+                        item4,
+                        new DividerDrawerItem(),
+                        item7
+                )
+                .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
+                    @Override
+                    public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
+                        // do something with the clicked item
+
+                        switch((int)drawerItem.getIdentifier()) {
+                            case 1:
+                                result.closeDrawer();
+                                Intent homeIntent = new Intent(ShoppingList.this, HomeActivity.class);
+                                startActivity(homeIntent);
+                                break;
+                            case 2:
+                                result.closeDrawer();
+                                break;
+                            case 3:
+                                result.closeDrawer();
+                                break;
+                            case 4:
+                                result.closeDrawer();
+                                break;
+                            case 5:
+                                result.closeDrawer();
+                                break;
+                            case 6:
+                                result.closeDrawer();
+                                break;
+                            case 7:
+                                result.closeDrawer();
+                                Intent intent = new Intent(ShoppingList.this, AddRecipeActivity.class);
+                                startActivity(intent);
+                                break;
+                        }
+
+                        return true;
+                    }
+                })
+                .build();
+
+        result.addStickyFooterItem(item5);
+        result.addStickyFooterItem(item6);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_shopping_list);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        navbar_setup();
+
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
@@ -69,7 +155,6 @@ public class ShoppingList extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
-
 
 
     }
@@ -131,6 +216,8 @@ public class ShoppingList extends AppCompatActivity {
             return rootView;
         }
     }
+
+
 
     /**
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to

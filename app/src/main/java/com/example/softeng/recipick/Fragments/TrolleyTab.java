@@ -8,12 +8,26 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
+import com.example.softeng.recipick.Adapters.IngredientsAdapter;
+import com.example.softeng.recipick.Models.User;
+import com.example.softeng.recipick.Models.Utility;
 import com.example.softeng.recipick.R;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import es.dmoral.toasty.Toasty;
 
 
 /**
@@ -36,9 +50,17 @@ public class TrolleyTab extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    private ListView listView;
+    private FirebaseAuth mAuth;
+    private DocumentReference userRef;
+    private String uid;
+    private static final String USERS = "Users";
+    private static final String TROLLEY = "trolley";
 
-    private List<String> ingredients = new ArrayList<>();
+    private List<String> trolley = new ArrayList<>();
+    private IngredientsAdapter adapter;
+
+    private EditText txtIngredient;
+    private ListView listView;
 
     public TrolleyTab() {
         // Required empty public constructor
@@ -81,14 +103,69 @@ public class TrolleyTab extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ingredients.add("Tomato");
-        ingredients.add("Pasta");
-        ingredients.add("Chicken");
-        ingredients.add("Flour");
-        ingredients.add("Beef");
+        Button btnAddIngredient = view.findViewById(R.id.btnAddIngredient);
+        txtIngredient = view.findViewById(R.id.txtIngredient);
+        mAuth = FirebaseAuth.getInstance();
+        uid =mAuth.getCurrentUser().getUid();
+
+        userRef = FirebaseFirestore.getInstance().collection(USERS).document(uid);
 
         this.listView = (ListView) view.findViewById(R.id.ingredientsView);
 
+        adapter = new IngredientsAdapter(TrolleyTab.this.getContext(), trolley);
+
+        loadUsersIngredients();
+
+        listView.setAdapter(adapter);
+
+        btnAddIngredient.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final String ingredientField = txtIngredient.getText().toString().toLowerCase();
+                if (ingredientField.isEmpty()) {
+                    Toasty.warning(requireContext(), "Invalid Ingredient!", Toast.LENGTH_SHORT, true).show();
+                } else if (trolley.contains(ingredientField)){
+                    Toasty.warning(requireContext(), "Ingredient already exists", Toast.LENGTH_SHORT, true).show();
+                } else {
+                    userRef.update(TROLLEY+"."+ingredientField, true)
+                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (task.isSuccessful()) {
+                                        trolley.add(ingredientField);
+                                        adapter.notifyDataSetChanged();
+                                        txtIngredient.setText(null);
+                                        Utility.updateUserTrolley(requireContext(), trolley);
+                                    } else {
+                                        Toasty.error(requireContext(), "An error has occurred, Please check your internet connection!", Toast.LENGTH_SHORT, true).show();
+                                    }
+                                }
+                            });
+                }
+            }
+        });
+
+    }
+
+    public void loadUsersIngredients() {
+        userRef.get()
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if (task.isSuccessful()) {
+                            DocumentSnapshot document = task.getResult();
+                            if (document.exists()) {
+                                Toasty.warning(requireContext(), "should work", Toast.LENGTH_SHORT, true).show();
+                                User user = document.toObject(User.class);
+                                trolley.addAll(user.getTrolley().keySet());
+                                Toasty.warning(requireContext(), trolley.toString(), Toast.LENGTH_SHORT, true).show();
+                                adapter.notifyDataSetChanged();
+                            }
+                        } else {
+                            Toasty.info(requireContext(), "no work", Toast.LENGTH_SHORT, true).show();
+                        }
+                    }
+                });
     }
 
     // TODO: Rename method, update argument and hook method into UI event
