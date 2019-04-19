@@ -14,6 +14,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.example.softeng.recipick.Adapters.IngredientsAdapter;
+import com.example.softeng.recipick.Adapters.TrolleyAdapter;
 import com.example.softeng.recipick.Models.User;
 import com.example.softeng.recipick.Models.Utility;
 import com.example.softeng.recipick.R;
@@ -57,7 +58,7 @@ public class TrolleyTab extends Fragment {
     private static final String TROLLEY = "trolley";
 
     private List<String> trolley = new ArrayList<>();
-    private IngredientsAdapter adapter;
+    private TrolleyAdapter adapter;
 
     private EditText txtIngredient;
     private ListView listView;
@@ -112,7 +113,7 @@ public class TrolleyTab extends Fragment {
 
         this.listView = (ListView) view.findViewById(R.id.ingredientsView);
 
-        adapter = new IngredientsAdapter(TrolleyTab.this.getContext(), trolley);
+        adapter = new TrolleyAdapter(TrolleyTab.this.getContext(), trolley);
 
         loadUsersIngredients();
 
