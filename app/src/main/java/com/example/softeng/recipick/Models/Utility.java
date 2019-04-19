@@ -122,6 +122,7 @@ public class Utility {
         return listOfIngredients;
     }
 
+
     public static boolean checkFavouriteRecipe(final Context context, String recipe_uid) {
         SharedPreferences prefs = context.getSharedPreferences("com.example.softeng.recipick", Context.MODE_PRIVATE);
         String list = prefs.getString(FAVOURITES, "");
@@ -131,8 +132,6 @@ public class Utility {
             listOfFavourites =  Arrays.asList(list.split(","));
             exists = listOfFavourites.contains(recipe_uid);
         }
-        Log.d("test", list);
-        Log.d("does recipe exist", String.valueOf(exists));
         return exists;
     }
     public static void updateUserTrolley(final Context context, List<String> trolley) {
