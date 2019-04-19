@@ -62,11 +62,11 @@ public class RecipeDetails extends AppCompatActivity {
     /** Adapter which will keep a list of images to be displayed */
     private ImageViewAdapter adapter;
 
-    private CheckBox btnFavourite;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        /** Ensures that the user's details is updated and loaded whilst the user is progressing through the application*/
+        Utility.saveUserDetails(this);
         setContentView(R.layout.activity_recipe_details);
         Toolbar toolbar = (Toolbar) findViewById(R.id.recipe_toolbar);
         setSupportActionBar(toolbar);
@@ -98,10 +98,6 @@ public class RecipeDetails extends AppCompatActivity {
             /** if not set the item */
             recipe = (Recipe)extras.getSerializable(Utility.RECIPE);
         }
-
-
-        Toasty.error(RecipeDetails.this, recipe.getImages().get(0) , Toast.LENGTH_LONG, true).show();
-
 
         /**
          * gets the rotation of the device
@@ -139,17 +135,7 @@ public class RecipeDetails extends AppCompatActivity {
 
         }
 
-        /**
-        btnFavourite.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    
-                } else {
 
-                }
-            }
-        }); */
 
     }
 
