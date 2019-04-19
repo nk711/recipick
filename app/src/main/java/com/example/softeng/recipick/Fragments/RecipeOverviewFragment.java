@@ -32,7 +32,11 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import es.dmoral.toasty.Toasty;
 
@@ -112,7 +116,7 @@ public class RecipeOverviewFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view =  inflater.inflate(R.layout.fragment_recipe_overview, container, false);
         if (savedInstanceState != null) {
-            recipe = (Recipe)savedInstanceState.getSerializable("contacts");
+            recipe = (Recipe)savedInstanceState.getSerializable("recipe");
         }
 
         mAuth = FirebaseAuth.getInstance();
@@ -154,7 +158,7 @@ public class RecipeOverviewFragment extends Fragment {
                 /** Checks if the recipe is null, if not go back to main page, otherwise
                  *  add ingredients to the shopping list */
                 if (recipe!=null) {
-
+                    addToTrolley();
                 } else {
                     requireActivity().onBackPressed();
                 }
@@ -179,20 +183,30 @@ public class RecipeOverviewFragment extends Fragment {
                 });
     }
 
-    public void addToTrolly() {
-        userRef.update(TROLLEY, FieldValue.arrayUnion(recipe.getUid()))
+
+    public void addToTrolley() {
+        List<String> userIngredients = Arrays.asList(Utility.retrieveUserIngredients(requireContext()));
+        Map<String, Object> trolley = new HashMap<>();
+        for (String ingredient: userIngredients) {
+            if (!userIngredients.contains(ingredient)) {
+                trolley.put(TROLLEY+"."+ingredient, true);
+            }
+        }
+
+        userRef.update(trolley)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()) {
                             Utility.saveUserDetails(requireContext());
-                            Toasty.success(requireContext(), "Recipe added to Favourites", Toasty.LENGTH_LONG, true).show();
+                            Toasty.success(requireContext(), "Recipe ingredients added to your trolley", Toasty.LENGTH_LONG, true).show();
                         } else {
                             Toasty.error(requireContext(), "An error has occurred, Please check your internet connection!", Toast.LENGTH_SHORT, true).show();
                         }
                     }
                 });
     }
+
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
