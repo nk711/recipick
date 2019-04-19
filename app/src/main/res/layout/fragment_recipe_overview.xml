@@ -22,7 +22,7 @@
         android:textColor="@color/TitleColour" />
 
     <Button
-        android:id="@+id/btnShopp"
+        android:id="@+id/btnShop"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/hollow_button"
