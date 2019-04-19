@@ -10,6 +10,7 @@ public class User {
     private String email;
     private Map<String, Boolean> ingredients;
     private List<String> favourites;
+    private Map<String, Boolean> trolley;
 
     public User() {
 
@@ -20,6 +21,7 @@ public class User {
         this.email = email;
         this.ingredients = new HashMap<>();
         this.favourites = new ArrayList<>();
+        this.trolley = new HashMap<>();
     }
 
     public List<String> getFavourites() {
@@ -36,6 +38,14 @@ public class User {
 
     public void setIngredients( Map<String, Boolean> ingredients) {
         this.ingredients = ingredients;
+    }
+
+    public Map<String, Boolean> getTrolley() {
+        return this.trolley;
+    }
+
+    public void setTrolley(Map<String, Boolean> trolley) {
+        this.trolley = trolley;
     }
 
     public String getDisplay_name() {
