@@ -525,7 +525,40 @@ public class AddRecipeActivity extends AppCompatActivity {
         return result;
     }
 
-    /** Associated with Enum classes */
+
+    /**
+     * When the activity enters the onsaveinstance the arraylist that is used to populate the recycler view is saved
+     * onsaveinstance retains the recycler view upon rotation of the device
+     * @param outState
+     *      Will hold the list of filenames and the list of file directory
+     */
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putStringArrayList("filenames", new ArrayList<String>(fileNameList));
+        outState.putParcelableArrayList("files", new ArrayList<Uri>(fileList));
+    }
+
+    /**
+     * Restores the data and reset's the recycler view
+     * retains the recycler view upon rotation of the device
+     * @param savedInstanceState
+     *          returns the saved list of filenames and file directory
+     */
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        fileNameList=  savedInstanceState.getStringArrayList("filenames");
+        fileList =  savedInstanceState.getParcelableArrayList("files");
+        adapter = new ImageListAdapter(fileNameList, fileList);
+        mImages.setLayoutManager(new LinearLayoutManager(AddRecipeActivity.this));
+        mImages.setAdapter(adapter);
+    }
+
+
+
+
+    /** TODO: Add custom dialogs for user to pick values from enum class */
     private void chooseCuisineDialog() {
 
     }
