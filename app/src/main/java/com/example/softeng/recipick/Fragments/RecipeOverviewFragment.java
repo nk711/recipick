@@ -26,6 +26,7 @@ import com.example.softeng.recipick.Models.Recipe;
 import com.example.softeng.recipick.Models.Utility;
 import com.example.softeng.recipick.R;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
@@ -59,11 +60,16 @@ public class RecipeOverviewFragment extends Fragment {
     private static final String TROLLEY = "trolley";
     private static final String FAVOURITES = "favourites";
     private static final String USERS = "Users";
+    private static final String USERFAVOURITES = "User_Favourites";
 
 
     private FirebaseAuth mAuth;
     private DocumentReference userRef;
+
+    private DocumentReference userFavouriteRef;
     private String uid;
+
+    private String recipe_id;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -122,6 +128,7 @@ public class RecipeOverviewFragment extends Fragment {
         mAuth = FirebaseAuth.getInstance();
         uid =mAuth.getCurrentUser().getUid();
         userRef = FirebaseFirestore.getInstance().collection(USERS).document(uid);
+        userFavouriteRef = FirebaseFirestore.getInstance().collection(USERFAVOURITES).document(uid);
 
 
         btnFavourites = view.findViewById(R.id.btnFavourite);
@@ -133,6 +140,14 @@ public class RecipeOverviewFragment extends Fragment {
         if (extras!=null) {
             /** if not set the item */
             recipe = (Recipe)extras.getSerializable(Utility.RECIPE);
+            recipe_id = (String)extras.getString(Utility.ID);
+        }
+
+        if (Utility.checkFavouriteRecipe(requireContext(), recipe_id)) {
+            btnFavourites.setText("Remove from favourites");
+
+        } else {
+            btnFavourites.setText("Add to favourite");
         }
 
         btnFavourites.setOnClickListener(new View.OnClickListener() {
@@ -140,9 +155,9 @@ public class RecipeOverviewFragment extends Fragment {
             public void onClick(View v) {
                 /** Checks if the recipe is null, if not go back to main page, otherwise
                  *  Check if the recipe exists in the user's favourite list, if not add to favourites*/
-                if (recipe!=null) {
-                    if (Utility.checkFavouriteRecipe(requireContext(), recipe.getUid())) {
-                        Toasty.info(requireContext(), "Recipe already added to favourites", Toasty.LENGTH_LONG, true).show();
+                if (recipe!=null||recipe_id!=null) {
+                    if (Utility.checkFavouriteRecipe(requireContext(), recipe_id)) {
+                        removeFromFavourites();
                     } else {
                         addToFavourites();
                     }
@@ -168,19 +183,37 @@ public class RecipeOverviewFragment extends Fragment {
         return view;
     }
 
-    public void addToFavourites() {
-        userRef.update(FAVOURITES, FieldValue.arrayUnion(recipe.getUid()))
+    public void removeFromFavourites() {
+        userRef.update(FAVOURITES+"."+recipe_id, FieldValue.delete())
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()) {
                             Utility.saveUserDetails(requireContext());
-                            Toasty.success(requireContext(), "Recipe added to Favourites", Toasty.LENGTH_LONG, true).show();
+                            Toasty.success(requireContext(), "Recipe removed from Favourites", Toasty.LENGTH_LONG, true).show();
+                            btnFavourites.setText("Add to favourite");
                         } else {
                             Toasty.error(requireContext(), "An error has occurred, Please check your internet connection!", Toast.LENGTH_SHORT, true).show();
                         }
                     }
                 });
+    }
+    public void addToFavourites() {
+        userRef.update(FAVOURITES+"."+recipe_id, recipe)
+              .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            Utility.saveUserDetails(requireContext());
+                            Toasty.success(requireContext(), "Recipe added to Favourites", Toasty.LENGTH_LONG, true).show();
+                            btnFavourites.setText("Remove from favourites");
+
+                        } else {
+                            Toasty.error(requireContext(), "An error has occurred, Please check your internet connection!", Toast.LENGTH_SHORT, true).show();
+                        }
+                    }
+                });
+
     }
 
 
