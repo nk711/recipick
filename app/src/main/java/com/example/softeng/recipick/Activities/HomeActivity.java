@@ -1,9 +1,6 @@
 package com.example.softeng.recipick.Activities;
 import android.content.Intent;
-import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
@@ -65,14 +62,14 @@ public class HomeActivity extends AppCompatActivity {
         //if you want to update the items at a later time it is recommended to keep it in a variable
         PrimaryDrawerItem item1 = new PrimaryDrawerItem().withIdentifier(1).withName("Home");
         PrimaryDrawerItem item4 = new PrimaryDrawerItem().withIdentifier(4).withName("Shopping List");
-        PrimaryDrawerItem item5 = new PrimaryDrawerItem().withIdentifier(5).withName("Profile");
+       // PrimaryDrawerItem item5 = new PrimaryDrawerItem().withIdentifier(5).withName("Profile");
         PrimaryDrawerItem item6 = new PrimaryDrawerItem().withIdentifier(6).withName("Log out");
         PrimaryDrawerItem item7 = new PrimaryDrawerItem().withIdentifier(7).withName("Add a recipe");
 
         AccountHeader accountHeader = new AccountHeaderBuilder()
                 .withActivity(this)
                 .withTranslucentStatusBar(true)
-                .withHeaderBackground(R.drawable.ic_applogoo)
+                .withHeaderBackground(R.drawable.ic_applogooo)
                 .build();
 
         //create the drawer and remember the `Drawer` result object
@@ -85,7 +82,7 @@ public class HomeActivity extends AppCompatActivity {
                         item4,
                         item7,
                         new DividerDrawerItem(),
-                        item5,
+                     //   item5,
                         item6
                 )
                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {

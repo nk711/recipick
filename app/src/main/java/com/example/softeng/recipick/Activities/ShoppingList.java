@@ -23,6 +23,7 @@ import android.widget.TextView;
 import com.example.softeng.recipick.Fragments.NearbyTab;
 import com.example.softeng.recipick.Fragments.TrolleyTab;
 import com.example.softeng.recipick.R;
+import com.google.firebase.auth.FirebaseAuth;
 import com.mikepenz.materialdrawer.AccountHeader;
 import com.mikepenz.materialdrawer.AccountHeaderBuilder;
 import com.mikepenz.materialdrawer.Drawer;
@@ -33,6 +34,7 @@ import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 
 public class ShoppingList extends AppCompatActivity {
 
+    private FirebaseAuth mAuth;
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
      * fragments for each of the sections. We use a
@@ -57,14 +59,14 @@ public class ShoppingList extends AppCompatActivity {
         //if you want to update the items at a later time it is recommended to keep it in a variable
         PrimaryDrawerItem item1 = new PrimaryDrawerItem().withIdentifier(1).withName("Home");
         PrimaryDrawerItem item4 = new PrimaryDrawerItem().withIdentifier(4).withName("Shopping List");
-        PrimaryDrawerItem item5 = new PrimaryDrawerItem().withIdentifier(5).withName("Profile");
+        // PrimaryDrawerItem item5 = new PrimaryDrawerItem().withIdentifier(5).withName("Profile");
         PrimaryDrawerItem item6 = new PrimaryDrawerItem().withIdentifier(6).withName("Log out");
-        PrimaryDrawerItem item7 = new PrimaryDrawerItem().withIdentifier(7).withName("Add A recipe TEST");
+        PrimaryDrawerItem item7 = new PrimaryDrawerItem().withIdentifier(7).withName("Add a recipe");
 
         AccountHeader accountHeader = new AccountHeaderBuilder()
                 .withActivity(this)
                 .withTranslucentStatusBar(true)
-                .withHeaderBackground(R.drawable.ic_applogoo)
+                .withHeaderBackground(R.drawable.ic_applogooo)
                 .build();
 
         //create the drawer and remember the `Drawer` result object
@@ -75,19 +77,19 @@ public class ShoppingList extends AppCompatActivity {
                 .addDrawerItems(
                         item1,
                         item4,
+                        item7,
                         new DividerDrawerItem(),
-                        item7
+                        //   item5,
+                        item6
                 )
                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
                     @Override
                     public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
-                        // do something with the clicked item
+                        // do something with the clicked item :D
 
                         switch((int)drawerItem.getIdentifier()) {
                             case 1:
                                 result.closeDrawer();
-                                Intent homeIntent = new Intent(ShoppingList.this, HomeActivity.class);
-                                startActivity(homeIntent);
                                 break;
                             case 2:
                                 result.closeDrawer();
@@ -97,12 +99,17 @@ public class ShoppingList extends AppCompatActivity {
                                 break;
                             case 4:
                                 result.closeDrawer();
+                                Intent shoppingListIntent = new Intent(ShoppingList.this, ShoppingList.class);
+                                startActivity(shoppingListIntent);
                                 break;
                             case 5:
                                 result.closeDrawer();
                                 break;
                             case 6:
                                 result.closeDrawer();
+                                mAuth.signOut();
+                                finish();
+                                startActivity(new Intent(ShoppingList.this, LoginActivity.class));
                                 break;
                             case 7:
                                 result.closeDrawer();
@@ -115,19 +122,17 @@ public class ShoppingList extends AppCompatActivity {
                     }
                 })
                 .build();
-
-        result.addStickyFooterItem(item5);
-        result.addStickyFooterItem(item6);
     }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_shopping_list);
-
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        mAuth = FirebaseAuth.getInstance();
         navbar_setup();
 
         // Create the adapter that will return a fragment for each of the three
