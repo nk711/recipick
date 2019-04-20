@@ -143,6 +143,7 @@ public class RecipeOverviewFragment extends Fragment {
             recipe_id = (String)extras.getString(Utility.ID);
         }
 
+        /** Button text changes depending whether the user had favourited the currently viewed recipe */
         if (Utility.checkFavouriteRecipe(requireContext(), recipe_id)) {
             btnFavourites.setText("Remove from favourites");
 
@@ -150,6 +151,7 @@ public class RecipeOverviewFragment extends Fragment {
             btnFavourites.setText("Add to favourite");
         }
 
+        /** Adds the recipe to the user's favourite list */
         btnFavourites.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -167,6 +169,7 @@ public class RecipeOverviewFragment extends Fragment {
             }
         });
 
+        /** Adds the ingredients from the recipe to the user's trolley */
         btnTrolley.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -183,6 +186,7 @@ public class RecipeOverviewFragment extends Fragment {
         return view;
     }
 
+    /** Removes the recipe from the user's recipe list */
     public void removeFromFavourites() {
         userRef.update(FAVOURITES+"."+recipe_id, FieldValue.delete())
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -198,6 +202,8 @@ public class RecipeOverviewFragment extends Fragment {
                     }
                 });
     }
+
+    /** Adds the recipe to the user's favourite list */
     public void addToFavourites() {
         userRef.update(FAVOURITES+"."+recipe_id, recipe)
               .addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -216,7 +222,7 @@ public class RecipeOverviewFragment extends Fragment {
 
     }
 
-
+    /** Adds the recipe's ingredients to the user's trolley */
     public void addToTrolley() {
         List<String> itemsInTrolly = Arrays.asList(Utility.retrieveUserTrolley(requireContext()));
         Map<String, Object> trolley = new HashMap<>();
@@ -237,6 +243,7 @@ public class RecipeOverviewFragment extends Fragment {
         if (trolley.size()==0)  {
             Toasty.info(requireContext(), "Ingredients are already in your trolley!", Toast.LENGTH_SHORT, true).show();
         } else {
+            /** Updates the users trolley */
             userRef.update(trolley)
                     .addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
