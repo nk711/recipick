@@ -73,7 +73,7 @@ public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.View
         Glide.with(this.context)
                 .load(image)
                 .centerCrop()
-                .placeholder(R.drawable.ic_applogoo)
+                .placeholder(R.drawable.ic_applogo)
                 .error(R.drawable.ic_applogo)
                 .dontAnimate()
                 .diskCacheStrategy(DiskCacheStrategy.ALL)

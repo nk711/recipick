@@ -15,10 +15,8 @@ import com.example.softeng.recipick.Models.Recipe;
 import com.example.softeng.recipick.Models.Utility;
 import com.example.softeng.recipick.R;
 import com.example.softeng.recipick.ViewHolders.RecipeViewHolder;
-import com.google.firebase.firestore.DocumentSnapshot;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -84,7 +82,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeViewHolder> {
         Glide.with(this.context)
                 .load(recipe.getImages().get(0))
                 .centerCrop()
-                .placeholder(R.drawable.ic_applogoo)
+                .placeholder(R.drawable.ic_applogo)
                 .error(R.drawable.ic_applogo)
                 .dontAnimate()
                 .diskCacheStrategy(DiskCacheStrategy.ALL)

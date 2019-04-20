@@ -78,8 +78,8 @@ public class ImageViewAdapter extends PagerAdapter {
         Glide.with(this.context)
                 .load(images.get(position))
                 .centerCrop()
-                .placeholder(R.drawable.ic_applogoo)
-                .error(R.drawable.ic_applogoo)
+                .placeholder(R.drawable.ic_applogo)
+                .error(R.drawable.ic_applogo)
                 .into(image);
 
         ViewPager vp = (ViewPager) container;

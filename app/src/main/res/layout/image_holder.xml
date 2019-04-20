@@ -14,7 +14,7 @@
         android:scaleType="centerCrop"
         android:adjustViewBounds="true"
         android:layout_weight="1"
-        app:srcCompat="@drawable/ic_applogoo" />
+        app:srcCompat="@drawable/ic_applogo" />
 
 
 </LinearLayout>

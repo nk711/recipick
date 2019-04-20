@@ -51,7 +51,7 @@ public class FirestoreRecipeAdapter extends FirestoreRecyclerAdapter<Recipe, Rec
         Glide.with(this.context)
                 .load(recipe.getImages().get(0))
                 .centerCrop()
-                .placeholder(R.drawable.ic_applogoo)
+                .placeholder(R.drawable.ic_applogo)
                 .error(R.drawable.ic_applogo)
                 .dontAnimate()
                 .diskCacheStrategy(DiskCacheStrategy.ALL)

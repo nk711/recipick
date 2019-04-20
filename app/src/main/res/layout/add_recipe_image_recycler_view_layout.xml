@@ -18,7 +18,7 @@
         android:layout_height="75dp"
         android:layout_marginStart="5dp"
         android:layout_marginEnd="15dp"
-        app:srcCompat ="@drawable/ic_applogoo" />
+        app:srcCompat ="@drawable/ic_applogo" />
 
     <TextView
         android:id="@+id/txt_file"

@@ -66,7 +66,7 @@ public class ShoppingList extends AppCompatActivity {
         AccountHeader accountHeader = new AccountHeaderBuilder()
                 .withActivity(this)
                 .withTranslucentStatusBar(true)
-                .withHeaderBackground(R.drawable.ic_applogooo)
+                .withHeaderBackground(R.drawable.ic_applogo)
                 .build();
 
         //create the drawer and remember the `Drawer` result object

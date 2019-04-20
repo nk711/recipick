@@ -15,7 +15,7 @@
         android:layout_marginEnd="50dp"
         android:layout_gravity="center"
         android:layout_centerInParent="true"
-        app:srcCompat="@drawable/ic_applogoo"
+        app:srcCompat="@drawable/ic_applogo"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:contentDescription="@string/app_logo_splash" />
