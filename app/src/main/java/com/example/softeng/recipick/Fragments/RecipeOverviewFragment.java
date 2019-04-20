@@ -201,9 +201,6 @@ public class RecipeOverviewFragment extends Fragment {
             }
 
         }
-
-        Toasty.error(requireContext(), itemsInTrolly.toString(), Toast.LENGTH_SHORT, true).show();
-
         if (trolley.size()==0)  {
             Toasty.info(requireContext(), "Ingredients are already in your trolley!", Toast.LENGTH_SHORT, true).show();
         } else {
