@@ -83,8 +83,10 @@ public class HomeActivity extends AppCompatActivity {
                 .addDrawerItems(
                         item1,
                         item4,
+                        item7,
                         new DividerDrawerItem(),
-                        item7
+                        item5,
+                        item6
                 )
                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
                     @Override
@@ -111,6 +113,9 @@ public class HomeActivity extends AppCompatActivity {
                                 break;
                             case 6:
                                 result.closeDrawer();
+                                mAuth.signOut();
+                                finish();
+                                startActivity(new Intent(HomeActivity.this, LoginActivity.class));
                                 break;
                             case 7:
                                 result.closeDrawer();
@@ -123,9 +128,6 @@ public class HomeActivity extends AppCompatActivity {
                     }
                 })
                 .build();
-
-        result.addStickyFooterItem(item5);
-        result.addStickyFooterItem(item6);
     }
 
     @Override
