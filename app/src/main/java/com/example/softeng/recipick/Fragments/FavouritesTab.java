@@ -61,15 +61,19 @@ public class FavouritesTab extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        recipeAdapter = new RecipeAdapter(requireContext(), Utility.user.getFavourites());
-        recyclerView.setAdapter(recipeAdapter);
+        if (Utility.user != null) {
+            recipeAdapter = new RecipeAdapter(requireContext(), Utility.user.getFavourites());
+            recyclerView.setAdapter(recipeAdapter);
+        }
 
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        recipeAdapter = new RecipeAdapter(requireContext(), Utility.user.getFavourites());
-        recyclerView.setAdapter(recipeAdapter);
+        if (Utility.user != null) {
+            recipeAdapter = new RecipeAdapter(requireContext(), Utility.user.getFavourites());
+            recyclerView.setAdapter(recipeAdapter);
+        }
     }
 }
