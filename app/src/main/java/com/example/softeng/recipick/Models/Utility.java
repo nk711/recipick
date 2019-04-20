@@ -1,24 +1,16 @@
 package com.example.softeng.recipick.Models;
-
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
-import android.util.Log;
-import android.widget.EditText;
-import android.widget.Toast;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
 
-import es.dmoral.toasty.Toasty;
 
 public class Utility {
 
@@ -29,12 +21,14 @@ public class Utility {
     public static final String FAVOURITES = "favourites";
     public static final String TROLLEY = "trolley";
     public static final String RECIPE = "RECIPE";
+    public static final String ID = "ID";
 
-    private static User user;
+    public static User user;
 
 
 
     private DocumentReference userRef;
+
 
     public static boolean loggedIn() {
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
@@ -57,9 +51,8 @@ public class Utility {
         if (!Utility.loggedIn()) {
             return;
         }
-
         DocumentReference userRef = FirebaseFirestore.getInstance().collection(USERS).document(getUid());
-       // CountDownLatch done = new CountDownLatch(1);
+       /** Could turn this into a listener */
         userRef.get()
                 .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
@@ -79,8 +72,8 @@ public class Utility {
                                 }
                                 StringBuilder favourites = new StringBuilder();
                                 if (user.getFavourites()!=null) {
-                                    for (String recipe : user.getFavourites()) {
-                                        favourites.append(recipe).append(",");
+                                    for (String id : user.getFavourites().keySet()) {
+                                        favourites.append(id).append(",");
                                     }
                                 }
                                 StringBuilder trolleyList = new StringBuilder();
@@ -122,6 +115,19 @@ public class Utility {
         return listOfIngredients;
     }
 
+
+    public static String[] retrieveUserTrolley(final Context context) {
+        SharedPreferences prefs = context.getSharedPreferences("com.example.softeng.recipick", Context.MODE_PRIVATE);
+        String list = prefs.getString(TROLLEY, "");
+        String[] listOfIngredients = null;
+        if (list != null) {
+            listOfIngredients =  list.split(",");
+        }
+        return listOfIngredients;
+    }
+
+
+
     public static boolean checkFavouriteRecipe(final Context context, String recipe_uid) {
         SharedPreferences prefs = context.getSharedPreferences("com.example.softeng.recipick", Context.MODE_PRIVATE);
         String list = prefs.getString(FAVOURITES, "");
@@ -131,10 +137,10 @@ public class Utility {
             listOfFavourites =  Arrays.asList(list.split(","));
             exists = listOfFavourites.contains(recipe_uid);
         }
-        Log.d("test", list);
-        Log.d("does recipe exist", String.valueOf(exists));
         return exists;
     }
+
+
     public static void updateUserTrolley(final Context context, List<String> trolley) {
         SharedPreferences prefs = context.getSharedPreferences("com.example.softeng.recipick", Context.MODE_PRIVATE);
         StringBuilder list = new StringBuilder();

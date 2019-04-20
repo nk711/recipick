@@ -22,6 +22,8 @@ import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.example.softeng.recipick.Adapters.ImageListAdapter;
+import com.example.softeng.recipick.Models.Recipe;
+import com.example.softeng.recipick.Models.Utility;
 import com.example.softeng.recipick.R;
 import java.util.List;
 
@@ -72,6 +74,8 @@ public class RecipePhotosFragment extends Fragment {
     private Button btnOpenDialog;
 
 
+    /** Holds the selected recipe */
+    private Recipe recipe;
     /** Recycler view will hold the list of selected images */
     private RecyclerView mImages;
 
@@ -119,6 +123,19 @@ public class RecipePhotosFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view =  inflater.inflate(R.layout.fragment_recipe_photos, container, false);
+
+        if (savedInstanceState != null) {
+            recipe = (Recipe)savedInstanceState.getSerializable("recipe");
+        }
+
+        /** gets the bundle from the previous activity */
+        Bundle extras = requireActivity().getIntent().getExtras();
+        /** checks if the bundle is null */
+        if (extras!=null) {
+            /** if not set the item */
+            recipe = (Recipe)extras.getSerializable(Utility.RECIPE);
+        }
+
 
         if (view != null) {
             btnOpenDialog = view.findViewById(R.id.btnOpenDialog);

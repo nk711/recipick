@@ -40,16 +40,19 @@ public class IngredientsAdapter extends ArrayAdapter<String> {
 
     private static final String USERS = "Users";
     private static final String INGREDIENTS = "ingredients";
+    private static final String TROLLEY = "trolley";
 
+    private String tag;
 
     /**
      * Parameterised constructor
      * @param context
      * @param objects
      */
-    public IngredientsAdapter(Context context, List<String> objects) {
+    public IngredientsAdapter(Context context, List<String> objects, String tag) {
         super(context, R.layout.ingredients_row_layout, objects);
         this.ingredientsList = objects;
+        this.tag = tag;
     }
 
     /**
@@ -76,7 +79,7 @@ public class IngredientsAdapter extends ArrayAdapter<String> {
         imageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                userRef.update(INGREDIENTS + "." + ingredientsList.get(position), FieldValue.delete() )
+                userRef.update(tag + "." + ingredientsList.get(position), FieldValue.delete() )
                         .addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {

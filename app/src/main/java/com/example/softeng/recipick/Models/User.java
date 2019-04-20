@@ -1,15 +1,14 @@
 package com.example.softeng.recipick.Models;
 
-import java.util.ArrayList;
+
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class User {
     private String display_name;
     private String email;
     private Map<String, Boolean> ingredients;
-    private List<String> favourites;
+    private Map<String, Recipe> favourites;
     private Map<String, Boolean> trolley;
 
     public User() {
@@ -20,15 +19,15 @@ public class User {
         this.display_name = display_name;
         this.email = email;
         this.ingredients = new HashMap<>();
-        this.favourites = new ArrayList<>();
+        this.favourites = new HashMap<>();
         this.trolley = new HashMap<>();
     }
 
-    public List<String> getFavourites() {
+    public Map<String, Recipe> getFavourites() {
         return favourites;
     }
 
-    public void setFavourites(List<String> favourites) {
+    public void setFavourites(Map<String, Recipe> favourites) {
         this.favourites = favourites;
     }
 

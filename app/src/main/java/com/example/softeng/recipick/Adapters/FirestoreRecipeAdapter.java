@@ -17,12 +17,12 @@ import com.example.softeng.recipick.R;
 import com.example.softeng.recipick.ViewHolders.RecipeViewHolder;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.firebase.firestore.DocumentSnapshot;
 
 import es.dmoral.toasty.Toasty;
 
 
 public class FirestoreRecipeAdapter extends FirestoreRecyclerAdapter<Recipe, RecipeViewHolder> {
-
     private Context context;
 
     public FirestoreRecipeAdapter(Context context, @NonNull FirestoreRecyclerOptions<Recipe> options) {
@@ -34,6 +34,7 @@ public class FirestoreRecipeAdapter extends FirestoreRecyclerAdapter<Recipe, Rec
     protected void onBindViewHolder(@NonNull RecipeViewHolder holder, int position, @NonNull final Recipe recipe) {
         holder.textViewName.setText(recipe.getName());
         holder.textViewDesc.setText(recipe.getDescription());
+        final DocumentSnapshot snapshot = getSnapshots().getSnapshot(holder.getAdapterPosition());
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -41,6 +42,7 @@ public class FirestoreRecipeAdapter extends FirestoreRecyclerAdapter<Recipe, Rec
                 Intent viewItem = new Intent(context, RecipeDetails.class);
                 Bundle bundle = new Bundle();
                 bundle.putSerializable(Utility.RECIPE, recipe);
+                bundle.putString(Utility.ID, snapshot.getId());
                 viewItem.putExtras(bundle);
                 context.startActivity(viewItem);
             }

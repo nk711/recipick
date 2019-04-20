@@ -1,6 +1,8 @@
 package com.example.softeng.recipick.Adapters;
 
 import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,11 +10,19 @@ import android.view.ViewGroup;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.example.softeng.recipick.Activities.RecipeDetails;
 import com.example.softeng.recipick.Models.Recipe;
+import com.example.softeng.recipick.Models.Utility;
 import com.example.softeng.recipick.R;
 import com.example.softeng.recipick.ViewHolders.RecipeViewHolder;
+import com.google.firebase.firestore.DocumentSnapshot;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+
+import es.dmoral.toasty.Toasty;
 
 /**
  * RecyclerView.Adapter - binds data to the view
@@ -25,10 +35,12 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeViewHolder> {
 
     /** Holds the list of recipes - for now*/
     private List<Recipe> recipeList;
+    private List<String> idList;
 
-    public RecipeAdapter(Context context, List<Recipe> recipeList) {
+    public RecipeAdapter(Context context, Map<String, Recipe> recipeList) {
         this.context = context;
-        this.recipeList = recipeList;
+        this.recipeList = new ArrayList<>(recipeList.values());
+        this.idList = new ArrayList<>(recipeList.keySet());
 
     }
 
@@ -48,31 +60,35 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeViewHolder> {
 
     /**
      * Bind data to view holder
-     * @param recipeViewHolder
+     * @param holder
      * @param pos
      */
     @Override
-    public void onBindViewHolder(RecipeViewHolder recipeViewHolder, int pos) {
-        // Get the specified recipe using pos
-        Recipe recipe = recipeList.get(pos);
+    public void onBindViewHolder(final RecipeViewHolder holder, int pos) {
+        final Recipe recipe = recipeList.get(holder.getAdapterPosition());
+        holder.textViewName.setText(recipe.getName());
+        holder.textViewDesc.setText(recipe.getDescription());
+        holder.mView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toasty.info(context, "hii", Toasty.LENGTH_LONG, true).show();
+                Intent viewItem = new Intent(context, RecipeDetails.class);
+                Bundle bundle = new Bundle();
+                bundle.putSerializable(Utility.RECIPE, recipe);
+                bundle.putString(Utility.ID, idList.get(holder.getAdapterPosition()));
+                viewItem.putExtras(bundle);
+                context.startActivity(viewItem);
+            }
+        });
 
-        recipeViewHolder.textViewName.setText(recipe.getName());
-        recipeViewHolder.textViewDesc.setText(recipe.getDescription());
-
-        try {
-            Glide.with(this.context)
-                    .load(recipe.getImages().get(0))
-                    .centerCrop()
-                    .placeholder(R.drawable.ic_applogoo)
-                    .error(R.drawable.ic_applogo)
-                    .dontAnimate()
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .into(recipeViewHolder.imageView);
-
-            /** Catches an error caused if the recipe has no images */
-        } catch (IndexOutOfBoundsException e) {
-
-        }
+        Glide.with(this.context)
+                .load(recipe.getImages().get(0))
+                .centerCrop()
+                .placeholder(R.drawable.ic_applogoo)
+                .error(R.drawable.ic_applogo)
+                .dontAnimate()
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .into(holder.imageView);
     }
 
     /**

@@ -56,8 +56,6 @@ public class ShoppingList extends AppCompatActivity {
     public void navbar_setup() {
         //if you want to update the items at a later time it is recommended to keep it in a variable
         PrimaryDrawerItem item1 = new PrimaryDrawerItem().withIdentifier(1).withName("Home");
-        PrimaryDrawerItem item2 = new PrimaryDrawerItem().withIdentifier(2).withName("My Recipes");
-        PrimaryDrawerItem item3 = new PrimaryDrawerItem().withIdentifier(3).withName("My Favourites");
         PrimaryDrawerItem item4 = new PrimaryDrawerItem().withIdentifier(4).withName("Shopping List");
         PrimaryDrawerItem item5 = new PrimaryDrawerItem().withIdentifier(5).withName("Profile");
         PrimaryDrawerItem item6 = new PrimaryDrawerItem().withIdentifier(6).withName("Log out");
@@ -76,8 +74,6 @@ public class ShoppingList extends AppCompatActivity {
                 .withAccountHeader(accountHeader)
                 .addDrawerItems(
                         item1,
-                        item2,
-                        item3,
                         item4,
                         new DividerDrawerItem(),
                         item7

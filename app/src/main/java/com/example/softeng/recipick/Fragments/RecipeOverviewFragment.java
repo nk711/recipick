@@ -26,13 +26,18 @@ import com.example.softeng.recipick.Models.Recipe;
 import com.example.softeng.recipick.Models.Utility;
 import com.example.softeng.recipick.R;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import es.dmoral.toasty.Toasty;
 
@@ -55,11 +60,16 @@ public class RecipeOverviewFragment extends Fragment {
     private static final String TROLLEY = "trolley";
     private static final String FAVOURITES = "favourites";
     private static final String USERS = "Users";
+    private static final String USERFAVOURITES = "User_Favourites";
 
 
     private FirebaseAuth mAuth;
     private DocumentReference userRef;
+
+    private DocumentReference userFavouriteRef;
     private String uid;
+
+    private String recipe_id;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -112,12 +122,13 @@ public class RecipeOverviewFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view =  inflater.inflate(R.layout.fragment_recipe_overview, container, false);
         if (savedInstanceState != null) {
-            recipe = (Recipe)savedInstanceState.getSerializable("contacts");
+            recipe = (Recipe)savedInstanceState.getSerializable("recipe");
         }
 
         mAuth = FirebaseAuth.getInstance();
         uid =mAuth.getCurrentUser().getUid();
         userRef = FirebaseFirestore.getInstance().collection(USERS).document(uid);
+        userFavouriteRef = FirebaseFirestore.getInstance().collection(USERFAVOURITES).document(uid);
 
 
         btnFavourites = view.findViewById(R.id.btnFavourite);
@@ -129,6 +140,14 @@ public class RecipeOverviewFragment extends Fragment {
         if (extras!=null) {
             /** if not set the item */
             recipe = (Recipe)extras.getSerializable(Utility.RECIPE);
+            recipe_id = (String)extras.getString(Utility.ID);
+        }
+
+        if (Utility.checkFavouriteRecipe(requireContext(), recipe_id)) {
+            btnFavourites.setText("Remove from favourites");
+
+        } else {
+            btnFavourites.setText("Add to favourite");
         }
 
         btnFavourites.setOnClickListener(new View.OnClickListener() {
@@ -136,9 +155,9 @@ public class RecipeOverviewFragment extends Fragment {
             public void onClick(View v) {
                 /** Checks if the recipe is null, if not go back to main page, otherwise
                  *  Check if the recipe exists in the user's favourite list, if not add to favourites*/
-                if (recipe!=null) {
-                    if (Utility.checkFavouriteRecipe(requireContext(), recipe.getUid())) {
-                        Toasty.info(requireContext(), "Recipe already added to favourites", Toasty.LENGTH_LONG, true).show();
+                if (recipe!=null||recipe_id!=null) {
+                    if (Utility.checkFavouriteRecipe(requireContext(), recipe_id)) {
+                        removeFromFavourites();
                     } else {
                         addToFavourites();
                     }
@@ -154,7 +173,7 @@ public class RecipeOverviewFragment extends Fragment {
                 /** Checks if the recipe is null, if not go back to main page, otherwise
                  *  add ingredients to the shopping list */
                 if (recipe!=null) {
-
+                    addToTrolley();
                 } else {
                     requireActivity().onBackPressed();
                 }
@@ -164,35 +183,75 @@ public class RecipeOverviewFragment extends Fragment {
         return view;
     }
 
-    public void addToFavourites() {
-        userRef.update(FAVOURITES, FieldValue.arrayUnion(recipe.getUid()))
+    public void removeFromFavourites() {
+        userRef.update(FAVOURITES+"."+recipe_id, FieldValue.delete())
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()) {
                             Utility.saveUserDetails(requireContext());
-                            Toasty.success(requireContext(), "Recipe added to Favourites", Toasty.LENGTH_LONG, true).show();
+                            Toasty.success(requireContext(), "Recipe removed from Favourites", Toasty.LENGTH_LONG, true).show();
+                            btnFavourites.setText("Add to favourite");
                         } else {
                             Toasty.error(requireContext(), "An error has occurred, Please check your internet connection!", Toast.LENGTH_SHORT, true).show();
                         }
                     }
                 });
+    }
+    public void addToFavourites() {
+        userRef.update(FAVOURITES+"."+recipe_id, recipe)
+              .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            Utility.saveUserDetails(requireContext());
+                            Toasty.success(requireContext(), "Recipe added to Favourites", Toasty.LENGTH_LONG, true).show();
+                            btnFavourites.setText("Remove from favourites");
+
+                        } else {
+                            Toasty.error(requireContext(), "An error has occurred, Please check your internet connection!", Toast.LENGTH_SHORT, true).show();
+                        }
+                    }
+                });
+
     }
 
-    public void addToTrolly() {
-        userRef.update(TROLLEY, FieldValue.arrayUnion(recipe.getUid()))
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()) {
-                            Utility.saveUserDetails(requireContext());
-                            Toasty.success(requireContext(), "Recipe added to Favourites", Toasty.LENGTH_LONG, true).show();
-                        } else {
-                            Toasty.error(requireContext(), "An error has occurred, Please check your internet connection!", Toast.LENGTH_SHORT, true).show();
+
+    public void addToTrolley() {
+        List<String> itemsInTrolly = Arrays.asList(Utility.retrieveUserTrolley(requireContext()));
+        Map<String, Object> trolley = new HashMap<>();
+        /** Checks if the user has any ingredients to compare to, if so then begin to filter out all the recipe ingredients that are in the users trolley */
+        if (itemsInTrolly.size()!=0) {
+            for (String ingredient : recipe.getIngredientsQuery().keySet()) {
+                if (!itemsInTrolly.contains(ingredient)) {
+                    trolley.put(TROLLEY + "." + ingredient, true);
+                }
+            }
+            /** Since the user has no ingredients, simply add the items into the trolley */
+        } else {
+            for (String ingredient : recipe.getIngredientsQuery().keySet()) {
+                    trolley.put(TROLLEY + "." + ingredient, true);
+            }
+
+        }
+        if (trolley.size()==0)  {
+            Toasty.info(requireContext(), "Ingredients are already in your trolley!", Toast.LENGTH_SHORT, true).show();
+        } else {
+            userRef.update(trolley)
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                Utility.saveUserDetails(requireContext());
+                                Toasty.success(requireContext(), "Recipe ingredients added to your trolley", Toasty.LENGTH_LONG, true).show();
+                            } else {
+                                Toasty.error(requireContext(), "An error has occurred, Please check your internet connection!", Toast.LENGTH_SHORT, true).show();
+                            }
                         }
-                    }
-                });
+                    });
+        }
     }
+
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
