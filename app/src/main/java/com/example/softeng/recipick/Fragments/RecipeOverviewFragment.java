@@ -185,26 +185,41 @@ public class RecipeOverviewFragment extends Fragment {
 
 
     public void addToTrolley() {
-        List<String> userIngredients = Arrays.asList(Utility.retrieveUserIngredients(requireContext()));
+        List<String> itemsInTrolly = Arrays.asList(Utility.retrieveUserTrolley(requireContext()));
         Map<String, Object> trolley = new HashMap<>();
-        for (String ingredient: userIngredients) {
-            if (!userIngredients.contains(ingredient)) {
-                trolley.put(TROLLEY+"."+ingredient, true);
+        /** Checks if the user has any ingredients to compare to, if so then begin to filter out all the recipe ingredients that are in the users trolley */
+        if (itemsInTrolly.size()!=0) {
+            for (String ingredient : recipe.getIngredientsQuery().keySet()) {
+                if (!itemsInTrolly.contains(ingredient)) {
+                    trolley.put(TROLLEY + "." + ingredient, true);
+                }
             }
+            /** Since the user has no ingredients, simply add the items into the trolley */
+        } else {
+            for (String ingredient : recipe.getIngredientsQuery().keySet()) {
+                    trolley.put(TROLLEY + "." + ingredient, true);
+            }
+
         }
 
-        userRef.update(trolley)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()) {
-                            Utility.saveUserDetails(requireContext());
-                            Toasty.success(requireContext(), "Recipe ingredients added to your trolley", Toasty.LENGTH_LONG, true).show();
-                        } else {
-                            Toasty.error(requireContext(), "An error has occurred, Please check your internet connection!", Toast.LENGTH_SHORT, true).show();
+        Toasty.error(requireContext(), itemsInTrolly.toString(), Toast.LENGTH_SHORT, true).show();
+
+        if (trolley.size()==0)  {
+            Toasty.info(requireContext(), "Ingredients are already in your trolley!", Toast.LENGTH_SHORT, true).show();
+        } else {
+            userRef.update(trolley)
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                Utility.saveUserDetails(requireContext());
+                                Toasty.success(requireContext(), "Recipe ingredients added to your trolley", Toasty.LENGTH_LONG, true).show();
+                            } else {
+                                Toasty.error(requireContext(), "An error has occurred, Please check your internet connection!", Toast.LENGTH_SHORT, true).show();
+                            }
                         }
-                    }
-                });
+                    });
+        }
     }
 
     @Override

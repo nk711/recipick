@@ -123,6 +123,18 @@ public class Utility {
     }
 
 
+    public static String[] retrieveUserTrolley(final Context context) {
+        SharedPreferences prefs = context.getSharedPreferences("com.example.softeng.recipick", Context.MODE_PRIVATE);
+        String list = prefs.getString(TROLLEY, "");
+        String[] listOfIngredients = null;
+        if (list != null) {
+            listOfIngredients =  list.split(",");
+        }
+        return listOfIngredients;
+    }
+
+
+
     public static boolean checkFavouriteRecipe(final Context context, String recipe_uid) {
         SharedPreferences prefs = context.getSharedPreferences("com.example.softeng.recipick", Context.MODE_PRIVATE);
         String list = prefs.getString(FAVOURITES, "");
