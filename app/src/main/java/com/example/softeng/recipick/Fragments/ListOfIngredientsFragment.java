@@ -41,6 +41,8 @@ import es.dmoral.toasty.Toasty;
 public class ListOfIngredientsFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+    private static final String TAG = "ListOfIngredients";
+
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
@@ -110,7 +112,7 @@ public class ListOfIngredientsFragment extends Fragment {
 
         this.listView = (ListView) view.findViewById(R.id.ingredientsView);
 
-        adapter = new IngredientsAdapter(ListOfIngredientsFragment.this.getContext(), ingredients);
+        adapter = new IngredientsAdapter(ListOfIngredientsFragment.this.getContext(), ingredients, INGREDIENTS);
 
         loadUsersIngredients();
 
