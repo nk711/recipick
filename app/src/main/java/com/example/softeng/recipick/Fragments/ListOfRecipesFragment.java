@@ -9,9 +9,13 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -30,6 +34,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.common.base.MoreObjects;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
@@ -64,9 +69,6 @@ public class ListOfRecipesFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    private FirebaseAuth mAuth;
-
-    private List<String> ingredients = new ArrayList<>();
 
 
     private CollectionReference recipeRef;
@@ -80,6 +82,8 @@ public class ListOfRecipesFragment extends Fragment {
     private static final String RECIPES = "Recipes";
 
 
+    private Button btnSearch;
+    private EditText txtSearch;
     RecyclerView recyclerView;
 
     private OnFragmentInteractionListener mListener;
@@ -129,23 +133,67 @@ public class ListOfRecipesFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+        btnSearch = (Button) view.findViewById(R.id.btnSearch);
+        txtSearch = (EditText) view.findViewById(R.id.txtSearch);
         recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
         uid = Utility.getUid();
         recipeRef = FirebaseFirestore.getInstance().collection(RECIPES);
         userRef = FirebaseFirestore.getInstance().collection(USERS).document(uid);
 
-        setAdapter();
+
+        txtSearch.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                /**
+                 * If the user erases text such that txtField has length 0 then
+                 *  display list as usual else, supply the additional query parameters
+                 *  to the adapter.
+                 *
+                if (s.toString().length()==0) {
+                    setAdapter(null);
+                } else {
+                    setAdapter(s.toString().trim());
+                }
+                 */
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+        btnSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //setAdapter(txtSearch.toString().trim());
+            }
+        });
+        setAdapter(null);
     }
 
-    public void setAdapter () {
+
+    public void setAdapter (String additional) {
         String[] listOfIngredients = Utility.retrieveUserIngredients(this.requireContext());
-        Query query = recipeRef;
+        Query query = recipeRef.orderBy("name");
         for (String item : listOfIngredients) {
             if (!item.isEmpty())
                 query = query.whereEqualTo("ingredientsQuery." + item, true);
         }
+        if (additional!= null) {
+            query = query.startAt(additional).endAt(additional+"\uf8ff");
+            Toasty.error(requireContext(), additional, Toast.LENGTH_LONG).show();
+
+        }
+
         if (recipeAdapter!=null)
             recipeAdapter.stopListening();
+
 
         FirestoreRecyclerOptions<Recipe> options = new FirestoreRecyclerOptions.Builder<Recipe>()
                 .setQuery(query, Recipe.class)
@@ -190,7 +238,7 @@ public class ListOfRecipesFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        setAdapter();
+        setAdapter(null);
         if (recipeAdapter!=null)
             recipeAdapter.startListening();
     }
@@ -205,7 +253,7 @@ public class ListOfRecipesFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        setAdapter();
+        setAdapter(null);
         if (recipeAdapter!=null)
             recipeAdapter.startListening();
     }
