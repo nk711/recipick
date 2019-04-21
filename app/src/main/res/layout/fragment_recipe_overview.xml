@@ -9,33 +9,6 @@
     android:orientation="vertical"
     tools:context=".Activities.RecipeDetails$PlaceholderFragment">
 
-
-    <Button
-        android:id="@+id/btnFavourite"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/hollow_button"
-        android:paddingStart="20dp"
-        android:paddingEnd="20dp"
-        android:text="Add to Favourite"
-        android:textAlignment="center"
-        android:textColor="@color/TitleColour" />
-
-    <Button
-        android:id="@+id/btnShop"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/hollow_button"
-        android:layout_marginTop="10dp"
-        android:paddingStart="20dp"
-        android:paddingEnd="20dp"
-        android:layout_gravity="center"
-        android:layout_alignParentEnd="true"
-        android:text = "Add to Shopping List"
-        android:textColor="@color/TitleColour"
-        android:textAlignment="center"/>
-
-
     <TextView
         android:id="@+id/recipeName"
         android:layout_width="match_parent"
@@ -74,15 +47,36 @@
 
     <ListView
         android:id="@+id/ingredients"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/activity_horizontal_margin"
-        android:layout_marginTop="@dimen/activity_vertical_margin"
-        android:layout_marginEnd="@dimen/activity_horizontal_margin"
-        android:layout_marginBottom="@dimen/activity_vertical_margin"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="@+id/constraintLayout"
         tools:layout_constraintLeft_creator="1"
         tools:layout_constraintTop_creator="1" />
 
+
+    <Button
+        android:id="@+id/btnFavourite"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/hollow_button"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:text="Add to Favourite"
+        android:textAlignment="center"
+        android:textColor="@color/TitleColour" />
+
+    <Button
+        android:id="@+id/btnShop"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/hollow_button"
+        android:layout_marginTop="10dp"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:layout_gravity="center"
+        android:layout_alignParentEnd="true"
+        android:text = "Add to Shopping List"
+        android:textColor="@color/TitleColour"
+        android:textAlignment="center"/>
 </LinearLayout>
