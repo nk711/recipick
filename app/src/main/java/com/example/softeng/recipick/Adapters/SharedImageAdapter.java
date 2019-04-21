@@ -47,7 +47,11 @@ public class SharedImageAdapter extends BaseAdapter  {
 
     @Override
     public int getCount() {
-        return images.size();
+            if (images==null) {
+                return 0;
+            } else {
+                return images.size();
+            }
     }
 
     /**
