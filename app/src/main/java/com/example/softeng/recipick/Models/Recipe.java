@@ -20,7 +20,7 @@ public class Recipe implements Serializable {
     private String cuisine = null;
     private String meals = null;
     private List<String> images = null;
-    private List<Review> reviews = null;
+    private List<String> sharedImages = null;
     private boolean share = false;
     private boolean visibility = false;
 
@@ -47,16 +47,22 @@ public class Recipe implements Serializable {
         this.images = new ArrayList<>();
         this.share = share;
         this.author = author;
-        this.reviews = new ArrayList<>();
+        this.sharedImages = new ArrayList<>();
     }
 
-
-    public List<Review> getReviews() {
-        return reviews;
+    public List<String> getSharedImages() {
+        return sharedImages;
     }
 
-    public void setReviews(List<Review> reviews) {
-        this.reviews = reviews;
+    public void setSharedImages(List<String> sharedImages) {
+        this.sharedImages = sharedImages;
+    }
+
+    public void addToSharedImages(String sharedImage) {
+        if (this.sharedImages==null) {
+            this.sharedImages = new ArrayList<>();
+        }
+        this.sharedImages.add(sharedImage);
     }
 
     public Map<String, Boolean> getIngredientsQuery() {
