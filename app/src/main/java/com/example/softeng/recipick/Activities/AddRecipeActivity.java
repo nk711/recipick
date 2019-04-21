@@ -250,6 +250,10 @@ public class AddRecipeActivity extends AppCompatActivity {
                 measurements.add(txtMeasurement.getText().toString());
                 quantity.add(txtQuantity.getText().toString());
                 ingredientsAdapter.notifyDataSetChanged();
+
+                txtIngredient.setText("");
+                txtMeasurement.setText("");
+                txtQuantity.setText("");
             }
         });
 
