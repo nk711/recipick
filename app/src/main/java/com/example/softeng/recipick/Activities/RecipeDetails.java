@@ -56,6 +56,7 @@ public class RecipeDetails extends AppCompatActivity {
     private CollapsingToolbarLayout collapsingToolBar;
 
     /** Image view holder, will hold an array of images */
+    /** Image view holder, will hold an array of images */
     private ViewPager mImageHolder;
     /** The selected recipe*/
     private Recipe recipe;

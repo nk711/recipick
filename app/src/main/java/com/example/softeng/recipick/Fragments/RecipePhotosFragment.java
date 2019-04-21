@@ -89,6 +89,7 @@ public class RecipePhotosFragment extends Fragment {
     private FirebaseAuth mAuth;
 
 
+    private Boolean result;
 
 
     private Uri imageUri;
@@ -183,6 +184,7 @@ public class RecipePhotosFragment extends Fragment {
 
         }
 
+        result = false;
         downloadedList = new ArrayList<>();
         mAuth = FirebaseAuth.getInstance();
         /** gets the uid of the currently logged in user */
@@ -274,15 +276,20 @@ public class RecipePhotosFragment extends Fragment {
         btnShare.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (fileList.size()>1) {
-                    Toasty.info(requireContext(), "You can only upload one image", Toasty.LENGTH_LONG).show();
-                } else {
-                    if (mRecipe!=null&&mRecipe_id!=null) {
-                        uploadImages();
+                if (!result) {
+                    if (fileList.size() > 1) {
+                        Toasty.info(requireContext(), "You can only upload one image", Toasty.LENGTH_LONG).show();
                     } else {
-                        Toasty.error(requireContext(), "Ops something went wrong! 1", Toasty.LENGTH_LONG).show();
-                        requireActivity().onBackPressed();
+                        if (mRecipe != null && mRecipe_id != null) {
+                            result = true;
+                            uploadImages();
+                        } else {
+                            Toasty.error(requireContext(), "Ops something went wrong! 1", Toasty.LENGTH_LONG).show();
+                            requireActivity().onBackPressed();
+                        }
                     }
+                } else {
+                      Toasty.info(requireContext(), "Uploading...", Toasty.LENGTH_LONG).show();
                 }
             }
         });
@@ -485,6 +492,7 @@ public class RecipePhotosFragment extends Fragment {
                                     .addOnCompleteListener(new OnCompleteListener<Uri>() {
                                         @Override
                                         public void onComplete(@NonNull Task<Uri> task) {
+                                            result = false;
                                             if (task.isSuccessful()) {
                                                 downloadedList.add(uri.toString());
                                                 mRecipe.addToSharedImages(downloadedList.get(0));
@@ -502,6 +510,7 @@ public class RecipePhotosFragment extends Fragment {
                                                             mImages.setAdapter(adapter);
                                                             sharedImageAdapter = new SharedImageAdapter(requireContext(), mRecipe.getSharedImages());
                                                             mSharedImages.setAdapter(sharedImageAdapter);
+
                                                         } else {
                                                             Toasty.error(requireContext(), "Ops something went wrong!", Toasty.LENGTH_LONG).show();
 
