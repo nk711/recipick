@@ -31,7 +31,7 @@ public class SharedImageAdapter extends BaseAdapter  {
      */
     public SharedImageAdapter(Context context, List<String> images) {
         this.context = context;
-        if (images.size()==0) {
+        if (images==null) {
             this.images = new ArrayList<>();
         } else {
             this.images = images;
