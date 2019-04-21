@@ -10,14 +10,14 @@
     tools:context=".Activities.RecipeDetails$PlaceholderFragment">
 
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="30dp"
+        android:textSize="25dp"
         android:textColor="@color/normalColor"
         android:paddingBottom="5dp"
         android:paddingRight="5dp"
-        android:text="TextView" />
+        android:text="Follow the following steps..." />
 
     <View
         android:layout_width="match_parent"
@@ -26,13 +26,12 @@
         android:background="@android:color/darker_gray"/>
 
     <TextView
-        android:id="@+id/textView3"
+        android:id="@+id/preparation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="20dp"
         android:padding="5dp"
-        android:textColor="@color/colorDarkerGrey"
-        android:text="TextView" />
+        android:textColor="@color/colorDarkerGrey" />
 
     <TextView
         android:id="@+id/section_label"

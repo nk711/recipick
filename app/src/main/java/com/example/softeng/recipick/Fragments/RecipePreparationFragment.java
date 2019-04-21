@@ -1,12 +1,12 @@
 package com.example.softeng.recipick.Fragments;
 
-import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.example.softeng.recipick.Models.Recipe;
 import com.example.softeng.recipick.Models.Utility;
@@ -31,7 +31,11 @@ public class RecipePreparationFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
+    /** Holds the recipe */
     private Recipe recipe;
+
+    /** Holds the reference to the preparation TextView */
+    private TextView preparation;
 
     private OnFragmentInteractionListener mListener;
 
@@ -78,6 +82,14 @@ public class RecipePreparationFragment extends Fragment {
         if (extras!=null) {
             /** if not set the item */
             recipe = (Recipe)extras.getSerializable(Utility.RECIPE);
+
+            /** Inflating the TextView for preparation */
+            preparation = view.findViewById(R.id.preparation);
+
+            /** Display the full preparation steps */
+            preparation.setText(recipe.getPreparation());
+
+
         }
         return view;
     }

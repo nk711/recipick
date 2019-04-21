@@ -16,12 +16,16 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.softeng.recipick.Adapters.ImageListAdapter;
+import com.example.softeng.recipick.Models.Ingredient;
 import com.example.softeng.recipick.Models.Recipe;
 import com.example.softeng.recipick.Models.Utility;
 import com.example.softeng.recipick.R;
@@ -83,6 +87,9 @@ public class RecipeOverviewFragment extends Fragment {
     /** Button for adding recipe to shopping list */
     private Button btnTrolley;
 
+    private TextView recipeName, desc;
+
+    private ListView ingredients;
 
     private OnFragmentInteractionListener mListener;
 
@@ -134,6 +141,11 @@ public class RecipeOverviewFragment extends Fragment {
         btnFavourites = view.findViewById(R.id.btnFavourite);
         btnTrolley = view.findViewById(R.id.btnShop);
 
+        recipeName = view.findViewById(R.id.recipeName);
+        desc = view.findViewById(R.id.txtDescription);
+        ingredients = view.findViewById(R.id.ingredients);
+
+
         /** gets the bundle from the previous activity */
         Bundle extras = requireActivity().getIntent().getExtras();
         /** checks if the bundle is null */
@@ -141,6 +153,19 @@ public class RecipeOverviewFragment extends Fragment {
             /** if not set the item */
             recipe = (Recipe)extras.getSerializable(Utility.RECIPE);
             recipe_id = (String)extras.getString(Utility.ID);
+
+            /** Set name and description of recipe */
+            recipeName.setText(recipe.getName());
+            desc.setText(recipe.getDescription());
+
+            /** Creating an ArrayList of type string that holds the list of ingredients */
+            ArrayList<String> ingredient = new ArrayList<>();
+            for(String items : recipe.getIngredientsQuery().keySet()) {
+                ingredient.add(items);
+            }
+
+            ArrayAdapter arrayAdapter = new ArrayAdapter(getContext(), android.R.layout.simple_list_item_1, ingredient);
+            ingredients.setAdapter(arrayAdapter);
         }
 
         /** Button text changes depending whether the user had favourited the currently viewed recipe */
