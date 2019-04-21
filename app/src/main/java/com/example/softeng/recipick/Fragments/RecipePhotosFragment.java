@@ -203,9 +203,10 @@ public class RecipePhotosFragment extends Fragment {
         fileNameList = new ArrayList<>();
         fileList = new ArrayList<>();
         adapter = new ImageListAdapter(fileNameList, fileList);
-        sharedImageAdapter = new SharedImageAdapter(requireContext(), mRecipe.getSharedImages());
         mImages.setLayoutManager(new LinearLayoutManager(requireContext()));
         mImages.setAdapter(adapter);
+
+        sharedImageAdapter = new SharedImageAdapter(requireContext(), mRecipe.getSharedImages());
         mSharedImages.setAdapter(sharedImageAdapter);
 
 
@@ -498,8 +499,8 @@ public class RecipePhotosFragment extends Fragment {
                                                             fileNameList = new ArrayList<>();
                                                             btnShare.setVisibility(View.GONE);
                                                             adapter = new ImageListAdapter(fileNameList, fileList);
-                                                            sharedImageAdapter = new SharedImageAdapter(requireContext(), mRecipe.getSharedImages());
                                                             mImages.setAdapter(adapter);
+                                                            sharedImageAdapter = new SharedImageAdapter(requireContext(), mRecipe.getSharedImages());
                                                             mSharedImages.setAdapter(sharedImageAdapter);
                                                         } else {
                                                             Toasty.error(requireContext(), "Ops something went wrong!", Toasty.LENGTH_LONG).show();
