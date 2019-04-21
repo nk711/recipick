@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.database.DataSetObserver;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -24,15 +25,29 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.GridView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.example.softeng.recipick.Activities.AddRecipeActivity;
 import com.example.softeng.recipick.Adapters.ImageListAdapter;
+import com.example.softeng.recipick.Adapters.SharedImageAdapter;
 import com.example.softeng.recipick.Models.Recipe;
 import com.example.softeng.recipick.Models.Utility;
 import com.example.softeng.recipick.R;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FieldValue;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.io.File;
 import java.io.IOException;
@@ -63,6 +78,18 @@ public class RecipePhotosFragment extends Fragment {
     private static final int RESULT_LOAD_IMAGE = 1;
 
 
+    /** uid of the currently logged in user */
+    private String uid;
+    /** gets a reference of the firebase storage */
+    private StorageReference mStorageRef;
+
+    private CollectionReference userRef;
+    private DocumentReference recipeRef;
+
+    private FirebaseAuth mAuth;
+
+
+
 
     private Uri imageUri;
 
@@ -84,7 +111,8 @@ public class RecipePhotosFragment extends Fragment {
 
 
     /** Holds the selected recipe */
-    private Recipe recipe;
+    private Recipe mRecipe;
+    private String mRecipe_id;
 
     private Button btnCamera;
     private Button btnShare;
@@ -92,6 +120,9 @@ public class RecipePhotosFragment extends Fragment {
 
     /** Recycler view will hold the list of selected images */
     private RecyclerView mImages;
+
+    private GridView mSharedImages;
+
     /** Holds the list of file names     */
     private List<String> fileNameList;
     /** Holds the list of file directories as URI */
@@ -99,6 +130,11 @@ public class RecipePhotosFragment extends Fragment {
 
     /** custom adapter to set the recycler view's state */
     private ImageListAdapter adapter;
+    private SharedImageAdapter sharedImageAdapter;
+
+    /** The downloaded list of images */
+    private List<String> downloadedList;
+
 
     private OnFragmentInteractionListener mListener;
 
@@ -142,23 +178,41 @@ public class RecipePhotosFragment extends Fragment {
         /** checks if the bundle is null */
         if (extras!=null) {
             /** if not set the item */
-            recipe = (Recipe)extras.getSerializable(Utility.RECIPE);
+            mRecipe = (Recipe)extras.getSerializable(Utility.RECIPE);
+            mRecipe_id = extras.getString(Utility.ID);
+
         }
+
+        downloadedList = new ArrayList<>();
+        mAuth = FirebaseAuth.getInstance();
+        /** gets the uid of the currently logged in user */
+        uid = mAuth.getCurrentUser().getUid();
+        /** gets the reference of firebase storage */
+        mStorageRef = FirebaseStorage.getInstance().getReference();
+
+
+        userRef = FirebaseFirestore.getInstance().collection(Utility.USERS).document(Utility.getUid()).collection(Utility.RECIPE);
+
 
         btnShare= view.findViewById(R.id.btnShare);
         btnGallery = view.findViewById(R.id.btnGallery);
         btnCamera = view.findViewById(R.id.btnCamera);
         mImages =  view.findViewById(R.id.list_images);
+        mSharedImages = view.findViewById(R.id.list_shared_images);
 
         fileNameList = new ArrayList<>();
         fileList = new ArrayList<>();
         adapter = new ImageListAdapter(fileNameList, fileList);
+        sharedImageAdapter = new SharedImageAdapter(requireContext(), mRecipe.getSharedImages());
         mImages.setLayoutManager(new LinearLayoutManager(requireContext()));
         mImages.setAdapter(adapter);
+        mSharedImages.setAdapter(sharedImageAdapter);
+
 
         if (savedInstanceState != null) {
             fileNameList=  savedInstanceState.getStringArrayList("filenames");
             fileList =  savedInstanceState.getParcelableArrayList("files");
+            downloadedList = savedInstanceState.getStringArrayList("downloaded");
             adapter = new ImageListAdapter(fileNameList, fileList);
             mImages.setLayoutManager(new LinearLayoutManager(requireContext()));
             mImages.setAdapter(adapter);
@@ -166,6 +220,8 @@ public class RecipePhotosFragment extends Fragment {
                 btnShare.setVisibility(View.GONE);
             }
         }
+
+        recipeRef = FirebaseFirestore.getInstance().collection(Utility.RECIPES).document(mRecipe_id);
 
         if (fileList.size()==0) {
             btnShare.setVisibility(View.GONE);
@@ -220,9 +276,16 @@ public class RecipePhotosFragment extends Fragment {
                 if (fileList.size()>1) {
                     Toasty.info(requireContext(), "You can only upload one image", Toasty.LENGTH_LONG).show();
                 } else {
+                    if (mRecipe!=null&&mRecipe_id!=null) {
+                        uploadImages();
+                    } else {
+                        Toasty.error(requireContext(), "Ops something went wrong! 1", Toasty.LENGTH_LONG).show();
+                        requireActivity().onBackPressed();
+                    }
                 }
             }
         });
+
         return view;
     }
 
@@ -393,9 +456,71 @@ public class RecipePhotosFragment extends Fragment {
         }
     }
 
-    private void createRecipe() {
+    /** Uploads the image, User can only post one image of their creation time
+     *  Uploads the image onto firebase storage, then we take the URL and update the recipe record.
+     */
+    private void uploadImages() {
+        final Uri uri = fileList.get(0);
+        /** gets the reference to a path in the storage */
+        final StorageReference storageReference = mStorageRef
+                .child(uid)
+                .child(uri.getLastPathSegment());
 
+        /** Uploads the file to the storage of firebase*/
+        storageReference.putFile(uri)
+                .addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                        /** After the image has been fully uploaded */
+                        /** Increment the counter */
+                        if (task.isSuccessful()) {
+                            storageReference.getDownloadUrl()
+                                    .addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                        @Override
+                                        public void onSuccess(Uri uri) {
+                                            downloadedList.add(uri.toString());
+                                        }
+                                    })
+                                    .addOnCompleteListener(new OnCompleteListener<Uri>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Uri> task) {
+                                            if (task.isSuccessful()) {
+                                                downloadedList.add(uri.toString());
+                                                mRecipe.addToSharedImages(downloadedList.get(0));
+                                                recipeRef.update("sharedImages", FieldValue.arrayUnion(downloadedList.get(0)))
+                                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                    @Override
+                                                    public void onComplete(@NonNull Task<Void> task) {
+                                                        if (task.isSuccessful()) {
+                                                            Toasty.success(requireContext(), "Your photo has been shared", Toasty.LENGTH_LONG).show();
+                                                            downloadedList = new ArrayList<>();
+                                                            fileList = new ArrayList<>();
+                                                            fileNameList = new ArrayList<>();
+                                                            btnShare.setVisibility(View.GONE);
+                                                            adapter = new ImageListAdapter(fileNameList, fileList);
+                                                            sharedImageAdapter = new SharedImageAdapter(requireContext(), mRecipe.getSharedImages());
+                                                            mImages.setAdapter(adapter);
+                                                            mSharedImages.setAdapter(sharedImageAdapter);
+                                                        } else {
+                                                            Toasty.error(requireContext(), "Ops something went wrong!", Toasty.LENGTH_LONG).show();
+
+                                                        }
+                                                    }
+                                                });
+                                            } else {
+                                                Toasty.error(requireContext(), "Ops something went wrong!", Toasty.LENGTH_LONG).show();
+
+                                            }
+
+                                        }
+                            });
+                        } else {
+                            Toasty.error(requireContext(), "An error had occurred! Please try again later", Toasty.LENGTH_LONG).show();
+                        }
+                    }
+                });
     }
+
 
 
     /**
@@ -409,6 +534,8 @@ public class RecipePhotosFragment extends Fragment {
         super.onSaveInstanceState(outState);
         outState.putStringArrayList("filenames", new ArrayList<String>(fileNameList));
         outState.putParcelableArrayList("files", new ArrayList<Uri>(fileList));
+        outState.putStringArrayList("downloaded", new ArrayList<String>(downloadedList));
+
     }
 
 
