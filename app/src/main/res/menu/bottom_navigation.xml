@@ -3,10 +3,14 @@
 
     <item
         android:id="@+id/recipeTab"
-        android:title="Recipe" />
+        android:title="Recipe"
+        android:icon="@drawable/ic_recipe_list"
+        android:orderInCategory="1"/>
 
     <item
         android:id="@+id/ingredientsTab"
-        android:title="List of Ingredients" />
+        android:title="List of Ingredients"
+        android:icon="@drawable/ic_ingredients_list"
+        android:orderInCategory="2"/>
 
 </menu>

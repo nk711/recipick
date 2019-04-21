@@ -157,14 +157,14 @@ public class ListOfIngredientsFragment extends Fragment {
                         if (task.isSuccessful()) {
                             DocumentSnapshot document = task.getResult();
                             if (document.exists()) {
-                                Toasty.warning(requireContext(), "should work", Toast.LENGTH_SHORT, true).show();
+                                //Toasty.warning(requireContext(), "should work", Toast.LENGTH_SHORT, true).show();
                                 User user = document.toObject(User.class);
                                 ingredients.addAll(user.getIngredients().keySet());
-                                Toasty.warning(requireContext(), ingredients.toString(), Toast.LENGTH_SHORT, true).show();
+                                //Toasty.warning(requireContext(), ingredients.toString(), Toast.LENGTH_SHORT, true).show();
                                 adapter.notifyDataSetChanged();
                             }
                         } else {
-                            Toasty.info(requireContext(), "no work", Toast.LENGTH_SHORT, true).show();
+                            //Toasty.info(requireContext(), "no work", Toast.LENGTH_SHORT, true).show();
                         }
                     }
                 });

@@ -158,14 +158,14 @@ public class TrolleyTab extends Fragment {
                         if (task.isSuccessful()) {
                             DocumentSnapshot document = task.getResult();
                             if (document.exists()) {
-                                Toasty.warning(requireContext(), "should work", Toast.LENGTH_SHORT, true).show();
+                                //Toasty.warning(requireContext(), "should work", Toast.LENGTH_SHORT, true).show();
                                 User user = document.toObject(User.class);
                                 trolley.addAll(user.getTrolley().keySet());
-                                Toasty.warning(requireContext(), trolley.toString(), Toast.LENGTH_SHORT, true).show();
+                                //Toasty.warning(requireContext(), trolley.toString(), Toast.LENGTH_SHORT, true).show();
                                 adapter.notifyDataSetChanged();
                             }
                         } else {
-                            Toasty.info(requireContext(), "no work", Toast.LENGTH_SHORT, true).show();
+                            //Toasty.info(requireContext(), "no work", Toast.LENGTH_SHORT, true).show();
                         }
                     }
                 });
