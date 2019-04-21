@@ -187,8 +187,7 @@ public class ListOfRecipesFragment extends Fragment {
         }
         if (additional!= null) {
             query = query.startAt(additional).endAt(additional+"\uf8ff");
-            Toasty.error(requireContext(), additional, Toast.LENGTH_LONG).show();
-
+            Toasty.error(requireContext(), additional, Toasty.LENGTH_LONG).show();
         }
 
         if (recipeAdapter!=null)
