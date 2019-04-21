@@ -3,69 +3,81 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_gravity="center_horizontal"
-    android:padding="15dp">
+    android:layout_gravity="center_horizontal">
 
-       <LinearLayout
-           android:id="@+id/box"
-           android:layout_width="match_parent"
-           android:layout_height="wrap_content"
-           android:layout_centerHorizontal="true"
-           android:padding="5dp"
-           android:orientation="horizontal">
-               <Button
-                   android:id="@+id/btnGallery"
-                   android:layout_width="wrap_content"
-                   android:layout_height="wrap_content"
-                   android:background="@drawable/hollow_button"
-                   android:layout_marginEnd="10dp"
-                   android:layout_gravity="center"
-                   android:paddingStart="15dp"
-                   android:paddingEnd="15dp"
-                   android:text = "Select from gallery"
-                   android:textColor="@color/TitleColour"
-                   android:textAlignment="center"/>
-               <Button
-                   android:id="@+id/btnCamera"
-                   android:layout_width="50dp"
-                   android:layout_height="wrap_content"
-                   android:background="@drawable/hollow_button"
-                   android:layout_gravity="center"
-                   android:drawableEnd="@drawable/ic_camera"
-                   android:drawableTint="@color/TitleColour"
-                   android:padding="13dp"
-                   android:layout_marginEnd="10dp"
+    <RelativeLayout
+        android:id="@+id/section"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="15dp">
+           <LinearLayout
+               android:id="@+id/box"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:layout_alignParentStart="true"
+               android:orientation="horizontal">
+                   <Button
+                       android:id="@+id/btnGallery"
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:background="@drawable/hollow_button"
+                       android:layout_marginEnd="10dp"
+                       android:layout_gravity="center"
+                       android:paddingStart="15dp"
+                       android:paddingEnd="15dp"
+                       android:text = "Gallery"
+                       android:textColor="@color/TitleColour"
+                       android:textAlignment="center"/>
+                   <Button
+                       android:id="@+id/btnCamera"
+                       android:layout_width="50dp"
+                       android:layout_height="wrap_content"
+                       android:background="@drawable/hollow_button"
+                       android:layout_gravity="center"
+                       android:drawableEnd="@drawable/ic_camera"
+                       android:drawableTint="@color/TitleColour"
+                       android:padding="13dp"
+                       android:layout_marginEnd="10dp"
+                       android:textColor="@color/TitleColour"
+                       android:textAlignment="center"/>
 
-                   android:textColor="@color/TitleColour"
-                   android:textAlignment="center"/>
+           </LinearLayout>
 
-               <Button
-                   android:id="@+id/btnShare"
-                   android:layout_width="wrap_content"
-                   android:layout_height="wrap_content"
-                   android:background="@drawable/hollow_button"
-                   android:layout_gravity="center"
-                   android:paddingStart="15dp"
-                   android:paddingEnd="15dp"
-                    android:layout_weight="1"
-                   android:text = "Share"
-                   android:textColor="@color/TitleColour"
-                   android:textAlignment="center"/>
-
-
-       </LinearLayout>
+        <Button
+            android:id="@+id/btnShare"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/hollow_button"
+            android:paddingStart="15dp"
+            android:paddingEnd="15dp"
+            android:layout_alignParentEnd="true"
+            android:text = "Share"
+            android:textColor="@color/TitleColour"
+            android:textAlignment="center"/>
 
         <android.support.v7.widget.RecyclerView
-            android:id="@+id/list_images"
-            android:background="@color/white"
-            android:layout_below="@id/box"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:scrollbars="vertical">
-
+                android:id="@+id/list_images"
+                android:background="@color/white"
+                android:layout_below="@id/box"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:scrollbars="vertical">
         </android.support.v7.widget.RecyclerView>
 
+    </RelativeLayout>
+    <GridView
+        android:id="@+id/list_shared_images"
+        android:layout_below="@id/section"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:numColumns="3"
+        android:verticalSpacing="1dp"
+        android:horizontalSpacing="1dp"
+        android:stretchMode="columnWidth"
+        android:gravity="center">
 
+
+    </GridView>
 
 
 </RelativeLayout>
