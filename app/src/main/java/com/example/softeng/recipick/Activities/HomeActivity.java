@@ -1,4 +1,5 @@
 package com.example.softeng.recipick.Activities;
+
 import android.content.Intent;
 import android.support.design.widget.TabLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -29,6 +30,7 @@ import com.mikepenz.materialdrawer.DrawerBuilder;
 import com.mikepenz.materialdrawer.model.DividerDrawerItem;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
+
 public class HomeActivity extends AppCompatActivity {
 
     /**
@@ -50,7 +52,9 @@ public class HomeActivity extends AppCompatActivity {
 
     private Drawer result;
 
-    /** used to get the currently logged in user */
+    /**
+     * used to get the currently logged in user
+     */
     private FirebaseAuth mAuth;
 
     private String uid;
@@ -62,9 +66,9 @@ public class HomeActivity extends AppCompatActivity {
         //if you want to update the items at a later time it is recommended to keep it in a variable
         PrimaryDrawerItem item1 = new PrimaryDrawerItem().withIdentifier(1).withName("Home");
         PrimaryDrawerItem item2 = new PrimaryDrawerItem().withIdentifier(2).withName("Shopping List");
-       // PrimaryDrawerItem item5 = new PrimaryDrawerItem().withIdentifier(5).withName("Profile");
-        PrimaryDrawerItem item3 = new PrimaryDrawerItem().withIdentifier(3).withName("Log out");
-        PrimaryDrawerItem item4 = new PrimaryDrawerItem().withIdentifier(4).withName("Add a recipe");
+        // PrimaryDrawerItem item5 = new PrimaryDrawerItem().withIdentifier(5).withName("Profile");
+        PrimaryDrawerItem item3 = new PrimaryDrawerItem().withIdentifier(3).withName("Add a recipe");
+        PrimaryDrawerItem item4 = new PrimaryDrawerItem().withIdentifier(4).withName("Log out");
 
         AccountHeader accountHeader = new AccountHeaderBuilder()
                 .withActivity(this)
@@ -82,7 +86,7 @@ public class HomeActivity extends AppCompatActivity {
                         item2,
                         item3,
                         new DividerDrawerItem(),
-                     //   item5,
+                        //   item5,
                         item4
                 )
                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
@@ -90,7 +94,7 @@ public class HomeActivity extends AppCompatActivity {
                     public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
                         // do something with the clicked item :D
 
-                        switch((int)drawerItem.getIdentifier()) {
+                        switch ((int) drawerItem.getIdentifier()) {
                             case 1:
                                 result.closeDrawer();
                                 break;
@@ -101,14 +105,14 @@ public class HomeActivity extends AppCompatActivity {
                                 break;
                             case 3:
                                 result.closeDrawer();
-                                mAuth.signOut();
-                                finish();
-                                startActivity(new Intent(HomeActivity.this, LoginActivity.class));
+                                Intent intent = new Intent(HomeActivity.this, AddRecipeActivity.class);
+                                startActivity(intent);
                                 break;
                             case 4:
                                 result.closeDrawer();
-                                Intent intent = new Intent(HomeActivity.this, AddRecipeActivity.class);
-                                startActivity(intent);
+                                mAuth.signOut();
+                                finish();
+                                startActivity(new Intent(HomeActivity.this, LoginActivity.class));
                                 break;
                         }
 
@@ -137,11 +141,11 @@ public class HomeActivity extends AppCompatActivity {
         mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
 
-         /**
+        /**
          * Gets the currently logged in user, if the user == null then return back to the login activity
          */
         mAuth = FirebaseAuth.getInstance();
-        if (mAuth.getCurrentUser()==null) {
+        if (mAuth.getCurrentUser() == null) {
             finish();
             startActivity(new Intent(this, LoginActivity.class));
         }
@@ -155,7 +159,6 @@ public class HomeActivity extends AppCompatActivity {
 
 
     }
-
 
 
     @Override
