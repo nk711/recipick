@@ -33,7 +33,7 @@ public class SplashActivity extends AppCompatActivity {
 
 
     /** Sets a delay for the splash screen */
-    private static int DELAY = 4000;
+    private static int DELAY = 2000;
     /** Text view component */
     private ImageView app_logo;
     /** Animation component */

@@ -7,8 +7,6 @@
     android:background="@color/colorPrimary"
     tools:context=".Activities.SplashActivity">
 
-
-
     <ImageView
         android:id="@+id/logo"
         android:layout_marginStart="50dp"

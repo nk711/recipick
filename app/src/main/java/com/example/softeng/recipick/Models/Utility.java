@@ -15,6 +15,8 @@ import java.util.List;
 public class Utility {
 
     public static final String USERS = "Users";
+    public static final String RECIPES = "Recipes";
+
     public static final String DISPLAYNAME = "display_name";
     public static final String EMAIL = "email";
     public static final String INGREDIENTS = "ingredients";
