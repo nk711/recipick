@@ -29,7 +29,6 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -64,12 +63,13 @@ public class NearbyTab extends Fragment implements OnMapReadyCallback, GoogleMap
     private GoogleMap gMap;
 
     /**
-     * Holds the reference to the map fragment.
+     *  Holds the reference to view
      */
-    private MapView mapView;
-
     private View view;
 
+    /**
+     * Holds the reference to the mapView
+     */
     private SupportMapFragment mapFragment;
 
     private final int MY_PERMISSIONS_REQUEST_FINE_LOCATION = 1;
@@ -84,10 +84,19 @@ public class NearbyTab extends Fragment implements OnMapReadyCallback, GoogleMap
      */
     private LocationRequest locationRequest;
 
+    /**
+     *  Holds the marker for the current location
+     */
     private Marker currentMarker;
 
+    /**
+     *  Holds the LatLng of current location
+     */
     private LatLng currentLocation;
 
+    /**
+     *  Holds the reference to the button to find the nearest supermarkets.
+     */
     private Button searchSupermarkets;
 
     public NearbyTab() {
@@ -129,6 +138,8 @@ public class NearbyTab extends Fragment implements OnMapReadyCallback, GoogleMap
 
         // Inflate the layout for this fragment; inflating the map view
         view = inflater.inflate(R.layout.fragment_nearby_tab, container, false);
+
+        // Inflating mapFragment
         mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.mapView);
         if (mapFragment == null) {
             FragmentManager fragmentManager = getFragmentManager();
@@ -136,6 +147,8 @@ public class NearbyTab extends Fragment implements OnMapReadyCallback, GoogleMap
             mapFragment = SupportMapFragment.newInstance();
             fragmentTransaction.replace(R.id.mapView, mapFragment).commit();
         }
+
+        // Call onMapReady when mapFragment is loaded.
         mapFragment.getMapAsync(this);
         return view;
     }
@@ -169,7 +182,7 @@ public class NearbyTab extends Fragment implements OnMapReadyCallback, GoogleMap
             StringBuilder stringBuilder = new StringBuilder("https://maps.googleapis.com/maps/api/place/nearbysearch/json?");
             // Based nearby supermarkets using current location
             stringBuilder.append("location=" + this.currentLocation.latitude + "," + this.currentLocation.longitude);
-            // Find supermarkets with a 2km radius from current location
+            // Find supermarkets within a 2km radius from current location
             stringBuilder.append("&radius=" + 2000);
             // Keyword set to "supermarket"
             stringBuilder.append("&keyword=" + "supermarket");
@@ -198,6 +211,7 @@ public class NearbyTab extends Fragment implements OnMapReadyCallback, GoogleMap
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
+        // Initialising gMap field.
         this.gMap = googleMap;
         this.gMap.setOnMapLoadedCallback(this);
         this.gMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
@@ -214,8 +228,11 @@ public class NearbyTab extends Fragment implements OnMapReadyCallback, GoogleMap
 
     @Override
     public void onMapLoaded() {
+        // Setting map type
         this.gMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+        // Allow map to be zoomable
         gMap.getUiSettings().setZoomControlsEnabled(true);
+        // Listen for marker clicks
         gMap.setOnMarkerClickListener(this);
     }
 
@@ -252,8 +269,6 @@ public class NearbyTab extends Fragment implements OnMapReadyCallback, GoogleMap
                 .position(currentLocation)
                 .title("Current Location")
                 .icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_person)));
-        // Add marker to the map
-        //this.gMap.addMarker(new MarkerOptions().position(new LatLng(51.241633, -0.590649)).title("University of Surrey").snippet("Testing point"));
     }
 
     /**

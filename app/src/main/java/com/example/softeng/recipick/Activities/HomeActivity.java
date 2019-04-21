@@ -61,10 +61,10 @@ public class HomeActivity extends AppCompatActivity {
     public void navbar_setup() {
         //if you want to update the items at a later time it is recommended to keep it in a variable
         PrimaryDrawerItem item1 = new PrimaryDrawerItem().withIdentifier(1).withName("Home");
-        PrimaryDrawerItem item4 = new PrimaryDrawerItem().withIdentifier(4).withName("Shopping List");
+        PrimaryDrawerItem item2 = new PrimaryDrawerItem().withIdentifier(2).withName("Shopping List");
        // PrimaryDrawerItem item5 = new PrimaryDrawerItem().withIdentifier(5).withName("Profile");
-        PrimaryDrawerItem item6 = new PrimaryDrawerItem().withIdentifier(6).withName("Log out");
-        PrimaryDrawerItem item7 = new PrimaryDrawerItem().withIdentifier(7).withName("Add a recipe");
+        PrimaryDrawerItem item3 = new PrimaryDrawerItem().withIdentifier(3).withName("Log out");
+        PrimaryDrawerItem item4 = new PrimaryDrawerItem().withIdentifier(4).withName("Add a recipe");
 
         AccountHeader accountHeader = new AccountHeaderBuilder()
                 .withActivity(this)
@@ -79,11 +79,11 @@ public class HomeActivity extends AppCompatActivity {
                 .withAccountHeader(accountHeader)
                 .addDrawerItems(
                         item1,
-                        item4,
-                        item7,
+                        item2,
+                        item3,
                         new DividerDrawerItem(),
                      //   item5,
-                        item6
+                        item4
                 )
                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
                     @Override
@@ -96,25 +96,16 @@ public class HomeActivity extends AppCompatActivity {
                                 break;
                             case 2:
                                 result.closeDrawer();
-                                break;
-                            case 3:
-                                result.closeDrawer();
-                                break;
-                            case 4:
-                                result.closeDrawer();
                                 Intent shoppingListIntent = new Intent(HomeActivity.this, ShoppingList.class);
                                 startActivity(shoppingListIntent);
                                 break;
-                            case 5:
-                                result.closeDrawer();
-                                break;
-                            case 6:
+                            case 3:
                                 result.closeDrawer();
                                 mAuth.signOut();
                                 finish();
                                 startActivity(new Intent(HomeActivity.this, LoginActivity.class));
                                 break;
-                            case 7:
+                            case 4:
                                 result.closeDrawer();
                                 Intent intent = new Intent(HomeActivity.this, AddRecipeActivity.class);
                                 startActivity(intent);

@@ -58,10 +58,10 @@ public class ShoppingList extends AppCompatActivity {
     public void navbar_setup() {
         //if you want to update the items at a later time it is recommended to keep it in a variable
         PrimaryDrawerItem item1 = new PrimaryDrawerItem().withIdentifier(1).withName("Home");
-        PrimaryDrawerItem item4 = new PrimaryDrawerItem().withIdentifier(4).withName("Shopping List");
+        PrimaryDrawerItem item2 = new PrimaryDrawerItem().withIdentifier(2).withName("Shopping List");
         // PrimaryDrawerItem item5 = new PrimaryDrawerItem().withIdentifier(5).withName("Profile");
-        PrimaryDrawerItem item6 = new PrimaryDrawerItem().withIdentifier(6).withName("Log out");
-        PrimaryDrawerItem item7 = new PrimaryDrawerItem().withIdentifier(7).withName("Add a recipe");
+        PrimaryDrawerItem item3 = new PrimaryDrawerItem().withIdentifier(3).withName("Log out");
+        PrimaryDrawerItem item4 = new PrimaryDrawerItem().withIdentifier(4).withName("Add a recipe");
 
         AccountHeader accountHeader = new AccountHeaderBuilder()
                 .withActivity(this)
@@ -76,11 +76,11 @@ public class ShoppingList extends AppCompatActivity {
                 .withAccountHeader(accountHeader)
                 .addDrawerItems(
                         item1,
-                        item4,
-                        item7,
+                        item2,
+                        item3,
                         new DividerDrawerItem(),
                         //   item5,
-                        item6
+                        item4
                 )
                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
                     @Override
@@ -90,28 +90,19 @@ public class ShoppingList extends AppCompatActivity {
                         switch((int)drawerItem.getIdentifier()) {
                             case 1:
                                 result.closeDrawer();
+                                Intent homeIntent = new Intent(ShoppingList.this, HomeActivity.class);
+                                startActivity(homeIntent);
                                 break;
                             case 2:
                                 result.closeDrawer();
                                 break;
                             case 3:
                                 result.closeDrawer();
-                                break;
-                            case 4:
-                                result.closeDrawer();
-                                Intent shoppingListIntent = new Intent(ShoppingList.this, ShoppingList.class);
-                                startActivity(shoppingListIntent);
-                                break;
-                            case 5:
-                                result.closeDrawer();
-                                break;
-                            case 6:
-                                result.closeDrawer();
                                 mAuth.signOut();
                                 finish();
                                 startActivity(new Intent(ShoppingList.this, LoginActivity.class));
                                 break;
-                            case 7:
+                            case 4:
                                 result.closeDrawer();
                                 Intent intent = new Intent(ShoppingList.this, AddRecipeActivity.class);
                                 startActivity(intent);
@@ -158,29 +149,6 @@ public class ShoppingList extends AppCompatActivity {
         });
 
 
-    }
-
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_shopping_list, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 
     /**
