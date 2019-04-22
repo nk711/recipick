@@ -9,6 +9,8 @@
     android:orientation="vertical"
     tools:context=".Activities.RecipeDetails$PlaceholderFragment">
 
+
+
     <TextView
         android:id="@+id/recipeName"
         android:layout_width="match_parent"

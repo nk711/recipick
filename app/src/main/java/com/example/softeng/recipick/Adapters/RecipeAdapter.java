@@ -69,7 +69,6 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeViewHolder> {
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toasty.info(context, "hii", Toasty.LENGTH_LONG, true).show();
                 Intent viewItem = new Intent(context, RecipeDetails.class);
                 Bundle bundle = new Bundle();
                 bundle.putSerializable(Utility.RECIPE, recipe);
