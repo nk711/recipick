@@ -1,10 +1,12 @@
+/**
+ *  HomeActivity.java
+ */
 package com.example.softeng.recipick.Activities;
 
 import android.content.Intent;
 import android.support.design.widget.TabLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -15,9 +17,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-
 import android.widget.TextView;
-
 import com.example.softeng.recipick.Fragments.DiscoverTab;
 import com.example.softeng.recipick.Fragments.FavouritesTab;
 import com.example.softeng.recipick.R;
@@ -30,9 +30,8 @@ import com.mikepenz.materialdrawer.DrawerBuilder;
 import com.mikepenz.materialdrawer.model.DividerDrawerItem;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
-
 public class HomeActivity extends AppCompatActivity {
-
+    private static final String TAG = "HomeActivity";
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
      * fragments for each of the sections. We use a
@@ -42,16 +41,18 @@ public class HomeActivity extends AppCompatActivity {
      * {@link android.support.v4.app.FragmentStatePagerAdapter}.
      */
     private SectionsPagerAdapter mSectionsPagerAdapter;
-
     /**
      * The {@link ViewPager} that will host the section contents.
      */
     private ViewPager mViewPager;
-
+    /**
+     * the toolbar of the activity
+     */
     private Toolbar toolbar;
-
+    /**
+     * the navigation drawer of the activity
+     */
     private Drawer result;
-
     /**
      * used to get the currently logged in user
      */
@@ -60,8 +61,6 @@ public class HomeActivity extends AppCompatActivity {
     private String uid;
     private static final String USERS = "Users";
     private static final String INGREDIENTS = "Ingredients";
-
-
     public void navbar_setup() {
         //if you want to update the items at a later time it is recommended to keep it in a variable
         PrimaryDrawerItem item1 = new PrimaryDrawerItem().withIdentifier(1).withName("Home");

@@ -404,6 +404,7 @@ public class AddRecipeActivity extends AppCompatActivity {
      * @return the taken image
      *
      * @throws IOException
+     *          Throws IO exception if any errors occur
      */
     private File createImageFile() throws IOException {
         String timeStamp =
@@ -437,7 +438,7 @@ public class AddRecipeActivity extends AppCompatActivity {
             try {
                 photoFile = createImageFile();
             } catch (IOException ex) {
-                Log.d(Tag, ex.getMessage());
+                Log.d(TAG, ex.getMessage());
             }
             if (photoFile != null) {
                 Uri photoURI = FileProvider.getUriForFile(this,  "com.example.softeng.recipick.provider", photoFile);
