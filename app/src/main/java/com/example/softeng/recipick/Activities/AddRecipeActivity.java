@@ -19,6 +19,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -50,6 +51,7 @@ import java.util.Locale;
 import java.util.Map;
 
 public class AddRecipeActivity extends AppCompatActivity {
+    private static final String TAG = "AddRecipeActivity";
     /** The request code in order for the user to select multiple images */
     private static final int RESULT_LOAD_IMAGE = 1;
     /** Holds the uri of an image*/
@@ -435,6 +437,7 @@ public class AddRecipeActivity extends AppCompatActivity {
             try {
                 photoFile = createImageFile();
             } catch (IOException ex) {
+                Log.d(Tag, ex.getMessage());
             }
             if (photoFile != null) {
                 Uri photoURI = FileProvider.getUriForFile(this,  "com.example.softeng.recipick.provider", photoFile);
@@ -483,7 +486,7 @@ public class AddRecipeActivity extends AppCompatActivity {
     }
 
     /**
-     * @returns true if the validation passes
+     * @return true if the validation passes
      *          false if the validation fails
      */
     private boolean validation() {
@@ -517,8 +520,8 @@ public class AddRecipeActivity extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putStringArrayList("filenames", new ArrayList<String>(fileNameList));
-        outState.putParcelableArrayList("files", new ArrayList<Uri>(fileList));
+        outState.putStringArrayList("filenames", new ArrayList<>(fileNameList));
+        outState.putParcelableArrayList("files", new ArrayList<>(fileList));
     }
 
     /**
@@ -541,7 +544,7 @@ public class AddRecipeActivity extends AppCompatActivity {
     /** TODO: Add custom dialogs for user to pick values from enum class
     private void chooseCuisineDialog() {
     } */
-    /** TODO: Add custom dialogs for user to pick measurements from enum class 
+    /** TODO: Add custom dialogs for user to pick measurements from enum class
     private void chooseMeasurementDialog() {
     }*/
 
