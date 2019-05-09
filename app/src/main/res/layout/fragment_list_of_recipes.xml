@@ -8,6 +8,7 @@
     tools:context=".Fragments.ListOfRecipesFragment">
 
 
+    <!--
     <LinearLayout
         android:id="@+id/fieldLayout"
         android:layout_width="match_parent"
@@ -46,6 +47,9 @@
             android:textAlignment="center"/>
 
     </LinearLayout>
+    -->
+
+
     <!-- TODO: Update blank fragment layout -->
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recyclerView"
