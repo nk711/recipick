@@ -1,5 +1,7 @@
+/**
+ *  ListOfRecipesFragment.java
+ */
 package com.example.softeng.recipick.Fragments;
-
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -19,10 +21,7 @@ import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
-
 import es.dmoral.toasty.Toasty;
-
-
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
@@ -43,38 +42,31 @@ public class ListOfRecipesFragment extends Fragment {
     //private EditText txtSearch;
     /** holds the list of recipes */
     RecyclerView recyclerView;
-
+    /** listens to fragment interactions*/
     private OnFragmentInteractionListener mListener;
-
     public ListOfRecipesFragment() {
-        // Required empty public constructor
+
     }
-
-
     // TODO: Rename and change types and number of parameters
     public static ListOfRecipesFragment newInstance() {
         ListOfRecipesFragment fragment = new ListOfRecipesFragment();
         return fragment;
     }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_list_of_recipes, container, false);
     }
-
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         //btnSearch = (Button) view.findViewById(R.id.btnSearch);
         //txtSearch = (EditText) view.findViewById(R.id.txtSearch);
-
         //holds the list of recipes
         recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
         //Gets the uid of the currently logged in user
