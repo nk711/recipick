@@ -83,7 +83,7 @@ public class IngredientsAdapter extends ArrayAdapter<String> {
                         .addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
-                                if (task.isSuccessful()) {
+                                if (task.isSuccessful() && !ingredientsList.isEmpty()) {
                                     ingredientsList.remove(position);
                                     Utility.updateUserIngredients(getContext(), ingredientsList);
                                     notifyDataSetChanged();

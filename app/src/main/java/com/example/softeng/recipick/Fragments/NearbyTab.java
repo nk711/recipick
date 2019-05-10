@@ -299,9 +299,11 @@ public class NearbyTab extends Fragment implements OnMapReadyCallback, GoogleMap
 
         } else {
             //Permission is granted
+            // Request for current location
+            LocationServices.FusedLocationApi.requestLocationUpdates(this.client, this.locationRequest, this);
         }
         // Request for current location
-        LocationServices.FusedLocationApi.requestLocationUpdates(this.client, this.locationRequest, this);
+     //   LocationServices.FusedLocationApi.requestLocationUpdates(this.client, this.locationRequest, this);
 
     }
 
