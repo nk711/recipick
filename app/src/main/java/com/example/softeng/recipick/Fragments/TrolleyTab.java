@@ -1,5 +1,8 @@
 package com.example.softeng.recipick.Fragments;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -39,17 +42,6 @@ import es.dmoral.toasty.Toasty;
  * create an instance of this fragment.
  */
 public class TrolleyTab extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String TAG = "TrolleyTab";
-
-
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
 
     private OnFragmentInteractionListener mListener;
 
@@ -80,20 +72,12 @@ public class TrolleyTab extends Fragment {
     // TODO: Rename and change types and number of parameters
     public static TrolleyTab newInstance(String param1, String param2) {
         TrolleyTab fragment = new TrolleyTab();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
         return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
@@ -109,7 +93,7 @@ public class TrolleyTab extends Fragment {
         Button btnAddIngredient = view.findViewById(R.id.btnAddIngredient);
         txtIngredient = view.findViewById(R.id.txtIngredient);
         mAuth = FirebaseAuth.getInstance();
-        uid =mAuth.getCurrentUser().getUid();
+        uid = mAuth.getCurrentUser().getUid();
 
         userRef = FirebaseFirestore.getInstance().collection(USERS).document(uid);
 
@@ -127,10 +111,12 @@ public class TrolleyTab extends Fragment {
                 final String ingredientField = txtIngredient.getText().toString().toLowerCase();
                 if (ingredientField.isEmpty()) {
                     Toasty.warning(requireContext(), "Invalid Ingredient!", Toast.LENGTH_SHORT, true).show();
-                } else if (trolley.contains(ingredientField)){
+                } else if (trolley.contains(ingredientField)) {
                     Toasty.warning(requireContext(), "Ingredient already exists", Toast.LENGTH_SHORT, true).show();
+                } else if(!connectedToInternet()) {
+                    Toasty.warning(requireContext(), "Please check your internet connection", Toasty.LENGTH_LONG, true).show();
                 } else {
-                    userRef.update(TROLLEY+"."+ingredientField, true)
+                    userRef.update(TROLLEY + "." + ingredientField, true)
                             .addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
@@ -147,7 +133,6 @@ public class TrolleyTab extends Fragment {
                 }
             }
         });
-
     }
 
     public void loadUsersIngredients() {
@@ -171,11 +156,28 @@ public class TrolleyTab extends Fragment {
                 });
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
+
+    /**
+     * A method that checks if there is an internet connection.
+     *
+     * @return whether or not there is an internet connection.
+     */
+    public boolean connectedToInternet() {
+        // Creates a ConnectivityManager object that checks the connectivity service
+        ConnectivityManager connectivityManager = (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        // If there is a connectivity service then get its information
+        if (connectivityManager != null) {
+            NetworkInfo[] networkInfos = connectivityManager.getAllNetworkInfo();
+            // If network info is not null, check if the state of the network info is connected
+            if (networkInfos != null) {
+                for (int i = 0; i < networkInfos.length; i++) {
+                    if (networkInfos[i].getState() == NetworkInfo.State.CONNECTED) {
+                        return true;
+                    }
+                }
+            }
         }
+        return false;
     }
 
     @Override

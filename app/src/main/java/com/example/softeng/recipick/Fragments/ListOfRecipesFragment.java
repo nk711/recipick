@@ -77,7 +77,6 @@ public class ListOfRecipesFragment extends Fragment {
         //setting the document reference path
         recipeRef = FirebaseFirestore.getInstance().collection(Utility.RECIPES);
 
-
         /**
          Code use: allows the user to search for recipes
 
