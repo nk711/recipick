@@ -1,5 +1,8 @@
 package com.example.softeng.recipick.Fragments;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -121,32 +124,36 @@ public class TrolleyTab extends Fragment {
 
         listView.setAdapter(adapter);
 
-        btnAddIngredient.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                final String ingredientField = txtIngredient.getText().toString().toLowerCase();
-                if (ingredientField.isEmpty()) {
-                    Toasty.warning(requireContext(), "Invalid Ingredient!", Toast.LENGTH_SHORT, true).show();
-                } else if (trolley.contains(ingredientField)){
-                    Toasty.warning(requireContext(), "Ingredient already exists", Toast.LENGTH_SHORT, true).show();
-                } else {
-                    userRef.update(TROLLEY+"."+ingredientField, true)
-                            .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    if (task.isSuccessful()) {
-                                        trolley.add(ingredientField);
-                                        adapter.notifyDataSetChanged();
-                                        txtIngredient.setText(null);
-                                        Utility.updateUserTrolley(requireContext(), trolley);
-                                    } else {
-                                        Toasty.error(requireContext(), "An error has occurred, Please check your internet connection!", Toast.LENGTH_SHORT, true).show();
+        if(connectedToInternet()) {
+            btnAddIngredient.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    final String ingredientField = txtIngredient.getText().toString().toLowerCase();
+                    if (ingredientField.isEmpty()) {
+                        Toasty.warning(requireContext(), "Invalid Ingredient!", Toast.LENGTH_SHORT, true).show();
+                    } else if (trolley.contains(ingredientField)) {
+                        Toasty.warning(requireContext(), "Ingredient already exists", Toast.LENGTH_SHORT, true).show();
+                    } else {
+                        userRef.update(TROLLEY + "." + ingredientField, true)
+                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if (task.isSuccessful()) {
+                                            trolley.add(ingredientField);
+                                            adapter.notifyDataSetChanged();
+                                            txtIngredient.setText(null);
+                                            Utility.updateUserTrolley(requireContext(), trolley);
+                                        } else {
+                                            Toasty.error(requireContext(), "An error has occurred, Please check your internet connection!", Toast.LENGTH_SHORT, true).show();
+                                        }
                                     }
-                                }
-                            });
+                                });
+                    }
                 }
-            }
-        });
+            });
+        } else {
+            Toasty.warning(requireContext(), "Please check your internet connection.", Toasty.LENGTH_LONG, true).show();
+        }
 
     }
 
@@ -171,11 +178,19 @@ public class TrolleyTab extends Fragment {
                 });
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
+    public boolean connectedToInternet() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (connectivityManager != null) {
+            NetworkInfo[] networkInfos = connectivityManager.getAllNetworkInfo();
+            if(networkInfos != null) {
+                for(int i = 0; i < networkInfos.length; i++) {
+                    if(networkInfos[i].getState() == NetworkInfo.State.CONNECTED) {
+                        return true;
+                    }
+                }
+            }
         }
+        return false;
     }
 
     @Override
