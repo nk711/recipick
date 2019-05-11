@@ -157,9 +157,9 @@ public class SignUpActivity extends AppCompatActivity {
     public void register() {
         if (validation()) {
             mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(SignUpActivity.this, new OnCompleteListener<AuthResult>() {
-                @Override
-                public void onComplete(@NonNull Task<AuthResult> task) {
-                    if (task.isSuccessful()) {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
                         /** Gets the currently logged in user */
                         String uid = currentUser().getUid();
 
@@ -173,19 +173,19 @@ public class SignUpActivity extends AppCompatActivity {
                          * Creates a node called users, within the node, it'll create a node with the user's unique ID [FIREBASE]
                          *
 
-                        FirebaseDatabase.getInstance().getReference("Users")
-                                .child(uid)
-                                .setValue(user).addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                /** if the registration was successful, then switch to the login fragment
-                                if (task.isSuccessful()) {
-                                    Toasty.success(SignUpActivity.this, "Registered Successfully", Toast.LENGTH_SHORT, true).show();
-                                    onBackPressed();
-                                } else {
-                                    Toasty.error(SignUpActivity.this, "Failed to register user! Please try again later!", Toast.LENGTH_LONG, true).show();
-                                }
-                            }
+                         FirebaseDatabase.getInstance().getReference("Users")
+                         .child(uid)
+                         .setValue(user).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                        /** if the registration was successful, then switch to the login fragment
+                        if (task.isSuccessful()) {
+                        Toasty.success(SignUpActivity.this, "Registered Successfully", Toast.LENGTH_SHORT, true).show();
+                        onBackPressed();
+                        } else {
+                        Toasty.error(SignUpActivity.this, "Failed to register user! Please try again later!", Toast.LENGTH_LONG, true).show();
+                        }
+                        }
                         }).addOnFailureListener(new OnFailureListener() {
                             @Override
                             public void onFailure(@NonNull Exception e) {
