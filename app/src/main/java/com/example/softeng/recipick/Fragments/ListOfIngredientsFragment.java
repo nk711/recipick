@@ -28,8 +28,10 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import es.dmoral.toasty.Toasty;
 
 
@@ -65,6 +67,7 @@ public class ListOfIngredientsFragment extends Fragment {
 
     private EditText txtIngredient;
     private ListView listView;
+
     public ListOfIngredientsFragment() {
         // Required empty public constructor
     }
@@ -109,7 +112,7 @@ public class ListOfIngredientsFragment extends Fragment {
         Button btnAddIngredient = view.findViewById(R.id.btnAddIngredient);
         txtIngredient = view.findViewById(R.id.txtIngredient);
         mAuth = FirebaseAuth.getInstance();
-        uid =mAuth.getCurrentUser().getUid();
+        uid = mAuth.getCurrentUser().getUid();
 
         userRef = FirebaseFirestore.getInstance().collection(USERS).document(uid);
 
@@ -124,15 +127,15 @@ public class ListOfIngredientsFragment extends Fragment {
         btnAddIngredient.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                final String ingredientField = txtIngredient.getText().toString();
+                final String ingredientField = txtIngredient.getText().toString().toLowerCase();
                 if (connectedToInternet() != true) {
                     Toasty.warning(requireContext(), "Please check your internet connection", Toasty.LENGTH_SHORT, true).show();
                 } else if (ingredients.contains(ingredientField)) {
                     Toasty.warning(requireContext(), "Ingredient already exists", Toast.LENGTH_SHORT, true).show();
-                } else   if (ingredientField.isEmpty()) {
+                } else if (ingredientField.isEmpty()) {
                     Toasty.warning(requireContext(), "Invalid Ingredient!", Toast.LENGTH_SHORT, true).show();
                 } else {
-                    userRef.update(INGREDIENTS+"."+ingredientField, true)
+                    userRef.update(INGREDIENTS + "." + ingredientField, true)
                             .addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
@@ -152,7 +155,6 @@ public class ListOfIngredientsFragment extends Fragment {
 
 
     }
-
 
 
     public void loadUsersIngredients() {
@@ -176,13 +178,22 @@ public class ListOfIngredientsFragment extends Fragment {
                 });
     }
 
+
+    /**
+     * A method that checks if there is an internet connection.
+     *
+     * @return whether or not there is an internet connection.
+     */
     public boolean connectedToInternet() {
+        // Creates a ConnectivityManager object that checks the connectivity service
         ConnectivityManager connectivityManager = (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        // If there is a connectivity service then get its information
         if (connectivityManager != null) {
             NetworkInfo[] networkInfos = connectivityManager.getAllNetworkInfo();
-            if(networkInfos != null) {
-                for(int i = 0; i < networkInfos.length; i++) {
-                    if(networkInfos[i].getState() == NetworkInfo.State.CONNECTED) {
+            // If network info is not null, check if the state of the network info is connected
+            if (networkInfos != null) {
+                for (int i = 0; i < networkInfos.length; i++) {
+                    if (networkInfos[i].getState() == NetworkInfo.State.CONNECTED) {
                         return true;
                     }
                 }
@@ -191,12 +202,6 @@ public class ListOfIngredientsFragment extends Fragment {
         return false;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
 
     @Override
     public void onDetach() {

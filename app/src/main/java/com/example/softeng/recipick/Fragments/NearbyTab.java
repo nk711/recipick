@@ -2,10 +2,19 @@ package com.example.softeng.recipick.Fragments;
 
 
 import android.Manifest;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.location.LocationManager;
+import android.media.audiofx.Equalizer;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -36,6 +45,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import es.dmoral.toasty.Toasty;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -63,7 +74,7 @@ public class NearbyTab extends Fragment implements OnMapReadyCallback, GoogleMap
     private GoogleMap gMap;
 
     /**
-     *  Holds the reference to view
+     * Holds the reference to view
      */
     private View view;
 
@@ -85,17 +96,17 @@ public class NearbyTab extends Fragment implements OnMapReadyCallback, GoogleMap
     private LocationRequest locationRequest;
 
     /**
-     *  Holds the marker for the current location
+     * Holds the marker for the current location
      */
     private Marker currentMarker;
 
     /**
-     *  Holds the LatLng of current location
+     * Holds the LatLng of current location
      */
     private LatLng currentLocation;
 
     /**
-     *  Holds the reference to the button to find the nearest supermarkets.
+     * Holds the reference to the button to find the nearest supermarkets.
      */
     private Button searchSupermarkets;
 
@@ -111,25 +122,15 @@ public class NearbyTab extends Fragment implements OnMapReadyCallback, GoogleMap
      * @param param2 Parameter 2.
      * @return A new instance of fragment NearbyTab.
      */
-    // TODO: Rename and change types and number of parameters
     public static NearbyTab newInstance(String param1, String param2) {
         NearbyTab fragment = new NearbyTab();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
         return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-
+        isLocationEnabled();
     }
 
     @Override
@@ -161,23 +162,25 @@ public class NearbyTab extends Fragment implements OnMapReadyCallback, GoogleMap
         this.searchSupermarkets.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // findSupermarkets method is invoked
-                findSupermarkets();
-                // Notify user that it may take a while to find nearby supermarkets
-                Toast.makeText(getContext(), "This may take a while. Press again if it takes too long.",Toast.LENGTH_LONG).show();
+                if(connectedToInternet()) {
+                    // findSupermarkets method is invoked
+                    findSupermarkets();
+                } else {
+                    Toasty.warning(requireContext(), "Please check your internet connection.", Toasty.LENGTH_LONG, true).show();
+                }
             }
         });
     }
 
 
     /**
-     *  A method that sends the reference of the URL and the map to the background,
-     *  where the method to find nearest supermarkets are done.
-     *
-     *  Reference: https://developers.google.com/places/web-service/search
+     * A method that sends the reference of the URL and the map to the background,
+     * where the method to find nearest supermarkets are done.
+     * <p>
+     * Reference: https://developers.google.com/places/web-service/search
      */
     public void findSupermarkets() {
-        if(this.currentLocation != null) {
+        if (this.currentLocation != null) {
             // Starting URL to find nearest supermarket
             StringBuilder stringBuilder = new StringBuilder("https://maps.googleapis.com/maps/api/place/nearbysearch/json?");
             // Based nearby supermarkets using current location
@@ -204,8 +207,82 @@ public class NearbyTab extends Fragment implements OnMapReadyCallback, GoogleMap
             // Camera zooming option when button is pressed.
             CameraUpdate update = CameraUpdateFactory.newLatLngZoom(currentLocation, 13);
             this.gMap.animateCamera(update);
-        } else {
-            Toast.makeText(getContext(), "Current location is not found.", Toast.LENGTH_LONG).show();
+            Toasty.warning(requireContext(), "This may take a while. Press again if it takes too long.", Toast.LENGTH_SHORT, true).show();
+        }
+        isLocationEnabled();
+    }
+
+    /**
+     * A method that checks if there is an internet connection.
+     *
+     * @return whether or not there is an internet connection.
+     */
+    public boolean connectedToInternet() {
+        // Creates a ConnectivityManager object that checks the connectivity service
+        ConnectivityManager connectivityManager = (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        // If there is a connectivity service then get its information
+        if (connectivityManager != null) {
+            NetworkInfo[] networkInfos = connectivityManager.getAllNetworkInfo();
+            // If network info is not null, check if the state of the network info is connected
+            if (networkInfos != null) {
+                for (int i = 0; i < networkInfos.length; i++) {
+                    if (networkInfos[i].getState() == NetworkInfo.State.CONNECTED) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    public void isLocationEnabled() {
+        // Creating a LocationManager object
+        LocationManager locationManager = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
+        // Holds boolean value whether gps is on or not
+        boolean gps_on = false;
+        // Holds boolean value whether network provider is on or not
+        boolean network_on = false;
+
+        try {
+            // Checks if gps is enabled
+            gps_on = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        } catch (Exception e) {
+            // Print any errors
+            e.printStackTrace();
+        }
+
+        try {
+            // Checks if network is enabled
+            network_on = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+
+        } catch (Exception e) {
+            // Print any errors
+            e.printStackTrace();
+        }
+
+        // If both network provider and gps are not on, create an alert dialog that notifies the user and
+        // give them the option to open their location setting and enable the gps for the application,
+        // otherwise cancel.
+        if (!gps_on && !network_on) {
+            new AlertDialog.Builder(getContext())
+                    // Setting the title
+                    .setTitle("Enable GPS")
+                    // Message of the dialog
+                    .setMessage("Your GPS is currently not enabled for this application.\nPlease enable it in order to locate the supermarkets near you.")
+                    // Set the title of the positive button and prompt user to location settings when clicked.
+                    .setPositiveButton("Open location settings", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            getContext().startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+
+                        }
+                    })
+                    // Cancel operation
+                    .setNegativeButton("Cancel", null)
+                    // Must press either the positive button or cancel button
+                    .setCancelable(false)
+                    // Show dialog.
+                    .show();
         }
     }
 
@@ -303,7 +380,7 @@ public class NearbyTab extends Fragment implements OnMapReadyCallback, GoogleMap
             LocationServices.FusedLocationApi.requestLocationUpdates(this.client, this.locationRequest, this);
         }
         // Request for current location
-     //   LocationServices.FusedLocationApi.requestLocationUpdates(this.client, this.locationRequest, this);
+        //   LocationServices.FusedLocationApi.requestLocationUpdates(this.client, this.locationRequest, this);
 
     }
 
