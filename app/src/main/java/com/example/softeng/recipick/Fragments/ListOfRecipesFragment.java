@@ -32,7 +32,7 @@ import es.dmoral.toasty.Toasty;
  */
 public class ListOfRecipesFragment extends Fragment {
     private CollectionReference recipeRef;
-    /** Used to */
+    /** Used to populate the recycler view */
     private FirestoreRecyclerAdapter recipeAdapter;
     /** The uid of the currently logged in user*/
     private String uid;
@@ -131,6 +131,7 @@ public class ListOfRecipesFragment extends Fragment {
             query = query.startAt(additional).endAt(additional+"\uf8ff");
             Toasty.error(requireContext(), additional, Toasty.LENGTH_LONG).show();
         }
+        query = query.whereEqualTo("share", true);
 
         if (recipeAdapter!=null)
             recipeAdapter.stopListening();
