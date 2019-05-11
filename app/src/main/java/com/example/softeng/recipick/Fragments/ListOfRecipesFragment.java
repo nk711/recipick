@@ -12,6 +12,9 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
+
+import com.example.softeng.recipick.Activities.LoginActivity;
 import com.example.softeng.recipick.Adapters.FirestoreRecipeAdapter;
 import com.example.softeng.recipick.Models.Recipe;
 import com.example.softeng.recipick.Models.Utility;

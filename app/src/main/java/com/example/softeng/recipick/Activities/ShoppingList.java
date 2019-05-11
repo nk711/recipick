@@ -33,7 +33,7 @@ import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 
 public class ShoppingList extends AppCompatActivity {
-
+    /** gets the currently logged in user */
     private FirebaseAuth mAuth;
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -59,9 +59,9 @@ public class ShoppingList extends AppCompatActivity {
         //if you want to update the items at a later time it is recommended to keep it in a variable
         PrimaryDrawerItem item1 = new PrimaryDrawerItem().withIdentifier(1).withName("Home");
         PrimaryDrawerItem item2 = new PrimaryDrawerItem().withIdentifier(2).withName("Shopping List");
-        // PrimaryDrawerItem item5 = new PrimaryDrawerItem().withIdentifier(5).withName("Profile");
-        PrimaryDrawerItem item3 = new PrimaryDrawerItem().withIdentifier(3).withName("Log out");
-        PrimaryDrawerItem item4 = new PrimaryDrawerItem().withIdentifier(4).withName("Add a recipe");
+        PrimaryDrawerItem item5 = new PrimaryDrawerItem().withIdentifier(5).withName("My Recipes");
+        PrimaryDrawerItem item3 = new PrimaryDrawerItem().withIdentifier(3).withName("Add a recipe");
+        PrimaryDrawerItem item4 = new PrimaryDrawerItem().withIdentifier(4).withName("Log out");
 
         AccountHeader accountHeader = new AccountHeaderBuilder()
                 .withActivity(this)
@@ -77,6 +77,7 @@ public class ShoppingList extends AppCompatActivity {
                 .addDrawerItems(
                         item1,
                         item2,
+                        item5,
                         item3,
                         new DividerDrawerItem(),
                         //   item5,
@@ -87,25 +88,32 @@ public class ShoppingList extends AppCompatActivity {
                     public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
                         // do something with the clicked item :D
 
-                        switch((int)drawerItem.getIdentifier()) {
+                        switch ((int) drawerItem.getIdentifier()) {
                             case 1:
                                 result.closeDrawer();
-                                Intent homeIntent = new Intent(ShoppingList.this, HomeActivity.class);
-                                startActivity(homeIntent);
+                                finish();
+                                Intent homePageIntent = new Intent(ShoppingList.this, HomeActivity.class);
+                                startActivity(homePageIntent);
                                 break;
                             case 2:
                                 result.closeDrawer();
                                 break;
                             case 3:
                                 result.closeDrawer();
+                                Intent addRecipeIntent= new Intent(ShoppingList.this, AddRecipeActivity.class);
+                                startActivity(addRecipeIntent);
+                                break;
+                            case 4:
+                                result.closeDrawer();
                                 mAuth.signOut();
                                 finish();
                                 startActivity(new Intent(ShoppingList.this, LoginActivity.class));
                                 break;
-                            case 4:
+                            case 5:
                                 result.closeDrawer();
-                                Intent intent = new Intent(ShoppingList.this, AddRecipeActivity.class);
-                                startActivity(intent);
+                                finish();
+                                Intent myRecipeIntent = new Intent(ShoppingList.this, MyRecipeActivity.class);
+                                startActivity(myRecipeIntent);
                                 break;
                         }
 
@@ -114,6 +122,7 @@ public class ShoppingList extends AppCompatActivity {
                 })
                 .build();
     }
+
 
 
     @Override

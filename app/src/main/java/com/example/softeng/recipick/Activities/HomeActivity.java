@@ -13,8 +13,6 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -58,14 +56,11 @@ public class HomeActivity extends AppCompatActivity {
      */
     private FirebaseAuth mAuth;
 
-    private String uid;
-    private static final String USERS = "Users";
-    private static final String INGREDIENTS = "Ingredients";
     public void navbar_setup() {
         //if you want to update the items at a later time it is recommended to keep it in a variable
         PrimaryDrawerItem item1 = new PrimaryDrawerItem().withIdentifier(1).withName("Home");
         PrimaryDrawerItem item2 = new PrimaryDrawerItem().withIdentifier(2).withName("Shopping List");
-        // PrimaryDrawerItem item5 = new PrimaryDrawerItem().withIdentifier(5).withName("Profile");
+        PrimaryDrawerItem item5 = new PrimaryDrawerItem().withIdentifier(5).withName("My Recipes");
         PrimaryDrawerItem item3 = new PrimaryDrawerItem().withIdentifier(3).withName("Add a recipe");
         PrimaryDrawerItem item4 = new PrimaryDrawerItem().withIdentifier(4).withName("Log out");
 
@@ -83,6 +78,7 @@ public class HomeActivity extends AppCompatActivity {
                 .addDrawerItems(
                         item1,
                         item2,
+                        item5,
                         item3,
                         new DividerDrawerItem(),
                         //   item5,
@@ -104,14 +100,20 @@ public class HomeActivity extends AppCompatActivity {
                                 break;
                             case 3:
                                 result.closeDrawer();
-                                Intent intent = new Intent(HomeActivity.this, AddRecipeActivity.class);
-                                startActivity(intent);
+                                Intent addRecipeIntent= new Intent(HomeActivity.this, AddRecipeActivity.class);
+                                startActivity(addRecipeIntent);
                                 break;
                             case 4:
                                 result.closeDrawer();
                                 mAuth.signOut();
                                 finish();
                                 startActivity(new Intent(HomeActivity.this, LoginActivity.class));
+                                break;
+                            case 5:
+                                result.closeDrawer();
+                                finish();
+                                Intent myRecipeIntent = new Intent(HomeActivity.this, MyRecipeActivity.class);
+                                startActivity(myRecipeIntent);
                                 break;
                         }
 
@@ -148,8 +150,6 @@ public class HomeActivity extends AppCompatActivity {
             finish();
             startActivity(new Intent(this, LoginActivity.class));
         }
-        uid = mAuth.getCurrentUser().getUid();
-
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
 
