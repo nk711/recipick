@@ -1,5 +1,8 @@
 package com.example.softeng.recipick.Fragments;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -122,10 +125,12 @@ public class ListOfIngredientsFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 final String ingredientField = txtIngredient.getText().toString();
-                if (ingredientField.isEmpty()) {
-                    Toasty.warning(requireContext(), "Invalid Ingredient!", Toast.LENGTH_SHORT, true).show();
-                } else if (ingredients.contains(ingredientField)){
+                if (connectedToInternet() != true) {
+                    Toasty.warning(requireContext(), "Please check your internet connection", Toasty.LENGTH_SHORT, true).show();
+                } else if (ingredients.contains(ingredientField)) {
                     Toasty.warning(requireContext(), "Ingredient already exists", Toast.LENGTH_SHORT, true).show();
+                } else   if (ingredientField.isEmpty()) {
+                    Toasty.warning(requireContext(), "Invalid Ingredient!", Toast.LENGTH_SHORT, true).show();
                 } else {
                     userRef.update(INGREDIENTS+"."+ingredientField, true)
                             .addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -149,6 +154,7 @@ public class ListOfIngredientsFragment extends Fragment {
     }
 
 
+
     public void loadUsersIngredients() {
         userRef.get()
                 .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -169,6 +175,22 @@ public class ListOfIngredientsFragment extends Fragment {
                     }
                 });
     }
+
+    public boolean connectedToInternet() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (connectivityManager != null) {
+            NetworkInfo[] networkInfos = connectivityManager.getAllNetworkInfo();
+            if(networkInfos != null) {
+                for(int i = 0; i < networkInfos.length; i++) {
+                    if(networkInfos[i].getState() == NetworkInfo.State.CONNECTED) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {

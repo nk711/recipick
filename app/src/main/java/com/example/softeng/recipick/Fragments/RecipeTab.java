@@ -1,4 +1,7 @@
 package com.example.softeng.recipick.Fragments;
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.BottomNavigationView;
@@ -10,6 +13,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.softeng.recipick.R;
+
+import es.dmoral.toasty.Toasty;
 
 
 /**
@@ -43,11 +48,15 @@ public class RecipeTab extends Fragment {
                     fragmentTransaction.commit();
                     return true;
                 case R.id.ingredientsTab:
-                    ListOfIngredientsFragment listOfIngredientsFragment = new ListOfIngredientsFragment();
-                    FragmentTransaction fragmentTransaction2 = getActivity().getSupportFragmentManager().beginTransaction();
-                    fragmentTransaction2.replace(R.id.frame, listOfIngredientsFragment, "List Of Ingredients");
-                    fragmentTransaction2.commit();
-                    return true;
+                    if(connectedToInternet()) {
+                        ListOfIngredientsFragment listOfIngredientsFragment = new ListOfIngredientsFragment();
+                        FragmentTransaction fragmentTransaction2 = getActivity().getSupportFragmentManager().beginTransaction();
+                        fragmentTransaction2.replace(R.id.frame, listOfIngredientsFragment, "List Of Ingredients");
+                        fragmentTransaction2.commit();
+                        return true;
+                    } else {
+                        Toasty.warning(requireContext(), "Please check your internet connection",Toasty.LENGTH_LONG, true).show();
+                    }
             }
             return false;
         }
@@ -88,6 +97,21 @@ public class RecipeTab extends Fragment {
         BottomNavigationView navigation = (BottomNavigationView) view.findViewById(R.id.bottom_nav);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
+    }
+
+    public boolean connectedToInternet() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (connectivityManager != null) {
+            NetworkInfo[] networkInfos = connectivityManager.getAllNetworkInfo();
+            if(networkInfos != null) {
+                for(int i = 0; i < networkInfos.length; i++) {
+                    if(networkInfos[i].getState() == NetworkInfo.State.CONNECTED) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     @Override
