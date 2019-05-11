@@ -85,19 +85,19 @@ public class ForgotActivity extends AppCompatActivity {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             if (task.isSuccessful()) {
-                                Toasty.success(ForgotActivity.this, "Email Successfully Sent. Please check your email", Toast.LENGTH_SHORT, true).show();
+                                Toasty.success(ForgotActivity.this, "Email successfully sent. Please check your email.", Toast.LENGTH_SHORT, true).show();
                                 Log.d(TAG, "Email sent.");
                             }
                         }
                     }).addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception e) {
-                    Toasty.error(ForgotActivity.this, "Email failed to send, please try again later", Toast.LENGTH_LONG, true).show();
+                    Toasty.error(ForgotActivity.this, "Email address entered is not registered or there is no internet connection.", Toast.LENGTH_LONG, true).show();
 
                 }
             });
         } else {
-            Toasty.error(ForgotActivity.this, "Invalid Email! Enter the email you registered with", Toast.LENGTH_LONG, true).show();
+            Toasty.error(ForgotActivity.this, "Invalid email address.", Toast.LENGTH_LONG, true).show();
 
         }
     }
