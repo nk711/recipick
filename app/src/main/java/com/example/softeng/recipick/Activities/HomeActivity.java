@@ -111,7 +111,6 @@ public class HomeActivity extends AppCompatActivity {
                                 break;
                             case 5:
                                 result.closeDrawer();
-                                finish();
                                 Intent myRecipeIntent = new Intent(HomeActivity.this, MyRecipeActivity.class);
                                 startActivity(myRecipeIntent);
                                 break;

@@ -84,7 +84,6 @@ public class MyRecipeActivity extends AppCompatActivity {
                         switch ((int) drawerItem.getIdentifier()) {
                             case 1:
                                 result.closeDrawer();
-                                finish();
                                 Intent homePageIntent = new Intent(MyRecipeActivity.this, HomeActivity.class);
                                 startActivity(homePageIntent);
                                 break;
@@ -122,7 +121,7 @@ public class MyRecipeActivity extends AppCompatActivity {
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         //holds the list of recipes
-        recyclerView = findViewById(R.id.recyclerView);
+        recyclerView = findViewById(R.id.list_recipes);
         //Gets the uid of the currently logged in user
         uid = Utility.getUid();
         //setting the document reference path
@@ -138,7 +137,7 @@ public class MyRecipeActivity extends AppCompatActivity {
      */
     public void setAdapter() {
         Query query = recipeRef.orderBy("name");
-        query = query.whereEqualTo("author", uid);
+        query = query.whereEqualTo("uid", uid);
 
         if (recipeAdapter!=null)
             recipeAdapter.stopListening();
