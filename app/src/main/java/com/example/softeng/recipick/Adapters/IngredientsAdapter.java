@@ -29,6 +29,9 @@ import java.util.List;
 
 import es.dmoral.toasty.Toasty;
 
+/**
+ * List adapter for user ingredients list
+ */
 public class IngredientsAdapter extends ArrayAdapter<String> {
 
     /** Holds the list of ingredients */

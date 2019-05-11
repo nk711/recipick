@@ -50,6 +50,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+/**
+ * Task that allows the user to add a new recipe
+ */
 public class AddRecipeActivity extends AppCompatActivity {
     private static final String TAG = "AddRecipeActivity";
     /** The request code in order for the user to select multiple images */

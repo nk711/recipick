@@ -30,7 +30,7 @@ import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 
 /**
- * Activity will list the recipes created by a user
+ * Lists the recipes created by a user
  */
 public class MyRecipeActivity extends AppCompatActivity {
     /** reference to the recipe collection */

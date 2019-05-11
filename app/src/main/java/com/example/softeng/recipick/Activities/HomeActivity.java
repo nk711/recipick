@@ -28,6 +28,10 @@ import com.mikepenz.materialdrawer.DrawerBuilder;
 import com.mikepenz.materialdrawer.model.DividerDrawerItem;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
+
+/**
+ * Shows available recipes, main page upon login
+ */
 public class HomeActivity extends AppCompatActivity {
     private static final String TAG = "HomeActivity";
     /**
@@ -56,6 +60,9 @@ public class HomeActivity extends AppCompatActivity {
      */
     private FirebaseAuth mAuth;
 
+    /**
+     * Add items to the navigation menu
+     */
     public void navbar_setup() {
         //if you want to update the items at a later time it is recommended to keep it in a variable
         PrimaryDrawerItem item1 = new PrimaryDrawerItem().withIdentifier(1).withName("Home");

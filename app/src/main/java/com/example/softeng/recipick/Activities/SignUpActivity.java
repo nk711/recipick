@@ -24,6 +24,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import es.dmoral.toasty.Toasty;
 
+/**
+ * Activity for user to sign into the application
+ */
 public class SignUpActivity extends AppCompatActivity {
     private static final String TAG = "SignUpActivity";
 
@@ -130,6 +133,10 @@ public class SignUpActivity extends AppCompatActivity {
         return FirebaseAuth.getInstance().getCurrentUser();
     }
 
+    /**
+     * Checks if emails entered into email field and confirm email field match
+     * @return true if they match, false if they don't
+     */
     public boolean validation() {
         boolean result = true;
         if (displayName.isEmpty()) {

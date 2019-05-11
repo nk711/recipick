@@ -12,7 +12,7 @@ import com.example.softeng.recipick.Models.Recipe;
 import com.example.softeng.recipick.R;
 
 /**
- * Class for UI elements
+ * UI elements ViewHolder
  */
 public class RecipeViewHolder extends RecyclerView.ViewHolder {
 

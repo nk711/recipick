@@ -5,6 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * A set of instructions to make a dish based off of ingredients provided
+ */
 public class Recipe implements Serializable {
     private String uid = null;
     private String author = null;
@@ -30,6 +33,23 @@ public class Recipe implements Serializable {
 
     }
 
+    /**
+     * Constructor method
+     * @param uid Database id of the recipe
+     * @param name Name of the recipe
+     * @param description Description provided by user
+     * @param ingredients Ingredients needed for recipe
+     * @param ingredientsQuery Database query for ingredients
+     * @param preparation Steps required to prepare the recipe
+     * @param duration Amount of time to make the recipe
+     * @param calories How many calories in the recipe
+     * @param budget Rough cost of all ingredients
+     * @param servings How many people it serves
+     * @param cuisine What cuisine category it falls under
+     * @param meals What meal of the day it is suitable for
+     * @param share Whether the user wishes to share the recipe of keep it for themselves
+     * @param author The author of the recipe
+     */
     public Recipe(String uid, String name, String description, List<Ingredient> ingredients, Map<String, Boolean> ingredientsQuery, String preparation, int duration,
                   int calories, double budget, int servings, String cuisine, String meals, boolean share, String author) {
         this.uid = uid;
@@ -50,6 +70,7 @@ public class Recipe implements Serializable {
         this.sharedImages = new ArrayList<>();
     }
 
+    //Getters and Setters
     public List<String> getSharedImages() {
         return sharedImages;
     }

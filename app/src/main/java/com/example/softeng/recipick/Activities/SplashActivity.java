@@ -23,6 +23,9 @@ import com.google.firebase.firestore.DocumentSnapshot;
 
 import es.dmoral.toasty.Toasty;
 
+/**
+ * Splash screen showing recipick logo
+ */
 public class SplashActivity extends AppCompatActivity {
 
 

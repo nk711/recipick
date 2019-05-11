@@ -2,6 +2,10 @@
  * Ingredients.java
  */
 package com.example.softeng.recipick.Models;
+
+/**
+ * List of ingredients available to choose from
+ */
 public enum Ingredients {
     /**
      Acidulated water

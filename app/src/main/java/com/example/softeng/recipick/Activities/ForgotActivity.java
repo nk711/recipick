@@ -17,6 +17,9 @@ import com.google.firebase.auth.FirebaseAuth;
 
 import es.dmoral.toasty.Toasty;
 
+/**
+ * Allows users to send an email to reset their password
+ */
 public class ForgotActivity extends AppCompatActivity {
     /** Tags the Forgot activity class */
     private static final String TAG = "ForgotActivity";
@@ -46,6 +49,7 @@ public class ForgotActivity extends AppCompatActivity {
             }
         });
 
+        /**Firebase Authentication=*/
         btnForgotPass = findViewById(R.id.btnForgotPass);
         txtEmail = findViewById(R.id.txtEmail);
         mAuth = FirebaseAuth.getInstance();
