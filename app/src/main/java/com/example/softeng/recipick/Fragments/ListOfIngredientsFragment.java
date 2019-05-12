@@ -51,6 +51,10 @@ public class ListOfIngredientsFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
+
+    private static final String REGEX = "[A-z]+";
+
+
     private String mParam1;
     private String mParam2;
 
@@ -128,27 +132,31 @@ public class ListOfIngredientsFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 final String ingredientField = txtIngredient.getText().toString().toLowerCase();
-                if (connectedToInternet() != true) {
-                    Toasty.warning(requireContext(), "Please check your internet connection", Toasty.LENGTH_SHORT, true).show();
-                } else if (ingredients.contains(ingredientField)) {
-                    Toasty.warning(requireContext(), "Ingredient already exists", Toast.LENGTH_SHORT, true).show();
-                } else if (ingredientField.isEmpty()) {
-                    Toasty.warning(requireContext(), "Invalid Ingredient!", Toast.LENGTH_SHORT, true).show();
-                } else {
-                    userRef.update(INGREDIENTS + "." + ingredientField, true)
-                            .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    if (task.isSuccessful()) {
-                                        ingredients.add(ingredientField);
-                                        adapter.notifyDataSetChanged();
-                                        txtIngredient.setText(null);
-                                        Utility.updateUserIngredients(requireContext(), ingredients);
-                                    } else {
-                                        Toasty.error(requireContext(), "An error has occurred, Please check your internet connection!", Toast.LENGTH_SHORT, true).show();
+                if (ingredientField.matches(REGEX)) {
+                    if (connectedToInternet() != true) {
+                        Toasty.warning(requireContext(), "Please check your internet connection", Toasty.LENGTH_SHORT, true).show();
+                    } else if (ingredients.contains(ingredientField)) {
+                        Toasty.warning(requireContext(), "Ingredient already exists", Toast.LENGTH_SHORT, true).show();
+                    } else if (ingredientField.isEmpty()) {
+                        Toasty.warning(requireContext(), "Invalid Ingredient!", Toast.LENGTH_SHORT, true).show();
+                    } else {
+                        userRef.update(INGREDIENTS + "." + ingredientField, true)
+                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if (task.isSuccessful()) {
+                                            ingredients.add(ingredientField);
+                                            adapter.notifyDataSetChanged();
+                                            txtIngredient.setText(null);
+                                            Utility.updateUserIngredients(requireContext(), ingredients);
+                                        } else {
+                                            Toasty.error(requireContext(), "An error has occurred, Please check your internet connection!", Toast.LENGTH_SHORT, true).show();
+                                        }
                                     }
-                                }
-                            });
+                                });
+                    }
+                } else {
+                    Toasty.warning(requireContext(), "Invalid Characters!", Toast.LENGTH_SHORT, true).show();
                 }
             }
         });
