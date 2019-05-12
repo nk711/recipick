@@ -1,3 +1,6 @@
+/**
+ *  Utility.java
+ */
 package com.example.softeng.recipick.Models;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -16,9 +19,9 @@ import java.util.List;
  */
 public class Utility {
 
+    /** constants */
     public static final String USERS = "Users";
     public static final String RECIPES = "Recipes";
-
     public static final String DISPLAYNAME = "display_name";
     public static final String EMAIL = "email";
     public static final String INGREDIENTS = "ingredients";
@@ -26,18 +29,16 @@ public class Utility {
     public static final String TROLLEY = "trolley";
     public static final String RECIPE = "RECIPE";
     public static final String ID = "ID";
-
+    /** Currently logged in user */
     public static User user;
-
-
-
+    /** reference to the currently logged in user's document*/
     private DocumentReference userRef;
 
 
     /**
      *
      * @param str
-     * @return
+     * @return - string with each first letter of each word capitalised
      */
     public static String uppercase(String str) {
         //Split where there is a white space
@@ -54,6 +55,7 @@ public class Utility {
     }
 
 
+    /** Checks if a user logged in or not */
     public static boolean loggedIn() {
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         if (mAuth.getCurrentUser()==null) {
@@ -63,6 +65,7 @@ public class Utility {
         }
     }
 
+    /** Gets the currently logged in user id */
     public static String getUid() {
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         if (mAuth.getCurrentUser()==null) {
@@ -71,6 +74,7 @@ public class Utility {
         return mAuth.getCurrentUser().getUid();
     }
 
+    /** Saves the users details to shared preferences */
     public static void saveUserDetails(final Context context) {
         if (!Utility.loggedIn()) {
             return;
@@ -117,6 +121,11 @@ public class Utility {
                 });
     }
 
+    /**
+     * @param context
+     * @param ingredients
+     *  Updates the user's ingredients locally in shared preference
+     */
     public static void updateUserIngredients(final Context context, List<String> ingredients) {
         SharedPreferences prefs = context.getSharedPreferences("com.example.softeng.recipick", Context.MODE_PRIVATE);
         StringBuilder list = new StringBuilder();
@@ -129,6 +138,10 @@ public class Utility {
     }
 
 
+    /**
+     * @param context
+     * @return user's ingredients from shared preference
+     */
     public static String[] retrieveUserIngredients(final Context context) {
         SharedPreferences prefs = context.getSharedPreferences("com.example.softeng.recipick", Context.MODE_PRIVATE);
         String list = prefs.getString(INGREDIENTS, "");
@@ -139,7 +152,10 @@ public class Utility {
         return listOfIngredients;
     }
 
-
+    /**
+     * @param context
+     * @return user's trolley from shared preference
+     */
     public static String[] retrieveUserTrolley(final Context context) {
         SharedPreferences prefs = context.getSharedPreferences("com.example.softeng.recipick", Context.MODE_PRIVATE);
         String list = prefs.getString(TROLLEY, "");
@@ -151,7 +167,11 @@ public class Utility {
     }
 
 
-
+    /**
+     * @param context
+     * @param recipe_uid
+     * @return true if the recipe id passed in is a user favourite otherwise false
+     */
     public static boolean checkFavouriteRecipe(final Context context, String recipe_uid) {
         SharedPreferences prefs = context.getSharedPreferences("com.example.softeng.recipick", Context.MODE_PRIVATE);
         String list = prefs.getString(FAVOURITES, "");
@@ -165,6 +185,10 @@ public class Utility {
     }
 
 
+    /**
+     * @param context
+     * @param trolley updates the trolley to shared preference
+     */
     public static void updateUserTrolley(final Context context, List<String> trolley) {
         SharedPreferences prefs = context.getSharedPreferences("com.example.softeng.recipick", Context.MODE_PRIVATE);
         StringBuilder list = new StringBuilder();

@@ -1,5 +1,7 @@
+/**
+ * ListOfIngredientsFragment.java
+ */
 package com.example.softeng.recipick.Fragments;
-
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -15,33 +17,23 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
-
 import com.example.softeng.recipick.Adapters.IngredientsAdapter;
 import com.example.softeng.recipick.Models.User;
 import com.example.softeng.recipick.Models.Utility;
 import com.example.softeng.recipick.R;
-
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import es.dmoral.toasty.Toasty;
 
 
 /**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link ListOfIngredientsFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link ListOfIngredientsFragment#newInstance} factory method to
- * create an instance of this fragment.
+ * Displays the list of ingredients the user has
  */
 public class ListOfIngredientsFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
@@ -51,7 +43,7 @@ public class ListOfIngredientsFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-
+    /** only allows the alphabet and white space */
     private static final String REGEX = "[A-z ]+";
 
 
@@ -59,17 +51,17 @@ public class ListOfIngredientsFragment extends Fragment {
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
-
-    private FirebaseAuth mAuth;
+    /** document reference to the currently logged in user*/
     private DocumentReference userRef;
+    /** currently logged in user id */
     private String uid;
-    private static final String USERS = "Users";
-    private static final String INGREDIENTS = "ingredients";
-
+    /** holds the list of ingredients to be loaded into the list */
     private List<String> ingredients = new ArrayList<>();
+    /** adapter used to populate the list with the ingredients*/
     private IngredientsAdapter adapter;
-
+    /** text field used to add an ingredient */
     private EditText txtIngredient;
+    /** listview that will be used to present hte list of ingredients*/
     private ListView listView;
 
     public ListOfIngredientsFragment() {
@@ -115,14 +107,13 @@ public class ListOfIngredientsFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         Button btnAddIngredient = view.findViewById(R.id.btnAddIngredient);
         txtIngredient = view.findViewById(R.id.txtIngredient);
-        mAuth = FirebaseAuth.getInstance();
-        uid = mAuth.getCurrentUser().getUid();
+        uid = Utility.getUid();
 
-        userRef = FirebaseFirestore.getInstance().collection(USERS).document(uid);
+        userRef = FirebaseFirestore.getInstance().collection(Utility.USERS).document(uid);
 
         this.listView = (ListView) view.findViewById(R.id.ingredientsView);
 
-        adapter = new IngredientsAdapter(ListOfIngredientsFragment.this.getContext(), ingredients, INGREDIENTS);
+        adapter = new IngredientsAdapter(ListOfIngredientsFragment.this.getContext(), ingredients, Utility.INGREDIENTS);
 
         loadUsersIngredients();
 
@@ -132,14 +123,14 @@ public class ListOfIngredientsFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 final String ingredientField = txtIngredient.getText().toString().toLowerCase().trim();
-                if (connectedToInternet() != true) {
+                if (!connectedToInternet()) {
                     Toasty.warning(requireContext(), "Please check your internet connection", Toasty.LENGTH_SHORT, true).show();
                 } else if (ingredientField.isEmpty() || !ingredientField.matches(REGEX)) {
                     Toasty.warning(requireContext(), "Invalid Ingredient!", Toast.LENGTH_SHORT, true).show();
                 } else if (ingredients.contains(ingredientField)) {
                     Toasty.warning(requireContext(), "Ingredient already exists", Toast.LENGTH_SHORT, true).show();
                 }  else {
-                    userRef.update(INGREDIENTS + "." + ingredientField, true)
+                    userRef.update(Utility.INGREDIENTS + "." + ingredientField, true)
                             .addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
@@ -159,7 +150,9 @@ public class ListOfIngredientsFragment extends Fragment {
     }
 
 
-
+    /**
+     * Loads all the ingredients the user has
+     */
     public void loadUsersIngredients() {
         userRef.get()
                 .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {

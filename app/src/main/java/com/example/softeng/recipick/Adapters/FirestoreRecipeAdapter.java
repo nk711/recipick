@@ -1,3 +1,6 @@
+/**
+ * FirestoreRecipeAdapter.java
+ */
 package com.example.softeng.recipick.Adapters;
 
 import android.content.Context;
@@ -7,7 +10,6 @@ import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.softeng.recipick.Activities.RecipeDetails;
@@ -19,14 +21,16 @@ import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.firebase.firestore.DocumentSnapshot;
 
-import es.dmoral.toasty.Toasty;
-
 /**
  * Custom view adapter for recipes pulled from the DB
  */
 public class FirestoreRecipeAdapter extends FirestoreRecyclerAdapter<Recipe, RecipeViewHolder> {
     private Context context;
 
+    /**
+     * @param context of the activity that is using the adapter
+     * @param options will be applied to filter the results
+     */
     public FirestoreRecipeAdapter(Context context, @NonNull FirestoreRecyclerOptions<Recipe> options) {
         super(options);
         this.context = context;
@@ -65,6 +69,12 @@ public class FirestoreRecipeAdapter extends FirestoreRecyclerAdapter<Recipe, Rec
                 .into(holder.imageView);
     }
 
+    /**
+     * @param viewGroup
+     * @param i
+     * @return the inflated view
+     *
+     */
     @NonNull
     @Override
     public RecipeViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {

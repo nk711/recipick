@@ -1,3 +1,6 @@
+/**
+ * TrolleyTab.java
+ */
 package com.example.softeng.recipick.Fragments;
 
 import android.content.Context;
@@ -34,29 +37,23 @@ import es.dmoral.toasty.Toasty;
 
 
 /**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link TrolleyTab.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link TrolleyTab#newInstance} factory method to
- * create an instance of this fragment.
+ * Displays the list of ingredients the user has in their trolley
  */
 public class TrolleyTab extends Fragment {
-
     private OnFragmentInteractionListener mListener;
-
-    private FirebaseAuth mAuth;
+    /** Reference to the currently logged in user document*/
     private DocumentReference userRef;
+    /** currently logged in user's id */
     private String uid;
-    private static final String USERS = "Users";
-    private static final String TROLLEY = "trolley";
-
+    /** Only allows alphabets and white space */
     private static final String REGEX = "[A-z ]+";
-
+    /** the user's trolley */
     private List<String> trolley = new ArrayList<>();
+    /** used to populate the list view with the user's trolley */
     private IngredientsAdapter adapter;
-
+    /** Used to add ingredients to the user's trolley */
     private EditText txtIngredient;
+    /** used to output the user's trolley */
     private ListView listView;
 
     public TrolleyTab() {
@@ -94,15 +91,10 @@ public class TrolleyTab extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         Button btnAddIngredient = view.findViewById(R.id.btnAddIngredient);
         txtIngredient = view.findViewById(R.id.txtIngredient);
-        mAuth = FirebaseAuth.getInstance();
-        uid = mAuth.getCurrentUser().getUid();
-
-        userRef = FirebaseFirestore.getInstance().collection(USERS).document(uid);
-
+        uid = Utility.getUid();
+        userRef = FirebaseFirestore.getInstance().collection(Utility.USERS).document(uid);
         this.listView = (ListView) view.findViewById(R.id.ingredientsView);
-
-        adapter = new IngredientsAdapter(requireContext(), trolley, TROLLEY);
-
+        adapter = new IngredientsAdapter(requireContext(), trolley, Utility.TROLLEY);
         loadUsersTrolley();
 
         listView.setAdapter(adapter);
@@ -118,7 +110,7 @@ public class TrolleyTab extends Fragment {
                 } else if (!connectedToInternet()) {
                     Toasty.warning(requireContext(), "Please check your internet connection", Toasty.LENGTH_LONG, true).show();
                 } else {
-                    userRef.update(TROLLEY + "." + ingredientField, true)
+                    userRef.update(Utility.TROLLEY + "." + ingredientField, true)
                             .addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
@@ -137,6 +129,9 @@ public class TrolleyTab extends Fragment {
         });
     }
 
+    /**
+     *  Used to load the user's trolley
+     */
     public void loadUsersTrolley() {
         userRef.get()
                 .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {

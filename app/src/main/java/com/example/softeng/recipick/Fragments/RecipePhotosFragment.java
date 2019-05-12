@@ -62,12 +62,7 @@ import es.dmoral.toasty.Toasty;
 import static android.app.Activity.RESULT_OK;
 
 /**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link RecipePhotosFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link RecipePhotosFragment#newInstance} factory method to
- * create an instance of this fragment.
+ *  Displays shared images of a recipe
  */
 public class RecipePhotosFragment extends Fragment {
 

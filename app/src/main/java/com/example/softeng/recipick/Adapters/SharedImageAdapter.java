@@ -1,22 +1,23 @@
+/**
+ *  SharedImageAdapter.java
+ */
 package com.example.softeng.recipick.Adapters;
 
 import android.content.Context;
-import android.media.Image;
-import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.GridLayout;
 import android.widget.ImageView;
-
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.softeng.recipick.R;
-
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ *  Adapter to hold a list of shared images for a recipe
+ */
 public class SharedImageAdapter extends BaseAdapter  {
     /** The context of the activity */
     private Context context;
@@ -39,16 +40,25 @@ public class SharedImageAdapter extends BaseAdapter  {
         this.layoutInflater = LayoutInflater.from(context);
     }
 
-    @Override
-    public long getItemId(int position) {
-        return position;
-    }
 
+
+    /**
+     * @param position
+     * @return item at a position
+     */
     @Override
     public Object getItem(int position) {
         return images.get(position);
     }
 
+    @Override
+    public long getItemId(int position) {
+        return 0;
+    }
+
+    /**
+     * @return the size of the list
+     */
     @Override
     public int getCount() {
             if (images==null) {

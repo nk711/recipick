@@ -1,3 +1,6 @@
+/**
+ * RecipeDetails.java
+ */
 package com.example.softeng.recipick.Activities;
 
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -40,7 +43,6 @@ import static android.content.res.Configuration.ORIENTATION_PORTRAIT;
  * Shows a more detailed view when a recipe is clicked
  */
 public class RecipeDetails extends AppCompatActivity {
-
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
      * fragments for each of the sections. We use a
@@ -50,15 +52,12 @@ public class RecipeDetails extends AppCompatActivity {
      * {@link android.support.v4.app.FragmentStatePagerAdapter}.
      */
     private SectionsPagerAdapter mSectionsPagerAdapter;
-
     /**
      * The {@link ViewPager} that will host the section contents.
      */
     private ViewPager mViewPager;
-
-    /* Recipe image component */
+    /** Recipe image component */
     private CollapsingToolbarLayout collapsingToolBar;
-
     /** Image view holder, will hold an array of images */
     /** Image view holder, will hold an array of images */
     private ViewPager mImageHolder;
@@ -77,7 +76,6 @@ public class RecipeDetails extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-
         NestedScrollView scrollView = (NestedScrollView) findViewById (R.id.nested);
         scrollView.setFillViewport (true);
 

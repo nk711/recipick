@@ -1,3 +1,6 @@
+/**
+ * LoginActivity.java
+ */
 package com.example.softeng.recipick.Activities;
 
 import android.content.Intent;

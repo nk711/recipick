@@ -1,3 +1,6 @@
+/**
+ * SignUpActivity.java
+ */
 package com.example.softeng.recipick.Activities;
 
 import android.support.annotation.NonNull;
