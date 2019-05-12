@@ -1,9 +1,15 @@
+/**
+ * IngredientTest.java
+ */
 package com.example.softeng.recipick.Models;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+/**
+ * JUnite testing for Ingredient class.
+ */
 public class IngredientTest {
 
     @Test

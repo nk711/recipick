@@ -58,6 +58,7 @@ public class RecipeTest {
     @Test
     @DisplayName("Get recipe ingredients")
     void testGetIngredients() {
+        // ArrayList that holds the recipe's ingredients
         List<Ingredient> ingredients = new ArrayList<>();
         Ingredient ingredient1 = new Ingredient();
         Ingredient ingredient2 = new Ingredient();
