@@ -27,9 +27,10 @@ public class IngredientsAndMeasurementsAdapter extends RecyclerView.Adapter<Ingr
     public List<String> measurements;
     /** the list of ingredient's quantity */
     public List<String> quantity;
-
     /** the context of the passed activity*/
     public Context context;
+    /** the current activity's name */
+    public String tag;
 
     /**
      * The constructor of the IngredientsAndMeasurementsAdapter
@@ -38,10 +39,11 @@ public class IngredientsAndMeasurementsAdapter extends RecyclerView.Adapter<Ingr
      * @param measurements
      *          the list of ingredients paired with a measurement type and quantity
      */
-    public IngredientsAndMeasurementsAdapter(List<String> ingredients, List<String> measurements, List<String> quantity) {
+    public IngredientsAndMeasurementsAdapter(List<String> ingredients, List<String> measurements, List<String> quantity, String tag) {
             this.ingredients = ingredients;
             this.measurements = measurements;
             this.quantity = quantity;
+            this.tag = tag;
     }
 
 
@@ -70,6 +72,10 @@ public class IngredientsAndMeasurementsAdapter extends RecyclerView.Adapter<Ingr
         String description = quantity.get(holder.getAdapterPosition()) + " " +measurements.get(holder.getAdapterPosition());
         holder.ingredient_name.setText(ingredients.get(holder.getAdapterPosition()));
         holder.ingredient_desc.setText(description);
+        if (tag=="RecipeOverviewFragment") {
+            holder.btnDelete.setVisibility(View.GONE);
+        }
+
     }
 
 
@@ -126,7 +132,7 @@ public class IngredientsAndMeasurementsAdapter extends RecyclerView.Adapter<Ingr
              ingredient_name = (TextView) mView.findViewById(R.id.txtIngredient);
              ingredient_desc = (TextView) mView.findViewById(R.id.txtAmount);
              btnDelete = (ImageView) mView.findViewById(R.id.btn_delete);
-            background = (LinearLayout) mView.findViewById(R.id.background);
+             background = (LinearLayout) mView.findViewById(R.id.background);
 
             /**
              * Pressing the remove button on a specific row will delete that specific row
