@@ -174,7 +174,7 @@ public class AddRecipeActivity extends AppCompatActivity {
 
 
         //Setting up ingredients adapter
-        ingredientsAdapter = new IngredientsAndMeasurementsAdapter(ingredients, measurements, quantity);
+        ingredientsAdapter = new IngredientsAndMeasurementsAdapter(ingredients, measurements, quantity, TAG);
         listView.setLayoutManager(new LinearLayoutManager(this));
         listView.setAdapter(ingredientsAdapter);
 
