@@ -168,12 +168,12 @@ public class RecipeOverviewFragment extends Fragment {
             recipe_id = (String)extras.getString(Utility.ID);
 
             /** Set name and description of recipe */
-            recipeName.setText(recipe.getName());
+            recipeName.setText(Utility.uppercase(recipe.getName()));
             desc.setText(recipe.getDescription());
 
             for(Ingredient item : recipe.getIngredients()) {
-                rIngredients.add(item.getName());
-                rMeasurements.add(item.getMeasurement());
+                rIngredients.add(Utility.uppercase(item.getName()));
+                rMeasurements.add(Utility.uppercase(item.getMeasurement()));
                 rQuantity.add(item.getQuantity());
             }
 
