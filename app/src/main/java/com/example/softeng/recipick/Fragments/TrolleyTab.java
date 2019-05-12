@@ -51,7 +51,7 @@ public class TrolleyTab extends Fragment {
     private static final String USERS = "Users";
     private static final String TROLLEY = "trolley";
 
-    private static final String REGEX = "[A-z]+";
+    private static final String REGEX = "[A-z ]+";
 
     private List<String> trolley = new ArrayList<>();
     private IngredientsAdapter adapter;
@@ -111,31 +111,27 @@ public class TrolleyTab extends Fragment {
             @Override
             public void onClick(View view) {
                 final String ingredientField = txtIngredient.getText().toString().toLowerCase();
-                if (ingredientField.matches(REGEX)) {
-                    if (ingredientField.isEmpty()) {
-                        Toasty.warning(requireContext(), "Invalid Ingredient!", Toast.LENGTH_SHORT, true).show();
-                    } else if (trolley.contains(ingredientField)) {
-                        Toasty.warning(requireContext(), "Ingredient already exists", Toast.LENGTH_SHORT, true).show();
-                    } else if (!connectedToInternet()) {
-                        Toasty.warning(requireContext(), "Please check your internet connection", Toasty.LENGTH_LONG, true).show();
-                    } else {
-                        userRef.update(TROLLEY + "." + ingredientField, true)
-                                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Void> task) {
-                                        if (task.isSuccessful()) {
-                                            trolley.add(ingredientField);
-                                            adapter.notifyDataSetChanged();
-                                            txtIngredient.setText(null);
-                                            Utility.updateUserTrolley(requireContext(), trolley);
-                                        } else {
-                                            Toasty.error(requireContext(), "An error has occurred, Please check your internet connection!", Toast.LENGTH_SHORT, true).show();
-                                        }
-                                    }
-                                });
-                    }
+                if (ingredientField.isEmpty() || !ingredientField.matches(REGEX)) {
+                    Toasty.warning(requireContext(), "Invalid Ingredient!", Toast.LENGTH_SHORT, true).show();
+                } else if (trolley.contains(ingredientField)) {
+                    Toasty.warning(requireContext(), "Ingredient already exists", Toast.LENGTH_SHORT, true).show();
+                } else if (!connectedToInternet()) {
+                    Toasty.warning(requireContext(), "Please check your internet connection", Toasty.LENGTH_LONG, true).show();
                 } else {
-                    Toasty.warning(requireContext(), "Invalid characters!", Toasty.LENGTH_SHORT, true).show();
+                    userRef.update(TROLLEY + "." + ingredientField, true)
+                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (task.isSuccessful()) {
+                                        trolley.add(ingredientField);
+                                        adapter.notifyDataSetChanged();
+                                        txtIngredient.setText(null);
+                                        Utility.updateUserTrolley(requireContext(), trolley);
+                                    } else {
+                                        Toasty.error(requireContext(), "An error has occurred, Please check your internet connection!", Toast.LENGTH_SHORT, true).show();
+                                    }
+                                }
+                            });
                 }
             }
         });

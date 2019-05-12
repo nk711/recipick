@@ -42,8 +42,6 @@ import es.dmoral.toasty.Toasty;
  * to handle interaction events.
  * Use the {@link ListOfIngredientsFragment#newInstance} factory method to
  * create an instance of this fragment.
- *
- *
  */
 public class ListOfIngredientsFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
@@ -54,7 +52,7 @@ public class ListOfIngredientsFragment extends Fragment {
     private static final String ARG_PARAM2 = "param2";
 
 
-    private static final String REGEX = "[A-z]+";
+    private static final String REGEX = "[A-z ]+";
 
 
     private String mParam1;
@@ -133,38 +131,33 @@ public class ListOfIngredientsFragment extends Fragment {
         btnAddIngredient.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                final String ingredientField = txtIngredient.getText().toString().toLowerCase();
-                if (ingredientField.matches(REGEX)) {
-                    if (connectedToInternet() != true) {
-                        Toasty.warning(requireContext(), "Please check your internet connection", Toasty.LENGTH_SHORT, true).show();
-                    } else if (ingredients.contains(ingredientField)) {
-                        Toasty.warning(requireContext(), "Ingredient already exists", Toast.LENGTH_SHORT, true).show();
-                    } else if (ingredientField.isEmpty()) {
-                        Toasty.warning(requireContext(), "Invalid Ingredient!", Toast.LENGTH_SHORT, true).show();
-                    } else {
-                        userRef.update(INGREDIENTS + "." + ingredientField, true)
-                                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Void> task) {
-                                        if (task.isSuccessful()) {
-                                            ingredients.add(ingredientField);
-                                            adapter.notifyDataSetChanged();
-                                            txtIngredient.setText(null);
-                                            Utility.updateUserIngredients(requireContext(), ingredients);
-                                        } else {
-                                            Toasty.error(requireContext(), "An error has occurred, Please check your internet connection!", Toast.LENGTH_SHORT, true).show();
-                                        }
+                final String ingredientField = txtIngredient.getText().toString().toLowerCase().trim();
+                if (connectedToInternet() != true) {
+                    Toasty.warning(requireContext(), "Please check your internet connection", Toasty.LENGTH_SHORT, true).show();
+                } else if (ingredientField.isEmpty() || !ingredientField.matches(REGEX)) {
+                    Toasty.warning(requireContext(), "Invalid Ingredient!", Toast.LENGTH_SHORT, true).show();
+                } else if (ingredients.contains(ingredientField)) {
+                    Toasty.warning(requireContext(), "Ingredient already exists", Toast.LENGTH_SHORT, true).show();
+                }  else {
+                    userRef.update(INGREDIENTS + "." + ingredientField, true)
+                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (task.isSuccessful()) {
+                                        ingredients.add(ingredientField);
+                                        adapter.notifyDataSetChanged();
+                                        txtIngredient.setText(null);
+                                        Utility.updateUserIngredients(requireContext(), ingredients);
+                                    } else {
+                                        Toasty.error(requireContext(), "An error has occurred, Please check your internet connection!", Toast.LENGTH_SHORT, true).show();
                                     }
-                                });
-                    }
-                } else {
-                    Toasty.warning(requireContext(), "Invalid Characters!", Toast.LENGTH_SHORT, true).show();
+                                }
+                            });
                 }
             }
         });
-
-
     }
+
 
 
     public void loadUsersIngredients() {
@@ -219,20 +212,21 @@ public class ListOfIngredientsFragment extends Fragment {
         mListener = null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
-    }
+/**
+ * This interface must be implemented by activities that contain this
+ * fragment to allow an interaction in this fragment to be communicated
+ * to the activity and potentially other fragments contained in that
+ * activity.
+ * <p>
+ * See the Android Training lesson <a href=
+ * "http://developer.android.com/training/basics/fragments/communicating.html"
+ * >Communicating with Other Fragments</a> for more information.
+ */
+public interface OnFragmentInteractionListener {
+    // TODO: Update argument type and name
+    void onFragmentInteraction(Uri uri);
+
+}
 
 
     @Override
