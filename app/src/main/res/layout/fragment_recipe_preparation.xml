@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/constraintLayout"
@@ -9,28 +9,33 @@
     android:orientation="vertical"
     tools:context=".Activities.RecipeDetails$PlaceholderFragment">
 
-    <TextView
-        android:id="@+id/title"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="25dp"
-        android:textColor="@color/normalColor"
-        android:paddingBottom="5dp"
-        android:paddingRight="5dp"
-        android:text="Follow the following steps..." />
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="25dp"
+            android:textColor="@color/normalColor"
+            android:paddingBottom="5dp"
+            android:paddingRight="5dp"
+            android:text="Follow the following steps..." />
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:padding="10dp"
-        android:background="@android:color/darker_gray"/>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:padding="10dp"
+            android:background="@android:color/darker_gray"/>
 
-    <TextView
-        android:id="@+id/preparation"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="20dp"
-        android:padding="5dp"
-        android:textColor="@color/colorDarkerGrey" />
+        <TextView
+            android:id="@+id/preparation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="20dp"
+            android:padding="5dp"
+            android:textColor="@color/colorDarkerGrey" />
+    </LinearLayout>
 
-</LinearLayout>
+</android.support.v4.widget.NestedScrollView>
