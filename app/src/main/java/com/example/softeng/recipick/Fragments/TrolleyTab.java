@@ -103,14 +103,14 @@ public class TrolleyTab extends Fragment {
 
         adapter = new IngredientsAdapter(requireContext(), trolley, TROLLEY);
 
-        loadUsersIngredients();
+        loadUsersTrolley();
 
         listView.setAdapter(adapter);
 
         btnAddIngredient.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                final String ingredientField = txtIngredient.getText().toString().toLowerCase();
+                final String ingredientField = txtIngredient.getText().toString().toLowerCase().trim();
                 if (ingredientField.isEmpty() || !ingredientField.matches(REGEX)) {
                     Toasty.warning(requireContext(), "Invalid Ingredient!", Toast.LENGTH_SHORT, true).show();
                 } else if (trolley.contains(ingredientField)) {
@@ -123,7 +123,7 @@ public class TrolleyTab extends Fragment {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
                                     if (task.isSuccessful()) {
-                                        trolley.add(ingredientField);
+                                        trolley.add(Utility.uppercase(ingredientField));
                                         adapter.notifyDataSetChanged();
                                         txtIngredient.setText(null);
                                         Utility.updateUserTrolley(requireContext(), trolley);
@@ -137,7 +137,7 @@ public class TrolleyTab extends Fragment {
         });
     }
 
-    public void loadUsersIngredients() {
+    public void loadUsersTrolley() {
         userRef.get()
                 .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
@@ -147,7 +147,9 @@ public class TrolleyTab extends Fragment {
                             if (document.exists()) {
                                 //Toasty.warning(requireContext(), "should work", Toast.LENGTH_SHORT, true).show();
                                 User user = document.toObject(User.class);
-                                trolley.addAll(user.getTrolley().keySet());
+                                for (String item: user.getTrolley().keySet()) {
+                                    trolley.add(Utility.uppercase(item));
+                                }
                                 //Toasty.warning(requireContext(), trolley.toString(), Toast.LENGTH_SHORT, true).show();
                                 adapter.notifyDataSetChanged();
                             }
