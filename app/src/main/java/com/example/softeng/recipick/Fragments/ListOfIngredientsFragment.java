@@ -144,7 +144,7 @@ public class ListOfIngredientsFragment extends Fragment {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
                                     if (task.isSuccessful()) {
-                                        ingredients.add(ingredientField);
+                                        ingredients.add(Utility.uppercase(ingredientField));
                                         adapter.notifyDataSetChanged();
                                         txtIngredient.setText(null);
                                         Utility.updateUserIngredients(requireContext(), ingredients);
@@ -170,7 +170,9 @@ public class ListOfIngredientsFragment extends Fragment {
                             if (document.exists()) {
                                 //Toasty.warning(requireContext(), "should work", Toast.LENGTH_SHORT, true).show();
                                 User user = document.toObject(User.class);
-                                ingredients.addAll(user.getIngredients().keySet());
+                                for (String item: user.getIngredients().keySet()) {
+                                    ingredients.add(Utility.uppercase(item));
+                                }
                                 //Toasty.warning(requireContext(), ingredients.toString(), Toast.LENGTH_SHORT, true).show();
                                 adapter.notifyDataSetChanged();
                             }
