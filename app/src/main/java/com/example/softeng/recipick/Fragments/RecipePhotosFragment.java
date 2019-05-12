@@ -233,15 +233,21 @@ public class RecipePhotosFragment extends Fragment {
         btnCamera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                /**
-                 * Creates a new intent
-                 * Can only upload files that are of type images.
-                 * User can multi-select images
-                 */
-                if (fileList.size()==0) {
-                    openCameraIntent();
+                /** Checks permission for camera */
+                if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA)
+                        != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(requireActivity(), new String[] {Manifest.permission.CAMERA}, MY_PERMISSIONS_REQUEST_CAMERA);
                 } else {
-                    Toasty.info(requireContext(), "You can only upload one image", Toasty.LENGTH_LONG).show();
+                    /**
+                     * Creates a new intent
+                     * Can only upload files that are of type images.
+                     * User can multi-select images
+                     */
+                    if (fileList.size() == 0) {
+                        openCameraIntent();
+                    } else {
+                        Toasty.info(requireContext(), "You can only upload one image", Toasty.LENGTH_LONG).show();
+                    }
                 }
 
             }
@@ -251,24 +257,25 @@ public class RecipePhotosFragment extends Fragment {
         btnGallery.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                /** Checks permission for external storage */
                 if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
                         != PackageManager.PERMISSION_GRANTED) {
                     ActivityCompat.requestPermissions(requireActivity(), new String[] {Manifest.permission.READ_EXTERNAL_STORAGE}, MY_PERMISSIONS_REQUEST_EXTERNAL_STORAGE);
-                }
-
-                if (fileList.size()==0) {
-                    /**
-                     * Creates a new intent
-                     * Can only upload files that are of type images.
-                     * User can multi-select images
-                     */
-                    Intent intent = new Intent();
-                    intent.setType("image/*");
-                    intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, false);
-                    intent.setAction(Intent.ACTION_GET_CONTENT);
-                    startActivityForResult(Intent.createChooser(intent, "Select Image"), RESULT_LOAD_IMAGE);
                 } else {
-                    Toasty.info(requireContext(), "You can only upload one image", Toasty.LENGTH_LONG).show();
+                    if (fileList.size() == 0) {
+                        /**
+                         * Creates a new intent
+                         * Can only upload files that are of type images.
+                         * User can multi-select images
+                         */
+                        Intent intent = new Intent();
+                        intent.setType("image/*");
+                        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, false);
+                        intent.setAction(Intent.ACTION_GET_CONTENT);
+                        startActivityForResult(Intent.createChooser(intent, "Select Image"), RESULT_LOAD_IMAGE);
+                    } else {
+                        Toasty.info(requireContext(), "You can only upload one image", Toasty.LENGTH_LONG).show();
+                    }
                 }
             }
         });
@@ -320,8 +327,8 @@ public class RecipePhotosFragment extends Fragment {
                     int totalSelected = data.getClipData().getItemCount();
                     /** gets the count of the existing selected images + the new selected images*/
                     size = size+totalSelected;
-                    /** Checks if its greater than 4 => cannot be greater than 4*/
-                    if (size<=6) {
+                    /** Checks if its greater than 1 => cannot be greater than 1*/
+                    if (size<=1) {
                         /** If everything is valid... Go through each file*/
                         for (int i = 0; i < totalSelected; i++) {
                             /** get the file directory of the current image*/
@@ -334,15 +341,15 @@ public class RecipePhotosFragment extends Fragment {
                             adapter.notifyDataSetChanged();
                         }
                     } else {
-                        /** Display message if size > 6 */
+                        /** Display message if size > 1 */
                         Toasty.error(requireContext(), "You can only upload one image!", Toasty.LENGTH_SHORT).show();
                     }
                     /** If the user selects only one image     */
                 } else if (data.getData() != null) {
                     /** gets the count of the existing selected images + the new selected images*/
                     size = size +1;
-                    /** Checks if its greater than 4 => cannot be greater than 6*/
-                    if (size<=6) {
+                    /** Checks if its greater than 1 => cannot be greater than 1*/
+                    if (size<=1) {
                         /** get the file directory of the current image*/
                         Uri file = data.getData();
                         /** gets the file name of the current image */
@@ -352,7 +359,7 @@ public class RecipePhotosFragment extends Fragment {
                         fileList.add(file);
                         adapter.notifyDataSetChanged();
                     } else {
-                        /** Display message if size > 4 */
+                        /** Display message if size > 1 */
                         Toasty.error(requireContext(), "You can only upload one image!", Toasty.LENGTH_SHORT).show();
                     }
                 }
@@ -361,7 +368,7 @@ public class RecipePhotosFragment extends Fragment {
 
             if (requestCode == REQUEST_CAPTURE_IMAGE && resultCode == RESULT_OK) {
                 size = size+1;
-                if (size<=6){
+                if (size<=1){
 
                     /** get the file directory of the current image*/
                     Uri file = imageUri;
@@ -443,10 +450,6 @@ public class RecipePhotosFragment extends Fragment {
     }
 
     private void openCameraIntent() {
-        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA)
-                != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(requireActivity(), new String[] {Manifest.permission.CAMERA}, MY_PERMISSIONS_REQUEST_CAMERA);
-        }
         Intent pictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if(pictureIntent.resolveActivity(requireActivity().getPackageManager()) != null){
             //Create a file to store the image
@@ -468,67 +471,73 @@ public class RecipePhotosFragment extends Fragment {
      *  Uploads the image onto firebase storage, then we take the URL and update the recipe record.
      */
     private void uploadImages() {
-        final Uri uri = fileList.get(0);
-        /** gets the reference to a path in the storage */
-        final StorageReference storageReference = mStorageRef
-                .child(uid)
-                .child(uri.getLastPathSegment());
+        if (fileList.size()!=0) {
+            final Uri uri = fileList.get(0);
+            /** gets the reference to a path in the storage */
+            final StorageReference storageReference = mStorageRef
+                    .child(uid)
+                    .child(uri.getLastPathSegment());
 
-        /** Uploads the file to the storage of firebase*/
-        storageReference.putFile(uri)
-                .addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-                        /** After the image has been fully uploaded */
-                        /** Increment the counter */
-                        if (task.isSuccessful()) {
-                            storageReference.getDownloadUrl()
-                                    .addOnSuccessListener(new OnSuccessListener<Uri>() {
-                                        @Override
-                                        public void onSuccess(Uri uri) {
-                                            downloadedList.add(uri.toString());
-                                        }
-                                    })
-                                    .addOnCompleteListener(new OnCompleteListener<Uri>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<Uri> task) {
-                                            result = false;
-                                            if (task.isSuccessful()) {
+            /** Uploads the file to the storage of firebase*/
+            storageReference.putFile(uri)
+                    .addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                            /** After the image has been fully uploaded */
+                            /** Increment the counter */
+                            if (task.isSuccessful()) {
+                                storageReference.getDownloadUrl()
+                                        .addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                            @Override
+                                            public void onSuccess(Uri uri) {
                                                 downloadedList.add(uri.toString());
-                                                mRecipe.addToSharedImages(downloadedList.get(0));
-                                                recipeRef.update("sharedImages", FieldValue.arrayUnion(downloadedList.get(0)))
-                                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                    @Override
-                                                    public void onComplete(@NonNull Task<Void> task) {
-                                                        if (task.isSuccessful()) {
-                                                            Toasty.success(requireContext(), "Your photo has been shared", Toasty.LENGTH_LONG).show();
-                                                            downloadedList = new ArrayList<>();
-                                                            fileList = new ArrayList<>();
-                                                            fileNameList = new ArrayList<>();
-                                                            btnShare.setVisibility(View.GONE);
-                                                            adapter = new ImageListAdapter(fileNameList, fileList);
-                                                            mImages.setAdapter(adapter);
-                                                            sharedImageAdapter = new SharedImageAdapter(requireContext(), mRecipe.getSharedImages());
-                                                            mSharedImages.setAdapter(sharedImageAdapter);
+                                            }
+                                        })
+                                        .addOnCompleteListener(new OnCompleteListener<Uri>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<Uri> task) {
+                                                result = false;
+                                                if (task.isSuccessful()) {
+                                                    downloadedList.add(uri.toString());
+                                                    mRecipe.addToSharedImages(downloadedList.get(0));
+                                                    recipeRef.update("sharedImages", FieldValue.arrayUnion(downloadedList.get(0)))
+                                                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                @Override
+                                                                public void onComplete(@NonNull Task<Void> task) {
+                                                                    if (task.isSuccessful()) {
+                                                                        Toasty.success(requireContext(), "Your photo has been shared", Toasty.LENGTH_LONG).show();
+                                                                        downloadedList = new ArrayList<>();
+                                                                        fileList = new ArrayList<>();
+                                                                        fileNameList = new ArrayList<>();
+                                                                        btnShare.setVisibility(View.GONE);
+                                                                        adapter = new ImageListAdapter(fileNameList, fileList);
+                                                                        mImages.setAdapter(adapter);
+                                                                        sharedImageAdapter = new SharedImageAdapter(requireContext(), mRecipe.getSharedImages());
+                                                                        mSharedImages.setAdapter(sharedImageAdapter);
 
-                                                        } else {
-                                                            Toasty.error(requireContext(), "Oops something went wrong!", Toasty.LENGTH_LONG).show();
+                                                                    } else {
+                                                                        Toasty.error(requireContext(), "Oops something went wrong!", Toasty.LENGTH_LONG).show();
 
-                                                        }
-                                                    }
-                                                });
-                                            } else {
-                                                Toasty.error(requireContext(), "Oops something went wrong!", Toasty.LENGTH_LONG).show();
+                                                                    }
+                                                                }
+                                                            });
+                                                } else {
+                                                    Toasty.error(requireContext(), "Oops something went wrong!", Toasty.LENGTH_LONG).show();
+
+                                                }
 
                                             }
-
-                                        }
-                            });
-                        } else {
-                            Toasty.error(requireContext(), "An error had occurred! Please try again later", Toasty.LENGTH_LONG).show();
+                                        });
+                            } else {
+                                Toasty.error(requireContext(), "An error had occurred! Please try again later", Toasty.LENGTH_LONG).show();
+                            }
                         }
-                    }
-                });
+                    });
+        } else {
+            result=false;
+            Toasty.info(requireContext(), "Select an image to share.", Toasty.LENGTH_LONG).show();
+
+        }
     }
 
 

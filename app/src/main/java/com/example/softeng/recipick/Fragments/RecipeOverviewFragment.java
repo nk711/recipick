@@ -198,7 +198,11 @@ public class RecipeOverviewFragment extends Fragment {
                 /** Checks if the recipe is null, if not go back to main page, otherwise
                  *  add ingredients to the shopping list */
                 if (recipe!=null) {
-                    addToTrolley();
+                    if(connectedToInternet()) {
+                        addToTrolley();
+                    } else {
+                        Toasty.warning(getContext(), "Please check your internet connection.", Toasty.LENGTH_SHORT, true).show();
+                    }
                 } else {
                     requireActivity().onBackPressed();
                 }

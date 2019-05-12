@@ -53,6 +53,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import es.dmoral.toasty.Toasty;
+
 /**
  * Task that allows the user to add a new recipe
  */
@@ -201,18 +203,19 @@ public class AddRecipeActivity extends AppCompatActivity {
             public void onClick(View view) {
                 if (ContextCompat.checkSelfPermission(AddRecipeActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE)
                         != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(AddRecipeActivity.this, new String[] {Manifest.permission.READ_EXTERNAL_STORAGE}, MY_PERMISSIONS_REQUEST_EXTERNAL_STORAGE);
+                    ActivityCompat.requestPermissions(AddRecipeActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, MY_PERMISSIONS_REQUEST_EXTERNAL_STORAGE);
+                } else {
+                    /**
+                     * Creates a new intent
+                     * Can only upload files that are of type images.
+                     * User can multi-select images
+                     */
+                    Intent intent = new Intent();
+                    intent.setType("image/*");
+                    intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+                    intent.setAction(Intent.ACTION_GET_CONTENT);
+                    startActivityForResult(Intent.createChooser(intent, "Select Image"), RESULT_LOAD_IMAGE);
                 }
-                /**
-                 * Creates a new intent
-                 * Can only upload files that are of type images.
-                 * User can multi-select images
-                 */
-                Intent intent = new Intent();
-                intent.setType("image/*");
-                intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-                intent.setAction(Intent.ACTION_GET_CONTENT);
-                startActivityForResult(Intent.createChooser(intent, "Select Image"), RESULT_LOAD_IMAGE);
             }
         });
 
@@ -222,12 +225,17 @@ public class AddRecipeActivity extends AppCompatActivity {
         btnCamera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                /**
-                 * Creates a new intent
-                 * Can only upload files that are of type images.
-                 * User can multi-select images
-                 */
-                openCameraIntent();
+                if (ContextCompat.checkSelfPermission(AddRecipeActivity.this, Manifest.permission.CAMERA)
+                        != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(AddRecipeActivity.this, new String[] {Manifest.permission.CAMERA}, MY_PERMISSIONS_REQUEST_CAMERA);
+                } else {
+                    /**
+                     * Creates a new intent
+                     * Can only upload files that are of type images.
+                     * User can multi-select images
+                     */
+                    openCameraIntent();
+                }
             }
         });
 
@@ -441,10 +449,6 @@ public class AddRecipeActivity extends AppCompatActivity {
      *  Using a camera intent in order to capture an image and save it
      */
     private void openCameraIntent() {
-        if (ContextCompat.checkSelfPermission(AddRecipeActivity.this, Manifest.permission.CAMERA)
-                != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(AddRecipeActivity.this, new String[] {Manifest.permission.CAMERA}, MY_PERMISSIONS_REQUEST_CAMERA);
-        }
         Intent pictureIntent = new Intent(
                 MediaStore.ACTION_IMAGE_CAPTURE);
         if(pictureIntent.resolveActivity(getPackageManager()) != null){
