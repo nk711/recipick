@@ -24,6 +24,9 @@ import java.util.List;
 
 import es.dmoral.toasty.Toasty;
 
+/**
+ * Allows a user to upload a new recipe
+ */
 public class UploadRecipeTask extends AsyncTask<Uri[], Integer, Boolean> {
 
     /** uid of the currently logged in user */

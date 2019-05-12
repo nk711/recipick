@@ -20,6 +20,7 @@ import java.util.List;
 
 /**
  *  @author Nithesh Koneswaran
+ *  Adapter when a recipe is clicked
  */
 public class ImageViewAdapter extends PagerAdapter {
     /** The context of the activity */

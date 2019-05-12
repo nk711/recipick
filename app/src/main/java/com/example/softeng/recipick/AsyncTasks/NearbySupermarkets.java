@@ -22,6 +22,9 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+/**
+ * Shows supermarkets nearby the users position
+ */
 public class NearbySupermarkets extends AsyncTask<Object, String, String> {
 
     /**
@@ -72,7 +75,7 @@ public class NearbySupermarkets extends AsyncTask<Object, String, String> {
             // Initialising bufferedReader to read the url
             this.bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
 
-            // Declaring a variable of type String tot hold the lines present in bufferedReader
+            // Declaring a variable of type String to hold the lines present in bufferedReader
             String line;
             // Initialising stringBuilder
             this.stringBuilder = new StringBuilder();

@@ -19,7 +19,9 @@ import com.google.firebase.auth.FirebaseAuth;
 
 import es.dmoral.toasty.Toasty;
 
-
+/**
+ * Allows users to log into their account to use the app
+ */
 public class LoginActivity extends AppCompatActivity {
     /** Tags the login activity class */
     private static final String TAG = "LoginActivity";

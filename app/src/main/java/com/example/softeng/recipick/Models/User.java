@@ -4,6 +4,9 @@ package com.example.softeng.recipick.Models;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * An account using the app
+ */
 public class User {
     private String display_name;
     private String email;
@@ -15,6 +18,11 @@ public class User {
 
     }
 
+    /**
+     * Constructor method
+     * @param display_name Name shown to other users
+     * @param email Email address linked to account
+     */
     public User(String display_name, String email) {
         this.display_name = display_name;
         this.email = email;
@@ -23,6 +31,7 @@ public class User {
         this.trolley = new HashMap<>();
     }
 
+    //Getters and Setters
     public Map<String, Recipe> getFavourites() {
         return favourites;
     }
