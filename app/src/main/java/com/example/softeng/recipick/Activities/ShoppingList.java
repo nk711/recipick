@@ -1,3 +1,6 @@
+/**
+ * ShoppingList.java
+ */
 package com.example.softeng.recipick.Activities;
 
 import android.content.Intent;
@@ -13,8 +16,6 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -33,7 +34,7 @@ import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 
 /**
- * Activity that displays all items added to the shopping list by the user
+ * Activity that displays all items added to the shopping list by the user, and displays all the supermarkets near the user's current location
  */
 public class ShoppingList extends AppCompatActivity {
     /** gets the currently logged in user */

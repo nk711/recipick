@@ -1,3 +1,6 @@
+/**
+ * RecipeAdapter.java
+ */
 package com.example.softeng.recipick.Adapters;
 
 import android.content.Context;
@@ -20,7 +23,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import es.dmoral.toasty.Toasty;
 
 /**
  * RecyclerView.Adapter - binds data to the view

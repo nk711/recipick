@@ -14,12 +14,7 @@ import com.example.softeng.recipick.R;
 
 
 /**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link RecipePreparationFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link RecipePreparationFragment#newInstance} factory method to
- * create an instance of this fragment.
+ *  Displays the preparation details of a recipe
  */
 public class RecipePreparationFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match

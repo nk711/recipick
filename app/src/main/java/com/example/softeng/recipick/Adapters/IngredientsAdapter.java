@@ -1,5 +1,7 @@
+/**
+ * IngredientsAdapter.java
+ */
 package com.example.softeng.recipick.Adapters;
-
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
@@ -15,36 +17,22 @@ import com.example.softeng.recipick.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.SetOptions;
-
-import org.w3c.dom.Text;
-
-import java.util.ArrayList;
 import java.util.List;
-
 import es.dmoral.toasty.Toasty;
-
 /**
  * List adapter for user ingredients list
  */
 public class IngredientsAdapter extends ArrayAdapter<String> {
-
     /** Holds the list of ingredients */
     private List<String> ingredientsList;
-
-
+    /** path to the collection of users*/
     private DocumentReference userRef;
+    /** currently logged in user's id */
     private String uid;
-
-    private static final String USERS = "Users";
-    private static final String INGREDIENTS = "ingredients";
-    private static final String TROLLEY = "trolley";
-
+    /** used to change the design components depending on which activity the adapter is in */
     private String tag;
 
     /**
@@ -71,7 +59,7 @@ public class IngredientsAdapter extends ArrayAdapter<String> {
         View rowView = inflater.inflate(R.layout.ingredients_row_layout, parent, false);
 
         uid = FirebaseAuth.getInstance().getUid();
-        userRef = FirebaseFirestore.getInstance().collection(USERS).document(uid);
+        userRef = FirebaseFirestore.getInstance().collection(Utility.USERS).document(uid);
 
         TextView textView = (TextView) rowView.findViewById(R.id.txtIngredient);
         textView.setText(ingredientsList.get(position));

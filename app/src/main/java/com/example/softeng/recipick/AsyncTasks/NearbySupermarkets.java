@@ -1,9 +1,9 @@
+/**
+ * NearbySupermarkets.java
+ */
 package com.example.softeng.recipick.AsyncTasks;
 
 import android.os.AsyncTask;
-import android.widget.Toast;
-
-import com.example.softeng.recipick.Fragments.NearbyTab;
 import com.example.softeng.recipick.R;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;

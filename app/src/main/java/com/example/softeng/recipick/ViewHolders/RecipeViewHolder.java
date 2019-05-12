@@ -1,21 +1,17 @@
+/**
+ * RecipeViewHolder.java
+ */
 package com.example.softeng.recipick.ViewHolders;
-
-import android.content.Intent;
-import android.os.Bundle;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import com.example.softeng.recipick.Models.Recipe;
 import com.example.softeng.recipick.R;
-
 /**
  * UI elements ViewHolder
  */
 public class RecipeViewHolder extends RecyclerView.ViewHolder {
-
     public View mView;
     /** Holds the image for recipes*/
     public ImageView imageView;

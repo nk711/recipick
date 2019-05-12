@@ -18,12 +18,7 @@ import es.dmoral.toasty.Toasty;
 
 
 /**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link RecipeTab.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link RecipeTab#newInstance} factory method to
- * create an instance of this fragment.
+ * Able to switch between the recipe tab and the ingredient tab
  */
 public class RecipeTab extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
