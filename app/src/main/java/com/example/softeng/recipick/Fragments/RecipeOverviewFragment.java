@@ -1,6 +1,9 @@
 package com.example.softeng.recipick.Fragments;
 
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -176,7 +179,11 @@ public class RecipeOverviewFragment extends Fragment {
                     if (Utility.checkFavouriteRecipe(requireContext(), recipe_id)) {
                         removeFromFavourites();
                     } else {
-                        addToFavourites();
+                        if(connectedToInternet()) {
+                            addToFavourites();
+                        } else {
+                            Toasty.warning(getContext(), "Please check your internet connection.", Toasty.LENGTH_SHORT, true).show();
+                        }
                     }
                 } else {
                     requireActivity().onBackPressed();
@@ -272,6 +279,30 @@ public class RecipeOverviewFragment extends Fragment {
                         }
                     });
         }
+    }
+
+
+    /**
+     * A method that checks if there is an internet connection.
+     *
+     * @return whether or not there is an internet connection.
+     */
+    public boolean connectedToInternet() {
+        // Creates a ConnectivityManager object that checks the connectivity service
+        ConnectivityManager connectivityManager = (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        // If there is a connectivity service then get its information
+        if (connectivityManager != null) {
+            NetworkInfo[] networkInfos = connectivityManager.getAllNetworkInfo();
+            // If network info is not null, check if the state of the network info is connected
+            if (networkInfos != null) {
+                for (int i = 0; i < networkInfos.length; i++) {
+                    if (networkInfos[i].getState() == NetworkInfo.State.CONNECTED) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     @Override

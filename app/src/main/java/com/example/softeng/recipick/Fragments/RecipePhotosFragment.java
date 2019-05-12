@@ -284,7 +284,7 @@ public class RecipePhotosFragment extends Fragment {
                             result = true;
                             uploadImages();
                         } else {
-                            Toasty.error(requireContext(), "Ops something went wrong! 1", Toasty.LENGTH_LONG).show();
+                            Toasty.error(requireContext(), "Something went wrong, try again later!", Toasty.LENGTH_LONG).show();
                             requireActivity().onBackPressed();
                         }
                     }
@@ -512,13 +512,13 @@ public class RecipePhotosFragment extends Fragment {
                                                             mSharedImages.setAdapter(sharedImageAdapter);
 
                                                         } else {
-                                                            Toasty.error(requireContext(), "Ops something went wrong!", Toasty.LENGTH_LONG).show();
+                                                            Toasty.error(requireContext(), "Oops something went wrong!", Toasty.LENGTH_LONG).show();
 
                                                         }
                                                     }
                                                 });
                                             } else {
-                                                Toasty.error(requireContext(), "Ops something went wrong!", Toasty.LENGTH_LONG).show();
+                                                Toasty.error(requireContext(), "Oops something went wrong!", Toasty.LENGTH_LONG).show();
 
                                             }
 

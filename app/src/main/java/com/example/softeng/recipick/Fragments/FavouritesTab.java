@@ -53,8 +53,6 @@ public class FavouritesTab extends Fragment {
             recyclerView.setLayoutManager(new LinearLayoutManager(requireActivity()));
             recyclerView.setAdapter(recipeAdapter);
         }
-
-
         return view;
     }
 
