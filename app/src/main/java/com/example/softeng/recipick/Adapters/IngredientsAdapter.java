@@ -82,7 +82,7 @@ public class IngredientsAdapter extends ArrayAdapter<String> {
         imageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                userRef.update(tag + "." + ingredientsList.get(position), FieldValue.delete() )
+                userRef.update(tag + "." + ingredientsList.get(position).toLowerCase(), FieldValue.delete() )
                         .addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
