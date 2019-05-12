@@ -1,5 +1,7 @@
+/**
+ * NearbyTab.java
+ */
 package com.example.softeng.recipick.Fragments;
-
 
 import android.Manifest;
 import android.app.AlertDialog;
@@ -9,11 +11,11 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
-import android.media.audiofx.Equalizer;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Looper;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -32,8 +34,11 @@ import com.example.softeng.recipick.AsyncTasks.NearbySupermarkets;
 import com.example.softeng.recipick.R;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -48,14 +53,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import es.dmoral.toasty.Toasty;
 
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link NearbyTab.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link NearbyTab#newInstance} factory method to
- * create an instance of this fragment.
- */
+/** Used to display near by supermarkets on the map*/
 public class NearbyTab extends Fragment implements OnMapReadyCallback, GoogleMap.OnMapLoadedCallback, GoogleMap.OnMarkerClickListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -235,6 +233,9 @@ public class NearbyTab extends Fragment implements OnMapReadyCallback, GoogleMap
         return false;
     }
 
+    /**
+     *  checks if the location is enabled
+     */
     public void isLocationEnabled() {
         // Creating a LocationManager object
         LocationManager locationManager = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
@@ -377,10 +378,16 @@ public class NearbyTab extends Fragment implements OnMapReadyCallback, GoogleMap
         } else {
             //Permission is granted
             // Request for current location
-            LocationServices.FusedLocationApi.requestLocationUpdates(this.client, this.locationRequest, this);
+           FusedLocationProviderClient mFusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity());
+            mFusedLocationClient.requestLocationUpdates(this.locationRequest, new LocationCallback() {
+                @Override
+                public void onLocationResult(LocationResult locationResult) {
+                    // do work here
+                    onLocationChanged(locationResult.getLastLocation());
+                }
+            }, Looper.myLooper());
         }
-        // Request for current location
-        //   LocationServices.FusedLocationApi.requestLocationUpdates(this.client, this.locationRequest, this);
+
 
     }
 
