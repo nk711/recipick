@@ -35,6 +35,9 @@ import es.dmoral.toasty.Toasty;
 
 import static android.content.res.Configuration.ORIENTATION_PORTRAIT;
 
+/**
+ * Shows a more detailed view when a recipe is clicked
+ */
 public class RecipeDetails extends AppCompatActivity {
 
     /**

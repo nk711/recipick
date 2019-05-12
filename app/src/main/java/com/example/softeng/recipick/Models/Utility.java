@@ -11,7 +11,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.Arrays;
 import java.util.List;
 
-
+/**
+ * Commonly used methods throughout the app and user attributes regularly accessed
+ */
 public class Utility {
 
     public static final String USERS = "Users";

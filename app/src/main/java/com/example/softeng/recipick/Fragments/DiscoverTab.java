@@ -9,6 +9,9 @@ import android.view.ViewGroup;
 
 import com.example.softeng.recipick.R;
 
+/**
+ * Sponsored recipe "packages"
+ */
 public class DiscoverTab extends Fragment {
 
     @Nullable

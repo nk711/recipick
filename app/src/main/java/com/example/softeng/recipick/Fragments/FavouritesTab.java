@@ -22,6 +22,9 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 
+/**
+ * List of users favourite recipes
+ */
 public class FavouritesTab extends Fragment {
     private CollectionReference recipeRef;
     private DocumentReference userRef;

@@ -21,7 +21,9 @@ import com.google.firebase.firestore.DocumentSnapshot;
 
 import es.dmoral.toasty.Toasty;
 
-
+/**
+ * Custom view adapter for recipes pulled from the DB
+ */
 public class FirestoreRecipeAdapter extends FirestoreRecyclerAdapter<Recipe, RecipeViewHolder> {
     private Context context;
 
@@ -30,6 +32,12 @@ public class FirestoreRecipeAdapter extends FirestoreRecyclerAdapter<Recipe, Rec
         this.context = context;
     }
 
+    /**
+     * Called by RecyclerView to display data at specific position
+     * @param holder ViewHolder which should be updated to represent contents of item at the current position in the data set
+     * @param position position of current item
+     * @param recipe recipe to be displayed
+     */
     @Override
     protected void onBindViewHolder(@NonNull RecipeViewHolder holder, int position, @NonNull final Recipe recipe) {
         holder.textViewName.setText(recipe.getName());

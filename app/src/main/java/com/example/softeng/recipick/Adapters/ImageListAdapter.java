@@ -22,17 +22,18 @@ import java.util.List;
 
 /**
  *  @author Nithesh Koneswaran
+ *  When an image is added to a list
  */
 public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.ViewHolder> {
-    /** the list of file names   */
+    /** the list of file names */
     public List<String> fileNameList;
     /** the list of file directories */
     public List<Uri> fileList;
-    /** the context of the passed activity*/
+    /** the context of the passed activity */
     public Context context;
 
     /**
-     * The constructor of the imagelistAdapter
+     * The constructor of the ImageListAdapter
      * @param fileNameList
      *          the list of file names
      * @param fileList
@@ -58,7 +59,7 @@ public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.View
     }
 
     /**
-     * Binds data to the viewholder,
+     * Binds data to the ViewHolder,
      * goes through each position and will add the filename and image to the row
      * @param holder
      * @param position
@@ -86,7 +87,7 @@ public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.View
 
     /**
      *
-     * @returns the size of the list
+     * @returns Size of the list
      */
     @Override
     public int getItemCount() {

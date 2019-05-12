@@ -18,6 +18,7 @@ import java.util.List;
 
 /**
  *  @author Nithesh Koneswaran
+ *  List adapter for ingredients when adding a new recipe
  */
 public class IngredientsAndMeasurementsAdapter extends RecyclerView.Adapter<IngredientsAndMeasurementsAdapter.ViewHolder> {
     /** the list of ingredient's name   */
@@ -58,7 +59,7 @@ public class IngredientsAndMeasurementsAdapter extends RecyclerView.Adapter<Ingr
     }
 
     /**
-     * Binds data to the viewholder,
+     * Binds data to the ViewHolder,
      * goes through each position and will add the filename and image to the row
      * @param holder
      * @param position
@@ -74,7 +75,7 @@ public class IngredientsAndMeasurementsAdapter extends RecyclerView.Adapter<Ingr
 
     /**
      *
-     * @returns the size of the list
+     * @returns Size of the list
      */
     @Override
     public int getItemCount() {

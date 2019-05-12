@@ -2,6 +2,9 @@ package com.example.softeng.recipick.Models;
 
 import java.io.Serializable;
 
+/**
+ * An ingredient of which recipes are made up of multiple instances of
+ */
 public class Ingredient implements Serializable {
     private String name ;
     private String quantity;
@@ -12,12 +15,19 @@ public class Ingredient implements Serializable {
 
     }
 
+    /**
+     * Constructor method
+     * @param name The name of the ingredient
+     * @param quantity The amount of which the ingredient is needed
+     * @param measurement The units which are being used for the quantity
+     */
     public Ingredient(String name, String quantity, String measurement) {
         this.name = name;
         this.quantity = quantity;
         this.measurement = measurement;
     }
 
+    //Getters and Setters
     public String getName() {
         return name;
     }
