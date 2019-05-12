@@ -34,6 +34,26 @@ public class Utility {
     private DocumentReference userRef;
 
 
+    /**
+     *
+     * @param str
+     * @return
+     */
+    public static String uppercase(String str) {
+        //Split where there is a white space
+        String[] split = str.split(" ");
+        StringBuilder buffer = new StringBuilder();
+        // Go through each word and capitalise the first letter
+        for (String word: split) {
+            buffer.append(word.substring(0,1).toUpperCase());
+            buffer.append(word.substring(1));
+            buffer.append(" ");
+        }
+        //return string
+        return buffer.toString().trim();
+    }
+
+
     public static boolean loggedIn() {
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         if (mAuth.getCurrentUser()==null) {
