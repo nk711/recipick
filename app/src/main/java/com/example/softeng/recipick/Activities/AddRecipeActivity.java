@@ -4,9 +4,12 @@
 package com.example.softeng.recipick.Activities;
 import android.Manifest;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -133,6 +136,7 @@ public class AddRecipeActivity extends AppCompatActivity {
     private String uid;
     /** holds a document reference path to the user section in firestorage */
     private DocumentReference userRef;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -233,14 +237,18 @@ public class AddRecipeActivity extends AppCompatActivity {
         btnAddIngredient.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ingredients.add(txtIngredient.getText().toString());
-                measurements.add(txtMeasurement.getText().toString());
-                quantity.add(txtQuantity.getText().toString());
-                ingredientsAdapter.notifyDataSetChanged();
+                if(!txtIngredient.getText().toString().equals("")) {
+                    ingredients.add(txtIngredient.getText().toString());
+                    measurements.add(txtMeasurement.getText().toString());
+                    quantity.add(txtQuantity.getText().toString());
+                    ingredientsAdapter.notifyDataSetChanged();
 
-                txtIngredient.setText("");
-                txtMeasurement.setText("");
-                txtQuantity.setText("");
+                    txtIngredient.setText("");
+                    txtMeasurement.setText("");
+                    txtQuantity.setText("");
+                } else {
+                    Toasty.warning(AddRecipeActivity.this, "Please enter an ingredient into the text field.", Toast.LENGTH_SHORT, true).show();
+                }
             }
         });
 
@@ -256,7 +264,11 @@ public class AddRecipeActivity extends AppCompatActivity {
         btnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                createRecipe();
+                if(connectedToInternet()) {
+                    createRecipe();
+                } else {
+                    Toasty.warning(AddRecipeActivity.this, "Please check your internet connection.", Toasty.LENGTH_LONG, true).show();
+                }
             }
         });
 
@@ -308,7 +320,7 @@ public class AddRecipeActivity extends AppCompatActivity {
                     int totalSelected = data.getClipData().getItemCount();
                     // gets the count of the existing selected images + the new selected images
                     size = size+totalSelected;
-                    // Checks if its greater than 4 => cannot be greater than 4
+                    // Checks if its greater than 6 => cannot be greater than 6
                     if (size<=6) {
                         // If everything is valid... Go through each file
                         for (int i = 0; i < totalSelected; i++) {
@@ -358,12 +370,12 @@ public class AddRecipeActivity extends AppCompatActivity {
                     adapter.notifyDataSetChanged();
                 } else {
                     // Display message if size > 6
-                    Toast.makeText(this, "You can only upload 4 Images!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "You can only upload 6 Images!", Toast.LENGTH_SHORT).show();
                 }
             }
         }  else {
             // Display message if size > 6
-            Toast.makeText(this, "You can only upload 4 Images!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "You can only upload 6 Images!", Toast.LENGTH_SHORT).show();
         }
 
     }
@@ -486,6 +498,8 @@ public class AddRecipeActivity extends AppCompatActivity {
             //Uses an async task to asynchronously save the images and store the recipe details on fire storage
             UploadRecipeTask upload = new UploadRecipeTask(fileList, recipe, AddRecipeActivity.this);
             upload.execute();
+        } else {
+            Toasty.warning(AddRecipeActivity.this, "Make sure all fields are filled.", Toasty.LENGTH_SHORT, true).show();
         }
     }
 
@@ -512,6 +526,29 @@ public class AddRecipeActivity extends AppCompatActivity {
             result = false;
         }
         return result;
+    }
+
+    /**
+     * A method that checks if there is an internet connection.
+     *
+     * @return whether or not there is an internet connection.
+     */
+    public boolean connectedToInternet() {
+        // Creates a ConnectivityManager object that checks the connectivity service
+        ConnectivityManager connectivityManager = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
+        // If there is a connectivity service then get its information
+        if (connectivityManager != null) {
+            NetworkInfo[] networkInfos = connectivityManager.getAllNetworkInfo();
+            // If network info is not null, check if the state of the network info is connected
+            if (networkInfos != null) {
+                for (int i = 0; i < networkInfos.length; i++) {
+                    if (networkInfos[i].getState() == NetworkInfo.State.CONNECTED) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
 
