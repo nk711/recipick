@@ -138,7 +138,8 @@ public class AddRecipeActivity extends AppCompatActivity {
     private String uid;
     /** holds a document reference path to the user section in firestorage */
     private DocumentReference userRef;
-
+    /** Only letters and spaces allowed */
+    private static final String REGEX = "[A-z ]+";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -245,17 +246,22 @@ public class AddRecipeActivity extends AppCompatActivity {
         btnAddIngredient.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!txtIngredient.getText().toString().equals("")) {
-                    ingredients.add(txtIngredient.getText().toString());
-                    measurements.add(txtMeasurement.getText().toString());
-                    quantity.add(txtQuantity.getText().toString());
+                if(!txtIngredient.getText().toString().trim().equals("") &&
+                        txtIngredient.getText().toString().trim().matches(REGEX) &&
+                        !txtMeasurement.getText().toString().trim().equals("") &&
+                        txtMeasurement.getText().toString().trim().matches(REGEX) &&
+                        !txtQuantity.getText().toString().trim().equals("")) {
+
+                    ingredients.add(txtIngredient.getText().toString().trim());
+                    measurements.add(txtMeasurement.getText().toString().trim());
+                    quantity.add(txtQuantity.getText().toString().trim());
                     ingredientsAdapter.notifyDataSetChanged();
 
                     txtIngredient.setText("");
                     txtMeasurement.setText("");
                     txtQuantity.setText("");
                 } else {
-                    Toasty.warning(AddRecipeActivity.this, "Please enter an ingredient into the text field.", Toast.LENGTH_SHORT, true).show();
+                    Toasty.warning(AddRecipeActivity.this, "Enter a valid ingredient, measurement and quantity", Toast.LENGTH_SHORT, true).show();
                 }
             }
         });
@@ -479,23 +485,25 @@ public class AddRecipeActivity extends AppCompatActivity {
             Map<String, Boolean> ingredientsQuery = new HashMap<>();
             //populates the ingredients lists
             for (int i = 0; i < ingredients.size(); i++) {
-                listOfIngredients.add(new Ingredient(ingredients.get(i), quantity.get(i), measurements.get(i)));
-                ingredientsQuery.put(ingredients.get(i), true);
+                listOfIngredients.add(new Ingredient(ingredients.get(i).toLowerCase().trim(),
+                                                     quantity.get(i).toLowerCase().trim(),
+                                                     measurements.get(i).toLowerCase().trim()));
+                ingredientsQuery.put(ingredients.get(i).toLowerCase().trim(), true);
             }
             //Creates a recipe object
             Recipe recipe = new Recipe (
                     uid,
-                    txtRecipeName.getText().toString(),
-                    txtDescription.getText().toString(),
+                    txtRecipeName.getText().toString().trim(),
+                    txtDescription.getText().toString().trim(),
                     listOfIngredients,
                     ingredientsQuery,
-                    txtPreperation.getText().toString(),
-                    Integer.parseInt(txtDuration.getText().toString()),
-                    Integer.parseInt(txtCalories.getText().toString()),
-                    Double.parseDouble(txtBudget.getText().toString()),
-                    Integer.parseInt(txtServings.getText().toString()),
-                    txtCuisine.getText().toString(),
-                    txtMeals.getText().toString(),
+                    txtPreperation.getText().toString().trim(),
+                    Integer.parseInt(txtDuration.getText().toString().trim()),
+                    Integer.parseInt(txtCalories.getText().toString().trim()),
+                    Double.parseDouble(txtBudget.getText().toString().trim()),
+                    Integer.parseInt(txtServings.getText().toString().trim()),
+                    txtCuisine.getText().toString().trim(),
+                    txtMeals.getText().toString().trim(),
                     share.isChecked(),
                     author
             );
@@ -503,7 +511,7 @@ public class AddRecipeActivity extends AppCompatActivity {
             UploadRecipeTask upload = new UploadRecipeTask(fileList, recipe, AddRecipeActivity.this);
             upload.execute();
         } else {
-            Toasty.warning(AddRecipeActivity.this, "Make sure all fields are filled.", Toasty.LENGTH_SHORT, true).show();
+            Toasty.warning(AddRecipeActivity.this, "Make sure all fields are filled", Toasty.LENGTH_SHORT, true).show();
         }
     }
 
@@ -514,19 +522,25 @@ public class AddRecipeActivity extends AppCompatActivity {
     private boolean validation() {
         boolean result = true;
         // Checks if fields are blank
-        if (txtRecipeName.getText().toString().isEmpty()||
-                txtDescription.getText().toString().isEmpty()||
-                txtPreperation.getText().toString().isEmpty()||
-                txtDuration.getText().toString().isEmpty()||
-                txtCalories.getText().toString().isEmpty()||
-                txtBudget.getText().toString().isEmpty()||
-                txtServings.getText().toString().isEmpty()||
-                txtCuisine.getText().toString().isEmpty()||
+        if (txtRecipeName.getText().toString().trim().isEmpty()||
+                txtDescription.getText().toString().trim().isEmpty()||
+                txtPreperation.getText().toString().trim().isEmpty()||
+                txtDuration.getText().toString().trim().isEmpty()||
+                txtCalories.getText().toString().trim().isEmpty()||
+                txtBudget.getText().toString().trim().isEmpty()||
+                txtServings.getText().toString().trim().isEmpty()||
+                txtCuisine.getText().toString().trim().isEmpty()||
                 fileList.isEmpty() ||
                 fileNameList.isEmpty() ||
                 ingredients.isEmpty() ||
                 measurements.isEmpty() ||
                 quantity.isEmpty()) {
+            result = false;
+        } else if (!txtRecipeName.getText().toString().trim().matches(REGEX)) {
+            result = false;
+        } else if (!txtCuisine.getText().toString().trim().matches(REGEX)) {
+            result = false;
+        } else if (!txtMeals.getText().toString().trim().matches(REGEX)) {
             result = false;
         }
         return result;
