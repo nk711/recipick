@@ -127,7 +127,7 @@ public class ListOfRecipesFragment extends Fragment {
         Query query = recipeRef.orderBy("name");
         for (String item : listOfIngredients) {
             if (!item.isEmpty())
-                query = query.whereEqualTo("ingredientsQuery." + item, true);
+                query = query.whereEqualTo("ingredientsQuery." + item.toLowerCase(), true);
         }
         if (additional!= null) {
             query = query.startAt(additional).endAt(additional+"\uf8ff");
