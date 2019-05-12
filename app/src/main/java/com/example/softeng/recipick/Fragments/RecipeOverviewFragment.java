@@ -9,6 +9,8 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +22,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.example.softeng.recipick.Adapters.IngredientsAndMeasurementsAdapter;
+import com.example.softeng.recipick.Models.Ingredient;
 import com.example.softeng.recipick.Models.Recipe;
 import com.example.softeng.recipick.Models.Utility;
 import com.example.softeng.recipick.R;
@@ -47,8 +51,9 @@ import es.dmoral.toasty.Toasty;
  * create an instance of this fragment.
  */
 public class RecipeOverviewFragment extends Fragment {
+    private static final String TAG = "RecipeOverviewFragment";
 
-    private static final String TAG = "Recipe Photos";
+
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -59,6 +64,16 @@ public class RecipeOverviewFragment extends Fragment {
     private static final String USERS = "Users";
     private static final String USERFAVOURITES = "User_Favourites";
 
+    /** the list of ingredient's name   */
+    public List<String> rIngredients;
+    /** the list of ingredient's measurements */
+    public List<String> rMeasurements;
+    /** the list of ingredient's quantity */
+    public List<String> rQuantity;
+    /** Adapter used to populate and view the user added ingredients */
+    private IngredientsAndMeasurementsAdapter ingredientsAdapter;
+    /** holds the list of ingredients for the user*/
+    private RecyclerView ingredients_measurements_list;
 
     private FirebaseAuth mAuth;
     private DocumentReference userRef;
@@ -81,8 +96,6 @@ public class RecipeOverviewFragment extends Fragment {
     private Button btnTrolley;
 
     private TextView recipeName, desc;
-
-    private ListView ingredients;
 
     private OnFragmentInteractionListener mListener;
 
@@ -130,14 +143,21 @@ public class RecipeOverviewFragment extends Fragment {
         userRef = FirebaseFirestore.getInstance().collection(USERS).document(uid);
         userFavouriteRef = FirebaseFirestore.getInstance().collection(USERFAVOURITES).document(uid);
 
+        ingredients_measurements_list = view.findViewById(R.id.list_ingredients);
+
 
         btnFavourites = view.findViewById(R.id.btnFavourite);
         btnTrolley = view.findViewById(R.id.btnShop);
 
         recipeName = view.findViewById(R.id.recipeName);
         desc = view.findViewById(R.id.txtDescription);
-        ingredients = view.findViewById(R.id.ingredients);
 
+
+
+        //initialising ingredient lists
+        rIngredients = new ArrayList<>();
+        rMeasurements = new ArrayList<>();
+        rQuantity = new ArrayList<>();
 
         /** gets the bundle from the previous activity */
         Bundle extras = requireActivity().getIntent().getExtras();
@@ -151,14 +171,12 @@ public class RecipeOverviewFragment extends Fragment {
             recipeName.setText(recipe.getName());
             desc.setText(recipe.getDescription());
 
-            /** Creating an ArrayList of type string that holds the list of ingredients */
-            ArrayList<String> ingredient = new ArrayList<>();
-            for(String items : recipe.getIngredientsQuery().keySet()) {
-                ingredient.add(items);
+            for(Ingredient item : recipe.getIngredients()) {
+                rIngredients.add(item.getName());
+                rMeasurements.add(item.getMeasurement());
+                rQuantity.add(item.getQuantity());
             }
 
-            ArrayAdapter arrayAdapter = new ArrayAdapter(getContext(), android.R.layout.simple_list_item_1, ingredient);
-            ingredients.setAdapter(arrayAdapter);
         }
 
         /** Button text changes depending whether the user had favourited the currently viewed recipe */
@@ -168,6 +186,11 @@ public class RecipeOverviewFragment extends Fragment {
         } else {
             btnFavourites.setText("Add to favourite");
         }
+
+        //Setting up ingredients adapter
+        ingredientsAdapter = new IngredientsAndMeasurementsAdapter(rIngredients, rMeasurements, rQuantity, TAG);
+        ingredients_measurements_list.setLayoutManager(new LinearLayoutManager(requireContext()));
+        ingredients_measurements_list.setAdapter(ingredientsAdapter);
 
         /** Adds the recipe to the user's favourite list */
         btnFavourites.setOnClickListener(new View.OnClickListener() {
