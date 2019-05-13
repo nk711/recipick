@@ -136,9 +136,9 @@ public class HomeActivity extends AppCompatActivity {
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-
+;
         navbar_setup();
+
 
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
