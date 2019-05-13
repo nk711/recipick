@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.DataSetObserver;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -43,6 +45,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
@@ -283,8 +286,12 @@ public class RecipePhotosFragment extends Fragment {
                         Toasty.info(requireContext(), "You can only upload one image", Toasty.LENGTH_LONG).show();
                     } else {
                         if (mRecipe != null && mRecipe_id != null) {
-                            result = true;
-                            uploadImages();
+                            if (connectedToInternet()) {
+                                result = true;
+                                uploadImages();
+                            } else {
+                                Toasty.warning(requireContext(), "Please check your internet connection", Toasty.LENGTH_LONG).show();
+                            }
                         } else {
                             Toasty.error(requireContext(), "Something went wrong, try again later!", Toasty.LENGTH_LONG).show();
                             requireActivity().onBackPressed();
@@ -509,7 +516,6 @@ public class RecipePhotosFragment extends Fragment {
                                                                         mImages.setAdapter(adapter);
                                                                         sharedImageAdapter = new SharedImageAdapter(requireContext(), mRecipe.getSharedImages());
                                                                         mSharedImages.setAdapter(sharedImageAdapter);
-
                                                                     } else {
                                                                         Toasty.error(requireContext(), "Oops something went wrong!", Toasty.LENGTH_LONG).show();
 
@@ -535,6 +541,29 @@ public class RecipePhotosFragment extends Fragment {
         }
     }
 
+
+    /**
+     * A method that checks if there is an internet connection.
+     *
+     * @return whether or not there is an internet connection.
+     */
+    public boolean connectedToInternet() {
+        // Creates a ConnectivityManager object that checks the connectivity service
+        ConnectivityManager connectivityManager = (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        // If there is a connectivity service then get its information
+        if (connectivityManager != null) {
+            NetworkInfo[] networkInfos = connectivityManager.getAllNetworkInfo();
+            // If network info is not null, check if the state of the network info is connected
+            if (networkInfos != null) {
+                for (int i = 0; i < networkInfos.length; i++) {
+                    if (networkInfos[i].getState() == NetworkInfo.State.CONNECTED) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
 
 
     /**
