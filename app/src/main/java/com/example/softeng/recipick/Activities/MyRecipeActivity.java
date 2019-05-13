@@ -120,6 +120,8 @@ public class MyRecipeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_my_recipe);
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        Utility.saveUserDetails(this);
+
         //holds the list of recipes
         recyclerView = findViewById(R.id.list_recipes);
         //Gets the uid of the currently logged in user
