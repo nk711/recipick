@@ -70,7 +70,6 @@ public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.View
         String fileName = fileNameList.get(position);
         holder.fileNameView.setText(fileName);
         Uri image = fileList.get(position);
-        Toast.makeText(this.context, image.toString(), Toast.LENGTH_LONG).show();
         Glide.with(this.context)
                 .load(image)
                 .centerCrop()
